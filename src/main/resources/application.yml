@@ -1,0 +1,20 @@
+spring:
+  profiles:
+    active: dev
+  datasource:
+    url: "jdbc:postgresql://${database.host}:${database.port}/${database.name}"
+    username: "${database.username}"
+    password: "${database.password}"
+    driver-class-name: "org.postgresql.Driver"
+    flyway:
+      enabled: true
+
+database:
+  host: "localhost"
+  port: 5432
+  name: "security"
+  username: "root"
+  password: "password"
+
+server:
+  port: 8000

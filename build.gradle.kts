@@ -28,6 +28,20 @@ dependencies {
     testImplementation("org.testcontainers:junit-jupiter:1.16.2")
     testImplementation("io.rest-assured:spring-mock-mvc:4.4.0")
 
+    // Kotlin test
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testImplementation("com.nhaarman:mockito-kotlin:1.6.0")
+    testImplementation("org.mockito:mockito-inline:2.23.0")
+
+    //Security
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("io.jsonwebtoken:jjwt:0.9.1")
+
+    // Database
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
+    implementation("org.postgresql:postgresql:42.2.24")
+    implementation("org.flywaydb:flyway-core:6.5.7")
 }
 
 dependencyManagement {

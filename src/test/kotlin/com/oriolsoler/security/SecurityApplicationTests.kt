@@ -1,6 +1,7 @@
 package com.oriolsoler.security
 
 import com.oriolsoler.security.acceptance.ApplicationTestCase
+import com.oriolsoler.security.acceptance.DatabaseTestCase
 import com.oriolsoler.security.helper.DockerComposeHelper
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -26,4 +27,7 @@ class SecurityApplicationTests {
 
     @Nested
     inner class Application : ApplicationTestCase()
+
+    @Nested
+    inner class Database : DatabaseTestCase()
 }
