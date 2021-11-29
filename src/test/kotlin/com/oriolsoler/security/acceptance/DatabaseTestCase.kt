@@ -10,7 +10,7 @@ import javax.sql.DataSource
 
 @SpringBootTest(
     classes = [SecurityApplication::class],
-    properties = ["spring.profiles.active=integration-test"]
+    properties = ["spring.profiles.active=test"]
 )
 abstract class DatabaseTestCase {
 

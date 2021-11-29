@@ -1,39 +1,40 @@
 package com.oriolsoler.security.acceptance
 
 import com.oriolsoler.security.SecurityApplication
+import com.oriolsoler.security.infrastucutre.controller.signup.SignUpRequestCommand
+import io.restassured.module.mockmvc.RestAssuredMockMvc
 import io.restassured.module.mockmvc.RestAssuredMockMvc.given
-import io.restassured.module.mockmvc.RestAssuredMockMvc.mockMvc
-import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpStatus.CREATED
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @SpringBootTest(
     classes = [SecurityApplication::class],
     properties = ["spring.profiles.active=test"]
 )
 @AutoConfigureMockMvc
-abstract class ApplicationTestCase {
+abstract class SignUpTestCase {
 
     @Autowired
     private lateinit var mvc: MockMvc
 
     @BeforeEach
-    fun setUp() {
-        mockMvc(mvc)
+    fun setUp(){
+        RestAssuredMockMvc.mockMvc(mvc)
     }
 
     @Test
-    fun should_be_healthy() {
+    internal fun `should register a new user successfully`() {
+        val signUpRequestCommand = SignUpRequestCommand("email@hello.com", "password")
         given()
-            .`when`()
-            .get("/actuator/health")
+            .contentType("application/json")
+            .body(signUpRequestCommand)
+            .post("/api/auth/register")
             .then()
-            .assertThat(status().isOk)
-            .body("status", equalTo("UP"))
+            .status(CREATED)
     }
 }

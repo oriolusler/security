@@ -2,6 +2,7 @@ package com.oriolsoler.security.domain
 
 import com.oriolsoler.security.domain.user.UserId
 import com.oriolsoler.security.domain.user.UserRole
+import com.oriolsoler.security.domain.user.UserRole.ROLE_USER
 
 class User(
     val id: UserId?,
@@ -9,7 +10,7 @@ class User(
     val email: String?,
     val phone: String?,
     val password: String?,
-    val roles: List<UserRole>?
+    val roles: List<UserRole>? = listOf(ROLE_USER)
 ) {
     constructor() : this(
         UserId(),
@@ -17,7 +18,7 @@ class User(
         "",
         "",
         "",
-        ArrayList()
+        listOf(ROLE_USER)
     )
 
     constructor(name: String, email: String, phone: String, password: String) : this(
@@ -26,7 +27,16 @@ class User(
         email,
         phone,
         password,
-        ArrayList()
+        listOf(ROLE_USER)
+    )
+
+    constructor(name: String, email: String, phone: String, password: String, roles: List<UserRole>) : this(
+        UserId(),
+        name,
+        email,
+        phone,
+        password,
+        roles
     )
 
     constructor(email: String) : this(
@@ -35,6 +45,6 @@ class User(
         email,
         "",
         "",
-        ArrayList()
+        listOf(ROLE_USER)
     )
 }

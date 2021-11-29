@@ -2,25 +2,27 @@ package com.oriolsoler.security
 
 import com.oriolsoler.security.acceptance.ApplicationTestCase
 import com.oriolsoler.security.acceptance.DatabaseTestCase
+import com.oriolsoler.security.acceptance.SignUpTestCase
 import com.oriolsoler.security.helper.DockerComposeHelper
+import com.oriolsoler.security.infrastucutre.repository.UserRepositoryTestCase
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Nested
 
 class SecurityApplicationTests {
 
-    companion object{
+    companion object {
         private val dockerCompose = DockerComposeHelper()
 
         @BeforeAll
         @JvmStatic
-        fun dockerComposeUp(){
+        fun dockerComposeUp() {
             dockerCompose.start()
         }
 
         @AfterAll
         @JvmStatic
-        fun dockerComposeDown(){
+        fun dockerComposeDown() {
             dockerCompose.stop()
         }
     }
@@ -30,4 +32,10 @@ class SecurityApplicationTests {
 
     @Nested
     inner class Database : DatabaseTestCase()
+
+    @Nested
+    inner class SignUp : SignUpTestCase()
+
+    @Nested
+    inner class UserRepository : UserRepositoryTestCase()
 }

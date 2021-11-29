@@ -1,4 +1,4 @@
-package com.oriolsoler.security.infrastucture.controller.signup
+package com.oriolsoler.security.controller.signup
 
 import com.nhaarman.mockito_kotlin.mock
 import com.oriolsoler.security.application.signup.SignUpEmailPasswordUseCase
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito.`when`
-import org.springframework.http.HttpStatus.OK
+import org.springframework.http.HttpStatus.CREATED
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -39,7 +39,7 @@ class SignUpEmailPasswordControllerTest {
 
         val response = signUpEmailPasswordController.register(signupRequestCommand)
 
-        assertEquals(OK, response.statusCode)
+        assertEquals(CREATED, response.statusCode)
         assertEquals("User with email $email created successfully", response.body)
     }
 }

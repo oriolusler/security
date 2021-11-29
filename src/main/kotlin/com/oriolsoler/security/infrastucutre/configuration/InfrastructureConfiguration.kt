@@ -19,7 +19,4 @@ class InfrastructureConfiguration {
     fun passwordEncoder(): PasswordEncoder {
         return BCryptPasswordEncoder()
     }
-
-
-
 }
