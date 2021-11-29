@@ -1,14 +1,13 @@
 package com.oriolsoler.security.infrastucutre.repository
 
-import com.oriolsoler.security.application.signup.UserRepository
+import com.oriolsoler.security.application.signup.SignUpUserRepository
 import com.oriolsoler.security.domain.User
-import com.oriolsoler.security.domain.user.UserId
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 
 class PostgresUserRepository(
     private val jdbcTemplate: NamedParameterJdbcTemplate
-) : UserRepository {
+) : SignUpUserRepository {
     override fun save(email: String, password: String): User {
         val sql = """
            INSERT INTO SECURITY_USER(ID, NAME, EMAIL, PHONE, PASSWORD)

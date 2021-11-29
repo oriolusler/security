@@ -1,8 +1,7 @@
 package com.oriolsoler.security.infrastucutre.repository
 
 import com.oriolsoler.security.SecurityApplication
-import com.oriolsoler.security.application.signup.UserRepository
-import com.oriolsoler.security.domain.user.UserRole
+import com.oriolsoler.security.application.signup.SignUpUserRepository
 import com.oriolsoler.security.domain.user.UserRole.ROLE_USER
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
 import org.junit.jupiter.api.BeforeEach
@@ -18,7 +17,7 @@ import kotlin.test.assertNotNull
 )
 abstract class UserRepositoryTestCase {
     @Autowired
-    private lateinit var userRepository: UserRepository
+    private lateinit var signUpUserRepository: SignUpUserRepository
 
     @Autowired
     private lateinit var userRepositoryForTest: UserRepositoryForTest
@@ -33,7 +32,7 @@ abstract class UserRepositoryTestCase {
         val email = "email@hello.com"
         val password = "password"
 
-        userRepository.save(email, password)
+        signUpUserRepository.save(email, password)
 
         val userSaved = userRepositoryForTest.findBy(email)
 

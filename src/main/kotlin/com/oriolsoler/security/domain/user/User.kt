@@ -5,12 +5,12 @@ import com.oriolsoler.security.domain.user.UserRole
 import com.oriolsoler.security.domain.user.UserRole.ROLE_USER
 
 class User(
-    val id: UserId?,
-    val name: String?,
-    val email: String?,
-    val phone: String?,
-    val password: String?,
-    val roles: List<UserRole>? = listOf(ROLE_USER)
+    val id: UserId,
+    val name: String,
+    val email: String,
+    val phone: String,
+    val password: String,
+    val roles: List<UserRole> = listOf(ROLE_USER)
 ) {
     constructor() : this(
         UserId(),

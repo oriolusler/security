@@ -37,5 +37,5 @@ class SecurityApplicationTests {
     inner class SignUp : SignUpTestCase()
 
     @Nested
-    inner class UserRepository : UserRepositoryTestCase()
+    inner class SignUpUserRepository : UserRepositoryTestCase()
 }

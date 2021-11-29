@@ -1,7 +1,7 @@
 package com.oriolsoler.security.infrastucutre.configuration
 
 import com.oriolsoler.security.application.signup.SignUpEmailPasswordUseCase
-import com.oriolsoler.security.application.signup.UserRepository
+import com.oriolsoler.security.application.signup.SignUpUserRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -11,8 +11,8 @@ class ApplicationConfiguration {
     @Bean
     fun signUpEmailPasswordUseCase(
         passwordEncoder: PasswordEncoder,
-        userRepository: UserRepository
+        signUpUserRepository: SignUpUserRepository
     ): SignUpEmailPasswordUseCase {
-        return SignUpEmailPasswordUseCase(userRepository, passwordEncoder)
+        return SignUpEmailPasswordUseCase(signUpUserRepository, passwordEncoder)
     }
 }

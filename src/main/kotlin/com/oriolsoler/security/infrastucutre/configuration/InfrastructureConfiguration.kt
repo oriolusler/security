@@ -1,6 +1,6 @@
 package com.oriolsoler.security.infrastucutre.configuration
 
-import com.oriolsoler.security.application.signup.UserRepository
+import com.oriolsoler.security.application.signup.SignUpUserRepository
 import com.oriolsoler.security.infrastucutre.repository.PostgresUserRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 @Configuration
 class InfrastructureConfiguration {
     @Bean
-    fun userRepository(jdbcTemplate: NamedParameterJdbcTemplate): UserRepository {
+    fun userRepository(jdbcTemplate: NamedParameterJdbcTemplate): SignUpUserRepository {
         return PostgresUserRepository(jdbcTemplate)
     }
 

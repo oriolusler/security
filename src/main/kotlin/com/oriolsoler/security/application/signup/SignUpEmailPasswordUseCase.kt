@@ -5,11 +5,11 @@ import com.oriolsoler.security.infrastucutre.controller.signup.SignUpRequestComm
 import org.springframework.security.crypto.password.PasswordEncoder
 
 class SignUpEmailPasswordUseCase(
-    private val userRepository: UserRepository,
+    private val signUpUserRepository: SignUpUserRepository,
     private val passwordEncoder: PasswordEncoder
 ) {
     fun execute(signupRequestCommand: SignUpRequestCommand): User {
-        return userRepository.save(
+        return signUpUserRepository.save(
             signupRequestCommand.email,
             passwordEncoder.encode(signupRequestCommand.password)
         )
