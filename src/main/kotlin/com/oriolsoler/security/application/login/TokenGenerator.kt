@@ -1,5 +1,7 @@
 package com.oriolsoler.security.application.login
 
+import com.oriolsoler.security.domain.user.UserId
+
 interface TokenGenerator {
-    fun generate(any: Any): Token
+    fun generate(userId: UserId): Token
 }

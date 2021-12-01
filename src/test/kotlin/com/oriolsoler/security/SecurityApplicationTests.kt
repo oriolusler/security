@@ -2,7 +2,8 @@ package com.oriolsoler.security
 
 import com.oriolsoler.security.acceptance.ApplicationTestCase
 import com.oriolsoler.security.acceptance.DatabaseTestCase
-import com.oriolsoler.security.acceptance.SignUpTestCase
+import com.oriolsoler.security.acceptance.LoginWithEmailPasswordTestCase
+import com.oriolsoler.security.acceptance.SignUpWithEmailPasswordTestCase
 import com.oriolsoler.security.helper.DockerComposeHelper
 import com.oriolsoler.security.infrastucutre.repository.UserRepositoryTestCase
 import org.junit.jupiter.api.AfterAll
@@ -34,8 +35,11 @@ class SecurityApplicationTests {
     inner class Database : DatabaseTestCase()
 
     @Nested
-    inner class SignUp : SignUpTestCase()
+    inner class SignUpWithEmailPassword : SignUpWithEmailPasswordTestCase()
 
     @Nested
     inner class SignUpUserRepository : UserRepositoryTestCase()
+    
+    @Nested
+    inner class LoginWithEmailPassword: LoginWithEmailPasswordTestCase()
 }

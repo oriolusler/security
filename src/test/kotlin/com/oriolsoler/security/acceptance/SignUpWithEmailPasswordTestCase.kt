@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc
     properties = ["spring.profiles.active=test"]
 )
 @AutoConfigureMockMvc
-abstract class SignUpTestCase {
+abstract class SignUpWithEmailPasswordTestCase {
 
     @Autowired
     private lateinit var mvc: MockMvc

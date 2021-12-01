@@ -42,6 +42,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-jdbc:2.5.6")
     implementation("org.postgresql:postgresql:42.3.1")
     implementation("org.flywaydb:flyway-core:8.0.2")
+
+    //Jwt
+    implementation("com.auth0:java-jwt:3.18.2")
 }
 
 dependencyManagement {

@@ -11,8 +11,8 @@ class LoginEmailPasswordUseCase(
 ) {
     fun execute(loginRequestCommand: LoginRequestCommand): LoginResponse {
         val currentUser = loginUserRepository.getBy(loginRequestCommand.email)
-        validPassword(loginRequestCommand.password, currentUser.password!!)
-        val token = tokenGenerator.generate(currentUser)
+        validPassword(loginRequestCommand.password, currentUser.password)
+        val token = tokenGenerator.generate(currentUser.id)
         return LoginResponse(
             token.value,
             token.type,
