@@ -4,6 +4,7 @@ import com.oriolsoler.security.SecurityApplication
 import com.oriolsoler.security.application.signup.SignUpUserRepository
 import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
+import io.restassured.http.Header
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import io.restassured.module.mockmvc.RestAssuredMockMvc.given
 import org.junit.jupiter.api.BeforeEach
@@ -48,6 +49,7 @@ abstract class LoginWithEmailPasswordTestCase {
 
         val signUpRequestCommand = LoginRequestCommand(email, password)
         given()
+            //.header(Header("Authorization", "Bearer TOKEN"))
             .contentType("application/json")
             .body(signUpRequestCommand)
             .post("/api/auth/login")

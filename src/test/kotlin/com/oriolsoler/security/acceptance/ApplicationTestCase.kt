@@ -1,6 +1,7 @@
 package com.oriolsoler.security.acceptance
 
 import com.oriolsoler.security.SecurityApplication
+import io.restassured.http.Header
 import io.restassured.module.mockmvc.RestAssuredMockMvc.given
 import io.restassured.module.mockmvc.RestAssuredMockMvc.mockMvc
 import org.hamcrest.Matchers.equalTo
@@ -30,6 +31,7 @@ abstract class ApplicationTestCase {
     @Test
     fun should_be_healthy() {
         given()
+            //.header(Header("Authorization", "Bearer TOKEN"))
             .`when`()
             .get("/actuator/health")
             .then()

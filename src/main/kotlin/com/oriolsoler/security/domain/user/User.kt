@@ -30,15 +30,6 @@ class User(
         listOf(ROLE_USER)
     )
 
-    constructor(name: String, email: String, phone: String, password: String, roles: List<UserRole>) : this(
-        UserId(),
-        name,
-        email,
-        phone,
-        password,
-        roles
-    )
-
     constructor(email: String) : this(
         UserId(),
         "",

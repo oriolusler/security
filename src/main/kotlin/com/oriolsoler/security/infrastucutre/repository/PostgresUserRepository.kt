@@ -22,7 +22,7 @@ class PostgresUserRepository(
 
         val newUser = User(email, "", "", password)
         val namedParameters = MapSqlParameterSource()
-        namedParameters.addValue("id", newUser.id!!.value)
+        namedParameters.addValue("id", newUser.id.value)
         namedParameters.addValue("name", "General name")
         namedParameters.addValue("email", email)
         namedParameters.addValue("phone", "+34666118833")
@@ -56,6 +56,23 @@ class PostgresUserRepository(
 
         val namedParameter = MapSqlParameterSource()
         namedParameter.addValue("email", email)
+
+        return try {
+            jdbcTemplate.queryForObject(query, namedParameter, mapperUser())!!
+        } catch (exception: EmptyResultDataAccessException) {
+            throw Exception("Empty USER result")
+        }
+    }
+
+    override fun getBy(userId: UserId): User {
+        val query = """
+            SELECT ID, NAME, EMAIL, PHONE, PASSWORD
+             FROM SECURITY_USER
+             WHERE ID=:id
+        """.trimIndent()
+
+        val namedParameter = MapSqlParameterSource()
+        namedParameter.addValue("id", userId.value)
 
         return try {
             jdbcTemplate.queryForObject(query, namedParameter, mapperUser())!!

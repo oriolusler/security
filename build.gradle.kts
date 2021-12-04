@@ -23,6 +23,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.0")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.0")
     implementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    implementation("org.projectlombok:lombok:1.18.20")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test:2.5.6")
     testImplementation("org.testcontainers:junit-jupiter:1.16.2")
