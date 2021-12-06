@@ -1,8 +1,19 @@
 version: '3.4'
 
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/security
+
   postgres:
-    image: postgres:12.4
+    image: postgres:13.1-alpine
     ports:
       - "5432:5432"
     environment:

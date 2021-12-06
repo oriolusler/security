@@ -14,7 +14,7 @@ class DockerComposeHelper {
     private val POSTGRES_PORT = 5432
 
     init {
-        container = DockerComposeContainer<Nothing>(File("docker-compose.yml"))
+        container = DockerComposeContainer<Nothing>(File("docker-compose.test.yml"))
             .apply { withLocalCompose(true) }
             .apply {
                 withExposedService(

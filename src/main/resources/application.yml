@@ -10,7 +10,7 @@ spring:
       enabled: true
 
 database:
-  host: "localhost"
+  host: "postgres"
   port: 5432
   username: "root"
   password: "password"
