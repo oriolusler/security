@@ -34,21 +34,6 @@ abstract class UserRepositoryTestCase {
     }
 
     @Test
-    fun `create user with default role`() {
-        val email = "email@hello.com"
-        val password = "password"
-
-        signUpUserRepository.save(email, password)
-
-        val userSaved = loginUserRepository.getBy(email)
-
-        assertNotNull(userSaved)
-        assertEquals(email, userSaved.email)
-        assertEquals(1, userSaved.roles.size)
-        assertEquals(ROLE_USER, userSaved.roles[0])
-    }
-
-    @Test
     fun `find user by user id`() {
         val email = "email@hello.com"
         val password = "password"

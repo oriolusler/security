@@ -2,13 +2,9 @@ package com.oriolsoler.security.controller.login
 
 import com.nhaarman.mockito_kotlin.mock
 import com.oriolsoler.security.application.login.LoginEmailPasswordUseCase
-import com.oriolsoler.security.application.signup.SignUpEmailPasswordUseCase
-import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.infrastucutre.controller.login.LoginEmailPasswordController
 import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
 import com.oriolsoler.security.infrastucutre.controller.login.LoginResponse
-import com.oriolsoler.security.infrastucutre.controller.signup.SignUpEmailPasswordController
-import com.oriolsoler.security.infrastucutre.controller.signup.SignUpRequestCommand
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith

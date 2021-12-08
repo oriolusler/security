@@ -1,8 +1,8 @@
 package com.oriolsoler.security.acceptance
 
 import com.oriolsoler.security.SecurityApplication
+import com.oriolsoler.security.domain.user.UserRole.*
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpRequestCommand
-import io.restassured.http.Header
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import io.restassured.module.mockmvc.RestAssuredMockMvc.given
 import org.junit.jupiter.api.BeforeEach
@@ -30,9 +30,14 @@ abstract class SignUpWithEmailPasswordTestCase {
 
     @Test
     internal fun `should register a new user successfully`() {
-        val signUpRequestCommand = SignUpRequestCommand("email@hello.com", "password")
+        val signUpRequestCommand = SignUpRequestCommand(
+            "email@hello.com",
+            "password",
+            "Pepe",
+            "+34666118833",
+            listOf(ROLE_USER)
+        )
         given()
-            //.header(Header("Authorization", "Bearer TOKEN"))
             .contentType("application/json")
             .body(signUpRequestCommand)
             .post("/api/auth/register")

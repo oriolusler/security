@@ -22,7 +22,7 @@ class LoginEmailPasswordTestCase {
         val email = "user@email.com"
         val password = "password"
         val encryptedPassword = "encrypted_password"
-        val user = User("name", email, "666225588", encryptedPassword)
+        val user = User(name = "name", email = email, phone = "666225588", password = encryptedPassword)
 
         val loginUserRepository = mock<LoginUserRepository> {
             on { getBy(email) } doReturn user
@@ -64,7 +64,7 @@ class LoginEmailPasswordTestCase {
         val email = "user@email.com"
         val password = "invalid_password"
         val encryptedPassword = "encrypted_password"
-        val user = User("name", email, "666225588", encryptedPassword)
+        val user = User(name = "name", email = email, phone = "666225588", password = encryptedPassword)
 
         val loginUserRepository = mock<LoginUserRepository> {
             on { getBy(email) } doReturn user

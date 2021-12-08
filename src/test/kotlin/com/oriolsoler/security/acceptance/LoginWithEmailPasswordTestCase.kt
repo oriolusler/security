@@ -2,9 +2,10 @@ package com.oriolsoler.security.acceptance
 
 import com.oriolsoler.security.SecurityApplication
 import com.oriolsoler.security.application.signup.SignUpUserRepository
+import com.oriolsoler.security.domain.user.UserRole
+import com.oriolsoler.security.domain.user.UserRole.*
 import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
-import io.restassured.http.Header
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import io.restassured.module.mockmvc.RestAssuredMockMvc.given
 import org.junit.jupiter.api.BeforeEach
@@ -45,11 +46,13 @@ abstract class LoginWithEmailPasswordTestCase {
     internal fun `should login successfully`() {
         val email = "email@hello.com"
         val password = "password"
-        signUpUserRepository.save(email, passwordEncoder.encode(password))
+        val name = "Oriol"
+        val phone = "+34666118833"
+        val roles = listOf(ROLE_USER)
+        signUpUserRepository.save(email, passwordEncoder.encode(password), name, phone, roles)
 
         val signUpRequestCommand = LoginRequestCommand(email, password)
         given()
-            //.header(Header("Authorization", "Bearer TOKEN"))
             .contentType("application/json")
             .body(signUpRequestCommand)
             .post("/api/auth/login")

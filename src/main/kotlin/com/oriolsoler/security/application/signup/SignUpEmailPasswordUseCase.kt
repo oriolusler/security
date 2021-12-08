@@ -11,7 +11,10 @@ class SignUpEmailPasswordUseCase(
     fun execute(signupRequestCommand: SignUpRequestCommand): User {
         return signUpUserRepository.save(
             signupRequestCommand.email,
-            passwordEncoder.encode(signupRequestCommand.password)
+            passwordEncoder.encode(signupRequestCommand.password),
+            signupRequestCommand.name,
+            signupRequestCommand.phone,
+            signupRequestCommand.roles
         )
     }
 }

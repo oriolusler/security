@@ -24,7 +24,7 @@ class UserRepositoryForTest(
            VALUES (:id, :name, :email, :phone, :password)
        """.trimIndent()
 
-        val newUser = User(email, "", "", password)
+        val newUser = User(email = email, password = password)
         val namedParameters = MapSqlParameterSource()
         namedParameters.addValue("id", userId.value)
         namedParameters.addValue("name", "General name")

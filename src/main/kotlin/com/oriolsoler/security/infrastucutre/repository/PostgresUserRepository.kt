@@ -14,19 +14,19 @@ import java.sql.ResultSet
 class PostgresUserRepository(
     private val jdbcTemplate: NamedParameterJdbcTemplate
 ) : SignUpUserRepository, LoginUserRepository {
-    override fun save(email: String, password: String): User {
+    override fun save(email: String, password: String, name: String, phone: String, roles: List<UserRole>): User {
         val sql = """
            INSERT INTO SECURITY_USER(ID, NAME, EMAIL, PHONE, PASSWORD)
            VALUES (:id, :name, :email, :phone, :password)
        """.trimIndent()
 
-        val newUser = User(email, "", "", password)
+        val newUser = User(name = name, password = password, email = email, phone = phone, roles = roles)
         val namedParameters = MapSqlParameterSource()
         namedParameters.addValue("id", newUser.id.value)
-        namedParameters.addValue("name", "General name")
-        namedParameters.addValue("email", email)
-        namedParameters.addValue("phone", "+34666118833")
-        namedParameters.addValue("password", password)
+        namedParameters.addValue("name", newUser.name)
+        namedParameters.addValue("email", newUser.email)
+        namedParameters.addValue("phone", newUser.phone)
+        namedParameters.addValue("password", newUser.password)
         jdbcTemplate.update(sql, namedParameters)
 
         saveRoles(newUser)
@@ -89,7 +89,7 @@ class PostgresUserRepository(
             val phone = rs.getString("phone")
             val password = rs.getString("password")
             val roles = getUserRolls(id)
-            User(id, name, email, phone, password, roles)
+            User(id = id, name = name, email = email, phone = phone, password = password, roles = roles)
         }
     }
 
