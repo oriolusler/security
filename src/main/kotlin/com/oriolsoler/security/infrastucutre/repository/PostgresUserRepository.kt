@@ -14,23 +14,24 @@ import java.sql.ResultSet
 class PostgresUserRepository(
     private val jdbcTemplate: NamedParameterJdbcTemplate
 ) : SignUpUserRepository, LoginUserRepository {
-    override fun save(email: String, password: String, name: String, phone: String, roles: List<UserRole>): User {
+    override fun save(user: User): User {
         val sql = """
-           INSERT INTO SECURITY_USER(ID, NAME, EMAIL, PHONE, PASSWORD)
-           VALUES (:id, :name, :email, :phone, :password)
+           INSERT INTO SECURITY_USER(ID, NAME, EMAIL, PHONE, PASSWORD, ENABLED, LOCKED)
+           VALUES (:id, :name, :email, :phone, :password, :enabled, :locked)
        """.trimIndent()
 
-        val newUser = User(name = name, password = password, email = email, phone = phone, roles = roles)
         val namedParameters = MapSqlParameterSource()
-        namedParameters.addValue("id", newUser.id.value)
-        namedParameters.addValue("name", newUser.name)
-        namedParameters.addValue("email", newUser.email)
-        namedParameters.addValue("phone", newUser.phone)
-        namedParameters.addValue("password", newUser.password)
+        namedParameters.addValue("id", user.id.value)
+        namedParameters.addValue("name", user.name)
+        namedParameters.addValue("email", user.email)
+        namedParameters.addValue("phone", user.phone)
+        namedParameters.addValue("password", user.password)
+        namedParameters.addValue("enabled", user.enabled)
+        namedParameters.addValue("locked", user.locked)
         jdbcTemplate.update(sql, namedParameters)
 
-        saveRoles(newUser)
-        return newUser
+        saveRoles(user)
+        return user
     }
 
     private fun saveRoles(newUser: User) {
@@ -49,7 +50,7 @@ class PostgresUserRepository(
 
     override fun getBy(email: String): User {
         val query = """
-            SELECT ID, NAME, EMAIL, PHONE, PASSWORD
+            SELECT ID, NAME, EMAIL, PHONE, PASSWORD, ENABLED, LOCKED
              FROM SECURITY_USER
              WHERE EMAIL=:email
         """.trimIndent()
@@ -66,7 +67,7 @@ class PostgresUserRepository(
 
     override fun getBy(userId: UserId): User {
         val query = """
-            SELECT ID, NAME, EMAIL, PHONE, PASSWORD
+            SELECT ID, NAME, EMAIL, PHONE, PASSWORD, ENABLED, LOCKED
              FROM SECURITY_USER
              WHERE ID=:id
         """.trimIndent()
@@ -88,8 +89,19 @@ class PostgresUserRepository(
             val email = rs.getString("email")
             val phone = rs.getString("phone")
             val password = rs.getString("password")
+            val enabled = rs.getBoolean("enabled")
+            val locked = rs.getBoolean("locked")
             val roles = getUserRolls(id)
-            User(id = id, name = name, email = email, phone = phone, password = password, roles = roles)
+            User(
+                id = id,
+                name = name,
+                email = email,
+                phone = phone,
+                password = password,
+                roles = roles,
+                enabled = enabled,
+                locked = locked
+            )
         }
     }
 

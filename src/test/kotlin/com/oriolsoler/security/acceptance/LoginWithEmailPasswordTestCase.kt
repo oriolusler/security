@@ -2,6 +2,7 @@ package com.oriolsoler.security.acceptance
 
 import com.oriolsoler.security.SecurityApplication
 import com.oriolsoler.security.application.signup.SignUpUserRepository
+import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.domain.user.UserRole
 import com.oriolsoler.security.domain.user.UserRole.*
 import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
@@ -49,7 +50,15 @@ abstract class LoginWithEmailPasswordTestCase {
         val name = "Oriol"
         val phone = "+34666118833"
         val roles = listOf(ROLE_USER)
-        signUpUserRepository.save(email, passwordEncoder.encode(password), name, phone, roles)
+        val user = User(
+            email = email,
+            password = passwordEncoder.encode(password),
+            name = name,
+            phone = phone,
+            roles = roles
+        )
+
+        signUpUserRepository.save(user)
 
         val signUpRequestCommand = LoginRequestCommand(email, password)
         given()

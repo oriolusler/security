@@ -32,7 +32,7 @@ class UserDetailsImpl(val user: User) : UserDetails {
     }
 
     override fun isAccountNonLocked(): Boolean {
-        return true
+        return !user.locked
     }
 
     override fun isCredentialsNonExpired(): Boolean {
@@ -40,7 +40,7 @@ class UserDetailsImpl(val user: User) : UserDetails {
     }
 
     override fun isEnabled(): Boolean {
-        return true
+        return user.enabled
     }
 
 }

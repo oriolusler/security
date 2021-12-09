@@ -1,9 +1,6 @@
 package com.oriolsoler.security.application
 
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.times
-import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockito_kotlin.*
 import com.oriolsoler.security.application.signup.SignUpEmailPasswordUseCase
 import com.oriolsoler.security.application.signup.SignUpUserRepository
 import com.oriolsoler.security.domain.User
@@ -28,7 +25,7 @@ class SignUpEmailPasswordTestCase {
         val user = User(name = name, email = email, phone = phone, password = encryptedPassword, roles = roles)
 
         val signUpUserRepository = mock<SignUpUserRepository> {
-            on { save(email, encryptedPassword, name, phone, roles) } doReturn user
+            on { save(any()) } doReturn user
         }
 
         val passwordEncoder = mock<PasswordEncoder> {
@@ -52,6 +49,6 @@ class SignUpEmailPasswordTestCase {
         assertEquals(user.id, userCreated.id)
         assertEquals(user.password, userCreated.password)
         verify(passwordEncoder, times(1)).encode(password)
-        verify(signUpUserRepository, times(1)).save(email, encryptedPassword, name, phone, roles)
+        verify(signUpUserRepository, times(1)).save(any())
     }
 }

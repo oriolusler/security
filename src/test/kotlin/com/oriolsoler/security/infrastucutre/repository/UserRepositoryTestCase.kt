@@ -3,6 +3,7 @@ package com.oriolsoler.security.infrastucutre.repository
 import com.oriolsoler.security.SecurityApplication
 import com.oriolsoler.security.application.login.LoginUserRepository
 import com.oriolsoler.security.application.signup.SignUpUserRepository
+import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.domain.user.UserId
 import com.oriolsoler.security.domain.user.UserRole.ROLE_USER
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
@@ -31,6 +32,20 @@ abstract class UserRepositoryTestCase {
     @BeforeEach
     fun setUp() {
         userRepositoryForTest.clean()
+    }
+
+    @Test
+    fun `save user`() {
+        val email = "email@online.com"
+        val password = "Encrypted password"
+        val name = "Pepe"
+        val phone = "+34666118833"
+        val roles = listOf(ROLE_USER)
+        val user = User(name = name, email = email, phone = phone, password = password, roles = roles)
+
+        val result = signUpUserRepository.save(user)
+
+        assertNotNull(result)
     }
 
     @Test
