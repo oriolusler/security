@@ -1,4 +1,4 @@
-package com.oriolsoler.security.domain.services
+package com.oriolsoler.security.domain
 
 import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.domain.user.UserId

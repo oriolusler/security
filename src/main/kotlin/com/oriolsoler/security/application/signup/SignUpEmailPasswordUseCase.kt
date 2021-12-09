@@ -6,10 +6,12 @@ import org.springframework.security.crypto.password.PasswordEncoder
 
 class SignUpEmailPasswordUseCase(
     private val signUpUserRepository: SignUpUserRepository,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordEncoder: PasswordEncoder,
+    private val verifyService: VerifyService,
+    private val emailService: EmailService
 ) {
     fun execute(signupRequestCommand: SignUpRequestCommand): User {
-        return signUpUserRepository.save(
+        val userCreated = signUpUserRepository.save(
             User(
                 email = signupRequestCommand.email,
                 password = passwordEncoder.encode(signupRequestCommand.password),
@@ -18,5 +20,7 @@ class SignUpEmailPasswordUseCase(
                 roles = signupRequestCommand.roles
             )
         )
+        emailService.send(userCreated.email, verifyService.generate())
+        return userCreated
     }
 }

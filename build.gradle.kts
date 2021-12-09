@@ -46,6 +46,10 @@ dependencies {
 
     //Jwt
     implementation("com.auth0:java-jwt:3.18.2")
+
+    //Email
+    implementation("org.springframework.boot:spring-boot-starter-mail:2.6.1")
+
 }
 
 dependencyManagement {
