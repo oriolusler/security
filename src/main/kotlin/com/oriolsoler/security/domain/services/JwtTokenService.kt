@@ -4,7 +4,7 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.interfaces.DecodedJWT
-import com.oriolsoler.security.application.login.Token
+import com.oriolsoler.security.domain.Token
 import com.oriolsoler.security.application.login.TokenGenerator
 import com.oriolsoler.security.domain.user.UserId
 

@@ -3,7 +3,7 @@ package com.oriolsoler.security.application
 import com.nhaarman.mockito_kotlin.*
 import com.oriolsoler.security.application.login.LoginEmailPasswordUseCase
 import com.oriolsoler.security.application.login.LoginUserRepository
-import com.oriolsoler.security.application.login.Token
+import com.oriolsoler.security.domain.Token
 import com.oriolsoler.security.application.login.TokenGenerator
 import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
