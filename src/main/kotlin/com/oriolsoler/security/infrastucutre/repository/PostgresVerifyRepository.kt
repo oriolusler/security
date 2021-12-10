@@ -1,6 +1,6 @@
 package com.oriolsoler.security.infrastucutre.repository
 
-import com.oriolsoler.security.application.login.LoginUserRepository
+import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.application.signup.VerifyServiceRepository
 import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.domain.UserVerification
@@ -14,7 +14,7 @@ import java.sql.ResultSet
 
 class PostgresVerifyRepository(
     private val jdbcTemplate: NamedParameterJdbcTemplate,
-    private val userRepository: LoginUserRepository
+    private val userRepository: UserRepository
 ) : VerifyServiceRepository {
     override fun save(userVerification: UserVerification) {
         val sql = """

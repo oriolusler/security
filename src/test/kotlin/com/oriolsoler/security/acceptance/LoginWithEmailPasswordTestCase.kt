@@ -1,9 +1,8 @@
 package com.oriolsoler.security.acceptance
 
 import com.oriolsoler.security.SecurityApplication
-import com.oriolsoler.security.application.signup.SignUpUserRepository
+import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.domain.User
-import com.oriolsoler.security.domain.user.UserRole
 import com.oriolsoler.security.domain.user.UserRole.*
 import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
@@ -29,7 +28,7 @@ abstract class LoginWithEmailPasswordTestCase {
     private lateinit var mvc: MockMvc
 
     @Autowired
-    private lateinit var signUpUserRepository: SignUpUserRepository
+    private lateinit var userRepository: UserRepository
 
     @Autowired
     private lateinit var userRepositoryFotTest: UserRepositoryForTest
@@ -50,7 +49,7 @@ abstract class LoginWithEmailPasswordTestCase {
         val roles = listOf(ROLE_USER)
         val user = User(email = email, password = passwordEncoder.encode(password), roles = roles)
 
-        signUpUserRepository.save(user)
+        userRepository.save(user)
 
         val signUpRequestCommand = LoginRequestCommand(email, password)
         given()

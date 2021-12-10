@@ -1,7 +1,6 @@
 package com.oriolsoler.security.infrastucutre.repository
 
-import com.oriolsoler.security.application.login.LoginUserRepository
-import com.oriolsoler.security.application.signup.SignUpUserRepository
+import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.domain.user.UserId
 import com.oriolsoler.security.domain.user.UserRole
@@ -13,7 +12,7 @@ import java.sql.ResultSet
 
 class PostgresUserRepository(
     private val jdbcTemplate: NamedParameterJdbcTemplate
-) : SignUpUserRepository, LoginUserRepository {
+) : UserRepository{
     override fun save(user: User): User {
         val sql = """
            INSERT INTO SECURITY_USER(ID, EMAIL, PASSWORD, ENABLED, LOCKED)

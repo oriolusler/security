@@ -29,7 +29,7 @@ abstract class SignUpWithEmailPasswordTestCase {
 
     @Test
     internal fun `should register a new user successfully`() {
-        val signUpRequestCommand = SignUpRequestCommand("oriol.soler@hotmail.com", "password")
+        val signUpRequestCommand = SignUpRequestCommand("email@online.com", "password")
         given()
             .contentType("application/json")
             .body(signUpRequestCommand)

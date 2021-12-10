@@ -22,7 +22,7 @@ class SignUpEmailPasswordTestCase {
 
         val user = User(email = email, password = encryptedPassword, roles = roles)
 
-        val signUpUserRepository = mock<SignUpUserRepository> {
+        val signUpUserRepository = mock<UserRepository> {
             on { save(any()) } doReturn user
         }
 

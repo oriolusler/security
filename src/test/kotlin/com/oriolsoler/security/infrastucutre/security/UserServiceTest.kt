@@ -2,7 +2,7 @@ package com.oriolsoler.security.infrastucutre.security
 
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
-import com.oriolsoler.security.application.login.LoginUserRepository
+import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.domain.User
 import org.junit.jupiter.api.Test
 import org.springframework.security.core.userdetails.UserDetails
@@ -13,10 +13,10 @@ class UserServiceTest {
     @Test
     fun `should get UserDetails from user repository`() {
         val user = User()
-        val loginUserRepository = mock<LoginUserRepository> {
+        val userRepository = mock<UserRepository> {
             on { getBy(user.id) } doReturn user
         }
-        val userService = UserService(loginUserRepository)
+        val userService = UserService(userRepository)
 
         val response = userService.loadUserByUsername(user.id.value.toString())
 

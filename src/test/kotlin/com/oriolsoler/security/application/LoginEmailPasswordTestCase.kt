@@ -2,7 +2,6 @@ package com.oriolsoler.security.application
 
 import com.nhaarman.mockito_kotlin.*
 import com.oriolsoler.security.application.login.LoginEmailPasswordUseCase
-import com.oriolsoler.security.application.login.LoginUserRepository
 import com.oriolsoler.security.domain.Token
 import com.oriolsoler.security.application.login.TokenGenerator
 import com.oriolsoler.security.domain.User
@@ -24,7 +23,7 @@ class LoginEmailPasswordTestCase {
         val encryptedPassword = "encrypted_password"
         val user = User(email = email, password = encryptedPassword)
 
-        val loginUserRepository = mock<LoginUserRepository> {
+        val userRepository = mock<UserRepository> {
             on { getBy(email) } doReturn user
         }
 
@@ -38,7 +37,7 @@ class LoginEmailPasswordTestCase {
         }
 
         val loginEmailPasswordTestCase = LoginEmailPasswordUseCase(
-            loginUserRepository,
+            userRepository,
             passwordEncoder,
             tokenGenerator
         )
@@ -54,7 +53,7 @@ class LoginEmailPasswordTestCase {
         assertEquals(email, loginResponse.email)
 
         verify(passwordEncoder, times(1)).matches(password, encryptedPassword)
-        verify(loginUserRepository, times(1)).getBy(email)
+        verify(userRepository, times(1)).getBy(email)
         verify(tokenGenerator, times(1)).generate(any())
     }
 
@@ -65,7 +64,7 @@ class LoginEmailPasswordTestCase {
         val encryptedPassword = "encrypted_password"
         val user = User(email = email, password = encryptedPassword)
 
-        val loginUserRepository = mock<LoginUserRepository> {
+        val userRepository = mock<UserRepository> {
             on { getBy(email) } doReturn user
         }
 
@@ -79,7 +78,7 @@ class LoginEmailPasswordTestCase {
         }
 
         val loginEmailPasswordTestCase = LoginEmailPasswordUseCase(
-            loginUserRepository,
+            userRepository,
             passwordEncoder,
             tokenGenerator
         )

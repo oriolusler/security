@@ -1,16 +1,17 @@
 package com.oriolsoler.security.application.login
 
+import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
 import com.oriolsoler.security.infrastucutre.controller.login.LoginResponse
 import org.springframework.security.crypto.password.PasswordEncoder
 
 class LoginEmailPasswordUseCase(
-    private val loginUserRepository: LoginUserRepository,
+    private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
     private val tokenGenerator: TokenGenerator
 ) {
     fun execute(loginRequestCommand: LoginRequestCommand): LoginResponse {
-        val currentUser = loginUserRepository.getBy(loginRequestCommand.email)
+        val currentUser = userRepository.getBy(loginRequestCommand.email)
         validPassword(loginRequestCommand.password, currentUser.password)
 
         val token = tokenGenerator.generate(currentUser.id)

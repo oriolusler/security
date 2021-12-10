@@ -1,8 +1,7 @@
 package com.oriolsoler.security.infrastucutre.repository
 
 import com.oriolsoler.security.SecurityApplication
-import com.oriolsoler.security.application.login.LoginUserRepository
-import com.oriolsoler.security.application.signup.SignUpUserRepository
+import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.domain.user.UserId
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
@@ -20,10 +19,7 @@ import kotlin.test.assertNotNull
 )
 abstract class UserRepositoryTestCase {
     @Autowired
-    private lateinit var signUpUserRepository: SignUpUserRepository
-
-    @Autowired
-    private lateinit var loginUserRepository: LoginUserRepository
+    private lateinit var userRepository: UserRepository
 
     @Autowired
     private lateinit var userRepositoryForTest: UserRepositoryForTest
@@ -39,7 +35,7 @@ abstract class UserRepositoryTestCase {
         val password = "Encrypted password"
         val user = User(email = email, password = password)
 
-        val result = signUpUserRepository.save(user)
+        val result = userRepository.save(user)
 
         assertNotNull(result)
     }
@@ -51,9 +47,9 @@ abstract class UserRepositoryTestCase {
         val userID = UserId()
         val user = User(id = userID, email = email, password = password)
 
-        signUpUserRepository.save(user)
+        userRepository.save(user)
 
-        val userSaved = loginUserRepository.getBy(userID)
+        val userSaved = userRepository.getBy(userID)
 
         assertNotNull(userSaved)
         assertEquals(email, userSaved.email)
@@ -62,12 +58,12 @@ abstract class UserRepositoryTestCase {
     @Test
     fun `expect error if no user found by email`() {
         val email = "email@hello.com"
-        assertFailsWith<Exception> { loginUserRepository.getBy(email) }
+        assertFailsWith<Exception> { userRepository.getBy(email) }
     }
 
     @Test
     fun `expect error if no user found by userId`() {
         val userId = UserId()
-        assertFailsWith<Exception> { loginUserRepository.getBy(userId) }
+        assertFailsWith<Exception> { userRepository.getBy(userId) }
     }
 }

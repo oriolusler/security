@@ -1,12 +1,11 @@
 package com.oriolsoler.security.infrastucutre.repository
 
 import com.oriolsoler.security.SecurityApplication
-import com.oriolsoler.security.application.signup.SignUpUserRepository
+import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.application.signup.VerifyService
 import com.oriolsoler.security.application.signup.VerifyServiceRepository
 import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.domain.UserVerification
-import com.oriolsoler.security.domain.Verification
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
 import com.oriolsoler.security.infrastucutre.repository.test.VerificationRepositoryForTest
 import org.junit.jupiter.api.AfterEach
@@ -24,7 +23,7 @@ import kotlin.test.assertNotNull
 )
 abstract class VerificationRepositoryTestCase {
     @Autowired
-    private lateinit var signUpUserRepository: SignUpUserRepository
+    private lateinit var userRepository: UserRepository
 
     @Autowired
     private lateinit var verifyServiceRepository: VerifyServiceRepository
@@ -42,7 +41,7 @@ abstract class VerificationRepositoryTestCase {
 
     @BeforeEach
     fun setUp() {
-        signUpUserRepository.save(user)
+        userRepository.save(user)
     }
 
     @AfterEach

@@ -1,9 +1,8 @@
 package com.oriolsoler.security.infrastucutre.configuration
 
-import com.oriolsoler.security.application.login.LoginUserRepository
+import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.application.login.TokenGenerator
 import com.oriolsoler.security.application.signup.EmailService
-import com.oriolsoler.security.application.signup.SignUpUserRepository
 import com.oriolsoler.security.application.signup.VerifyService
 import com.oriolsoler.security.application.signup.VerifyServiceRepository
 import com.oriolsoler.security.domain.services.ClockService
@@ -29,12 +28,7 @@ import java.util.*
 @Configuration
 class InfrastructureConfiguration {
     @Bean
-    fun signUpUserRepository(jdbcTemplate: NamedParameterJdbcTemplate): SignUpUserRepository {
-        return PostgresUserRepository(jdbcTemplate)
-    }
-
-    @Bean
-    fun loginUserRepository(jdbcTemplate: NamedParameterJdbcTemplate): LoginUserRepository {
+    fun userRepository(jdbcTemplate: NamedParameterJdbcTemplate): UserRepository {
         return PostgresUserRepository(jdbcTemplate)
     }
 
@@ -57,8 +51,8 @@ class InfrastructureConfiguration {
     }
 
     @Bean
-    fun userService(loginUserRepository: LoginUserRepository): UserDetailsService {
-        return UserService(loginUserRepository)
+    fun userService(userRepository: UserRepository): UserDetailsService {
+        return UserService(userRepository)
     }
 
     @Bean
@@ -105,7 +99,7 @@ class InfrastructureConfiguration {
     @Bean
     fun verifyServiceRepository(
         jdbcTemplate: NamedParameterJdbcTemplate,
-        userRepository: LoginUserRepository
+        userRepository: UserRepository
     ): VerifyServiceRepository {
         return PostgresVerifyRepository(jdbcTemplate, userRepository)
     }
