@@ -9,9 +9,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNotNull
+import kotlin.test.*
 
 @SpringBootTest(
     classes = [SecurityApplication::class],
@@ -24,6 +22,10 @@ abstract class UserRepositoryTestCase {
     @Autowired
     private lateinit var userRepositoryForTest: UserRepositoryForTest
 
+    private val email = "email@online.com"
+    private val password = "Encrypted password"
+    private val user = User(email = email, password = password)
+
     @BeforeEach
     fun setUp() {
         userRepositoryForTest.clean()
@@ -31,19 +33,12 @@ abstract class UserRepositoryTestCase {
 
     @Test
     fun `save user`() {
-        val email = "email@online.com"
-        val password = "Encrypted password"
-        val user = User(email = email, password = password)
-
         val result = userRepository.save(user)
-
         assertNotNull(result)
     }
 
     @Test
     fun `find user by user id`() {
-        val email = "email@hello.com"
-        val password = "password"
         val userID = UserId()
         val user = User(id = userID, email = email, password = password)
 
@@ -57,7 +52,6 @@ abstract class UserRepositoryTestCase {
 
     @Test
     fun `expect error if no user found by email`() {
-        val email = "email@hello.com"
         assertFailsWith<Exception> { userRepository.getBy(email) }
     }
 
@@ -65,5 +59,17 @@ abstract class UserRepositoryTestCase {
     fun `expect error if no user found by userId`() {
         val userId = UserId()
         assertFailsWith<Exception> { userRepository.getBy(userId) }
+    }
+
+    @Test
+    fun `should unlock used`() {
+        val user = User(email = email, password = password)
+        assertTrue { user.locked }
+        userRepository.save(user)
+
+        userRepository.setUnlocked(user)
+
+        val userPost = userRepository.getBy(user.id)
+        assertFalse { userPost.locked }
     }
 }

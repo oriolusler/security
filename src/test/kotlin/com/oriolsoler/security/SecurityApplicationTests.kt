@@ -1,9 +1,6 @@
 package com.oriolsoler.security
 
-import com.oriolsoler.security.acceptance.ApplicationTestCase
-import com.oriolsoler.security.acceptance.DatabaseTestCase
-import com.oriolsoler.security.acceptance.LoginWithEmailPasswordTestCase
-import com.oriolsoler.security.acceptance.SignUpWithEmailPasswordTestCase
+import com.oriolsoler.security.acceptance.*
 import com.oriolsoler.security.helper.DockerComposeHelper
 import com.oriolsoler.security.infrastucutre.repository.UserRepositoryTestCase
 import com.oriolsoler.security.infrastucutre.repository.VerificationRepositoryTestCase
@@ -46,4 +43,7 @@ class SecurityApplicationTests {
 
     @Nested
     inner class VerificationRepository : VerificationRepositoryTestCase()
+
+    @Nested
+    inner class VerifyVerification : VerifyVerificationTestCase()
 }

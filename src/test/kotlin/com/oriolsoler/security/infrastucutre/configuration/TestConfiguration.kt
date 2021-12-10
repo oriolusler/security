@@ -1,5 +1,6 @@
 package com.oriolsoler.security.infrastucutre.configuration
 
+import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
 import com.oriolsoler.security.infrastucutre.repository.test.VerificationRepositoryForTest
 import org.springframework.context.annotation.Bean
@@ -15,6 +16,7 @@ class TestConfiguration {
 
     @Bean
     fun verificationRepositoryForTest(
-        namedParameterJdbcTemplate: NamedParameterJdbcTemplate
-    ): VerificationRepositoryForTest = VerificationRepositoryForTest(namedParameterJdbcTemplate)
+        namedParameterJdbcTemplate: NamedParameterJdbcTemplate,
+        userRepository: UserRepository
+    ): VerificationRepositoryForTest = VerificationRepositoryForTest(namedParameterJdbcTemplate, userRepository)
 }

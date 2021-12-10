@@ -1,6 +1,7 @@
 package com.oriolsoler.security.domain.services
 
 import com.oriolsoler.security.application.signup.VerifyService
+import com.oriolsoler.security.domain.UserVerification
 import com.oriolsoler.security.domain.Verification
 import java.util.concurrent.ThreadLocalRandom
 
@@ -13,6 +14,10 @@ class PinVerifyService(private val clock: ClockService, private val minutesValid
             creationDate = now,
             expirationDate = now.plusMinutes(minutesValid)
         )
+    }
+
+    override fun isValid(userVerification: UserVerification): Boolean {
+        return !userVerification.verification.used && clock.now().isBefore(userVerification.verification.expirationDate)
     }
 
     private fun generateVerificationCode(): String {

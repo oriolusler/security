@@ -49,6 +49,40 @@ class PostgresVerifyRepository(
         }
     }
 
+    override fun getUnusedBy(user: User, verification: String): UserVerification {
+        val query = """
+            SELECT USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, USED
+             FROM VERIFY
+             WHERE USER_ID=:user
+             AND VERIFICATION=:verification
+        """.trimIndent()
+
+        val namedParameter = MapSqlParameterSource()
+        namedParameter.addValue("user", user.id.value)
+        namedParameter.addValue("verification", verification)
+
+        return try {
+            jdbcTemplate.queryForObject(query, namedParameter, mapperVerification())!!
+        } catch (exception: EmptyResultDataAccessException) {
+            throw Exception("Empty USER result")
+        }
+    }
+
+    override fun setToUsed(userVerification: UserVerification) {
+        val query = """
+            UPDATE VERIFY
+             SET USED=TRUE
+             WHERE USER_ID=:user
+              AND VERIFICATION=:verification
+        """.trimIndent()
+
+        val namedParameter = MapSqlParameterSource()
+        namedParameter.addValue("user", userVerification.user.id.value)
+        namedParameter.addValue("verification", userVerification.verification.verification)
+
+        jdbcTemplate.update(query, namedParameter)
+    }
+
     private fun mapperVerification(): RowMapper<UserVerification> {
         return RowMapper { rs: ResultSet, _: Int ->
             val user = userRepository.getBy(UserId(rs.getString("user_id")))

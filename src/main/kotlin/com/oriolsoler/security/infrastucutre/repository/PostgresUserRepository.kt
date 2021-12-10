@@ -12,7 +12,7 @@ import java.sql.ResultSet
 
 class PostgresUserRepository(
     private val jdbcTemplate: NamedParameterJdbcTemplate
-) : UserRepository{
+) : UserRepository {
     override fun save(user: User): User {
         val sql = """
            INSERT INTO SECURITY_USER(ID, EMAIL, PASSWORD, ENABLED, LOCKED)
@@ -29,6 +29,18 @@ class PostgresUserRepository(
 
         saveRoles(user)
         return user
+    }
+
+    override fun setUnlocked(user: User) {
+        val sql = """
+           UPDATE SECURITY_USER
+           SET LOCKED = FALSE
+           WHERE ID =:id
+       """.trimIndent()
+
+        val namedParameters = MapSqlParameterSource()
+        namedParameters.addValue("id", user.id.value)
+        jdbcTemplate.update(sql, namedParameters)
     }
 
     private fun saveRoles(newUser: User) {

@@ -4,6 +4,7 @@ import com.oriolsoler.security.application.login.LoginEmailPasswordUseCase
 import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.application.login.TokenGenerator
 import com.oriolsoler.security.application.signup.*
+import com.oriolsoler.security.application.validateverification.VerifyVerificationUseCase
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -34,5 +35,14 @@ class ApplicationConfiguration {
         tokenGenerator: TokenGenerator
     ): LoginEmailPasswordUseCase {
         return LoginEmailPasswordUseCase(userRepository, passwordEncoder, tokenGenerator)
+    }
+
+    @Bean
+    fun verifyVerificationUseCase(
+        verifyService: VerifyService,
+        verifyServiceRepository: VerifyServiceRepository,
+        userRepository: UserRepository
+    ): VerifyVerificationUseCase {
+        return VerifyVerificationUseCase(verifyService, verifyServiceRepository, userRepository)
     }
 }

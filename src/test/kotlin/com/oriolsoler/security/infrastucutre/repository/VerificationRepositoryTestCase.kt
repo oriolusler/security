@@ -6,6 +6,7 @@ import com.oriolsoler.security.application.signup.VerifyService
 import com.oriolsoler.security.application.signup.VerifyServiceRepository
 import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.domain.UserVerification
+import com.oriolsoler.security.domain.Verification
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
 import com.oriolsoler.security.infrastucutre.repository.test.VerificationRepositoryForTest
 import org.junit.jupiter.api.AfterEach
@@ -16,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 @SpringBootTest(
     classes = [SecurityApplication::class],
@@ -76,5 +78,17 @@ abstract class VerificationRepositoryTestCase {
     @Test
     fun `expect error if no validation found`() {
         assertFailsWith<Exception> { verifyServiceRepository.getUnusedBy(user) }
+    }
+
+    @Test
+    fun `should update verification if used`() {
+        val verification = Verification(verification = "455123", used = false)
+        val userVerification = UserVerification(user, verification)
+        verifyServiceRepository.save(userVerification)
+
+        verifyServiceRepository.setToUsed(userVerification)
+
+        val verificationPost = verificationRepositoryForTest.getBy(userVerification)
+        assertTrue { verificationPost.verification.used }
     }
 }
