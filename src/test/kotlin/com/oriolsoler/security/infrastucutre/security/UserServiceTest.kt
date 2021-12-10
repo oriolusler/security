@@ -1,13 +1,10 @@
 package com.oriolsoler.security.infrastucutre.security
 
-import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.oriolsoler.security.application.login.LoginUserRepository
 import com.oriolsoler.security.domain.User
-import com.oriolsoler.security.domain.user.UserId
 import org.junit.jupiter.api.Test
-import org.mockito.ArgumentMatchers.anyString
 import org.springframework.security.core.userdetails.UserDetails
 import kotlin.test.*
 
@@ -27,7 +24,7 @@ class UserServiceTest {
         assertIs<UserDetails>(response)
         assertIs<UserDetailsImpl>(response)
         assertEquals(user.password, response.getPassword())
-        assertEquals(user.name, response.getUsername())
+        assertEquals("", response.getUsername())
         assertFalse {
             response.isAccountNonExpired()
             response.isCredentialsNonExpired()

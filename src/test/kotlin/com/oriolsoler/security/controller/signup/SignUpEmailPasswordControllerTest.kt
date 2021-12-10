@@ -5,7 +5,6 @@ import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.oriolsoler.security.application.signup.SignUpEmailPasswordUseCase
 import com.oriolsoler.security.domain.User
-import com.oriolsoler.security.domain.user.UserRole.ROLE_USER
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpEmailPasswordController
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpRequestCommand
 import org.junit.jupiter.api.BeforeEach
@@ -35,13 +34,7 @@ class SignUpEmailPasswordControllerTest {
     fun `should create user`() {
         val email = "user@email.com"
         val password = "password"
-        val signupRequestCommand = SignUpRequestCommand(
-            email,
-            password,
-            "Pepe",
-            "+34666118833",
-            listOf(ROLE_USER)
-        )
+        val signupRequestCommand = SignUpRequestCommand(email, password)
 
         val user = User(email = email)
         `when`(signUpEmailPasswordUseCase.execute(signupRequestCommand)).thenReturn(user)

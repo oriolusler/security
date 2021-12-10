@@ -12,15 +12,9 @@ class LoginEmailPasswordUseCase(
     fun execute(loginRequestCommand: LoginRequestCommand): LoginResponse {
         val currentUser = loginUserRepository.getBy(loginRequestCommand.email)
         validPassword(loginRequestCommand.password, currentUser.password)
+
         val token = tokenGenerator.generate(currentUser.id)
-        return LoginResponse(
-            token.value,
-            token.type,
-            currentUser.id,
-            currentUser.name,
-            currentUser.email,
-            currentUser.roles
-        )
+        return LoginResponse(token.value, token.type, currentUser.id, currentUser.email)
     }
 
     private fun validPassword(rawPassword: String, encodedPassword: String) {

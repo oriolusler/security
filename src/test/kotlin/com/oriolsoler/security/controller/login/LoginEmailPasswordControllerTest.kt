@@ -2,6 +2,7 @@ package com.oriolsoler.security.controller.login
 
 import com.nhaarman.mockito_kotlin.mock
 import com.oriolsoler.security.application.login.LoginEmailPasswordUseCase
+import com.oriolsoler.security.domain.user.UserId
 import com.oriolsoler.security.infrastucutre.controller.login.LoginEmailPasswordController
 import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
 import com.oriolsoler.security.infrastucutre.controller.login.LoginResponse
@@ -35,7 +36,7 @@ class LoginEmailPasswordControllerTest {
         val password = "password"
         val loginRequestCommand = LoginRequestCommand(email, password)
 
-        val loginResponse = LoginResponse()
+        val loginResponse = LoginResponse(id = UserId(), email = "email@online.com")
         `when`(loginEmailPasswordUseCase.execute(loginRequestCommand)).thenReturn(loginResponse)
 
         val response = loginEmailPasswordController.register(loginRequestCommand)

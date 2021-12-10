@@ -5,7 +5,6 @@ import com.oriolsoler.security.application.login.LoginUserRepository
 import com.oriolsoler.security.application.signup.SignUpUserRepository
 import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.domain.user.UserId
-import com.oriolsoler.security.domain.user.UserRole.ROLE_USER
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -38,10 +37,7 @@ abstract class UserRepositoryTestCase {
     fun `save user`() {
         val email = "email@online.com"
         val password = "Encrypted password"
-        val name = "Pepe"
-        val phone = "+34666118833"
-        val roles = listOf(ROLE_USER)
-        val user = User(name = name, email = email, phone = phone, password = password, roles = roles)
+        val user = User(email = email, password = password)
 
         val result = signUpUserRepository.save(user)
 
@@ -53,8 +49,9 @@ abstract class UserRepositoryTestCase {
         val email = "email@hello.com"
         val password = "password"
         val userID = UserId()
+        val user = User(id = userID, email = email, password = password)
 
-        userRepositoryForTest.save(userID, email, password)
+        signUpUserRepository.save(user)
 
         val userSaved = loginUserRepository.getBy(userID)
 

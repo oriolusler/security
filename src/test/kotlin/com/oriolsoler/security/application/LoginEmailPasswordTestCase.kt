@@ -22,7 +22,7 @@ class LoginEmailPasswordTestCase {
         val email = "user@email.com"
         val password = "password"
         val encryptedPassword = "encrypted_password"
-        val user = User(name = "name", email = email, phone = "666225588", password = encryptedPassword)
+        val user = User(email = email, password = encryptedPassword)
 
         val loginUserRepository = mock<LoginUserRepository> {
             on { getBy(email) } doReturn user
@@ -51,9 +51,8 @@ class LoginEmailPasswordTestCase {
         assertTrue { loginResponse.token.isNotEmpty() }
         assertEquals("Bearer", loginResponse.type)
         assertEquals(user.id.value, loginResponse.id.value)
-        assertEquals("name", loginResponse.name)
         assertEquals(email, loginResponse.email)
-        assertEquals(user.roles, loginResponse.roles)
+
         verify(passwordEncoder, times(1)).matches(password, encryptedPassword)
         verify(loginUserRepository, times(1)).getBy(email)
         verify(tokenGenerator, times(1)).generate(any())
@@ -64,7 +63,7 @@ class LoginEmailPasswordTestCase {
         val email = "user@email.com"
         val password = "invalid_password"
         val encryptedPassword = "encrypted_password"
-        val user = User(name = "name", email = email, phone = "666225588", password = encryptedPassword)
+        val user = User(email = email, password = encryptedPassword)
 
         val loginUserRepository = mock<LoginUserRepository> {
             on { getBy(email) } doReturn user

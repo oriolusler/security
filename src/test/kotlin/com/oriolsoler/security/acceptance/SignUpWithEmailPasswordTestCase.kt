@@ -1,7 +1,6 @@
 package com.oriolsoler.security.acceptance
 
 import com.oriolsoler.security.SecurityApplication
-import com.oriolsoler.security.domain.user.UserRole.*
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpRequestCommand
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import io.restassured.module.mockmvc.RestAssuredMockMvc.given
@@ -30,13 +29,7 @@ abstract class SignUpWithEmailPasswordTestCase {
 
     @Test
     internal fun `should register a new user successfully`() {
-        val signUpRequestCommand = SignUpRequestCommand(
-            "oriol.soler@hotmail.com",
-            "password",
-            "Pepe",
-            "+34666118833",
-            listOf(ROLE_USER)
-        )
+        val signUpRequestCommand = SignUpRequestCommand("oriol.soler@hotmail.com", "password")
         given()
             .contentType("application/json")
             .body(signUpRequestCommand)

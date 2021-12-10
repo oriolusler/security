@@ -24,7 +24,7 @@ class UserDetailsImpl(val user: User) : UserDetails {
     }
 
     override fun getUsername(): String {
-        return user.name
+        return ""
     }
 
     override fun isAccountNonExpired(): Boolean {

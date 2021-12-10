@@ -16,15 +16,13 @@ class PostgresUserRepository(
 ) : SignUpUserRepository, LoginUserRepository {
     override fun save(user: User): User {
         val sql = """
-           INSERT INTO SECURITY_USER(ID, NAME, EMAIL, PHONE, PASSWORD, ENABLED, LOCKED)
-           VALUES (:id, :name, :email, :phone, :password, :enabled, :locked)
+           INSERT INTO SECURITY_USER(ID, EMAIL, PASSWORD, ENABLED, LOCKED)
+           VALUES (:id, :email, :password, :enabled, :locked)
        """.trimIndent()
 
         val namedParameters = MapSqlParameterSource()
         namedParameters.addValue("id", user.id.value)
-        namedParameters.addValue("name", user.name)
         namedParameters.addValue("email", user.email)
-        namedParameters.addValue("phone", user.phone)
         namedParameters.addValue("password", user.password)
         namedParameters.addValue("enabled", user.enabled)
         namedParameters.addValue("locked", user.locked)
@@ -50,7 +48,7 @@ class PostgresUserRepository(
 
     override fun getBy(email: String): User {
         val query = """
-            SELECT ID, NAME, EMAIL, PHONE, PASSWORD, ENABLED, LOCKED
+            SELECT ID, EMAIL, PASSWORD, ENABLED, LOCKED
              FROM SECURITY_USER
              WHERE EMAIL=:email
         """.trimIndent()
@@ -67,7 +65,7 @@ class PostgresUserRepository(
 
     override fun getBy(userId: UserId): User {
         val query = """
-            SELECT ID, NAME, EMAIL, PHONE, PASSWORD, ENABLED, LOCKED
+            SELECT ID, EMAIL, PASSWORD, ENABLED, LOCKED
              FROM SECURITY_USER
              WHERE ID=:id
         """.trimIndent()
@@ -85,23 +83,12 @@ class PostgresUserRepository(
     private fun mapperUser(): RowMapper<User> {
         return RowMapper { rs: ResultSet, _: Int ->
             val id = UserId(rs.getString("id"))
-            val name = rs.getString("name")
             val email = rs.getString("email")
-            val phone = rs.getString("phone")
             val password = rs.getString("password")
             val enabled = rs.getBoolean("enabled")
             val locked = rs.getBoolean("locked")
             val roles = getUserRolls(id)
-            User(
-                id = id,
-                name = name,
-                email = email,
-                phone = phone,
-                password = password,
-                roles = roles,
-                enabled = enabled,
-                locked = locked
-            )
+            User(id = id, email = email, password = password, roles = roles, enabled = enabled, locked = locked)
         }
     }
 

@@ -47,16 +47,8 @@ abstract class LoginWithEmailPasswordTestCase {
     internal fun `should login successfully`() {
         val email = "email@hello.com"
         val password = "password"
-        val name = "Oriol"
-        val phone = "+34666118833"
         val roles = listOf(ROLE_USER)
-        val user = User(
-            email = email,
-            password = passwordEncoder.encode(password),
-            name = name,
-            phone = phone,
-            roles = roles
-        )
+        val user = User(email = email, password = passwordEncoder.encode(password), roles = roles)
 
         signUpUserRepository.save(user)
 

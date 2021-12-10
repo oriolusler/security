@@ -14,10 +14,7 @@ class SignUpEmailPasswordUseCase(
         val userCreated = signUpUserRepository.save(
             User(
                 email = signupRequestCommand.email,
-                password = passwordEncoder.encode(signupRequestCommand.password),
-                name = signupRequestCommand.name,
-                phone = signupRequestCommand.phone,
-                roles = signupRequestCommand.roles
+                password = passwordEncoder.encode(signupRequestCommand.password)
             )
         )
         emailService.send(userCreated.email, verifyService.generate())
