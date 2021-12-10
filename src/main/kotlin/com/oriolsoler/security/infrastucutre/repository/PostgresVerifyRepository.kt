@@ -3,6 +3,7 @@ package com.oriolsoler.security.infrastucutre.repository
 import com.oriolsoler.security.application.login.LoginUserRepository
 import com.oriolsoler.security.application.signup.VerifyServiceRepository
 import com.oriolsoler.security.domain.User
+import com.oriolsoler.security.domain.UserVerification
 import com.oriolsoler.security.domain.Verification
 import com.oriolsoler.security.domain.user.UserId
 import org.springframework.dao.EmptyResultDataAccessException
@@ -15,22 +16,22 @@ class PostgresVerifyRepository(
     private val jdbcTemplate: NamedParameterJdbcTemplate,
     private val userRepository: LoginUserRepository
 ) : VerifyServiceRepository {
-    override fun save(verification: Verification) {
+    override fun save(userVerification: UserVerification) {
         val sql = """
            INSERT INTO VERIFY(USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, USED)
            VALUES (:user, :verification, :creation_date, :expiration_date, :used)
        """.trimIndent()
 
         val namedParameters = MapSqlParameterSource()
-        namedParameters.addValue("user", verification.user.id.value)
-        namedParameters.addValue("verification", verification.verification)
-        namedParameters.addValue("creation_date", verification.creationDate)
-        namedParameters.addValue("expiration_date", verification.expirationDate)
-        namedParameters.addValue("used", verification.used)
+        namedParameters.addValue("user", userVerification.user.id.value)
+        namedParameters.addValue("verification", userVerification.verification.verification)
+        namedParameters.addValue("creation_date", userVerification.verification.creationDate)
+        namedParameters.addValue("expiration_date", userVerification.verification.expirationDate)
+        namedParameters.addValue("used", userVerification.verification.used)
         jdbcTemplate.update(sql, namedParameters)
     }
 
-    override fun getUnusedBy(user: User): Verification {
+    override fun getUnusedBy(user: User): UserVerification {
         val query = """
             SELECT USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, USED
              FROM VERIFY
@@ -48,19 +49,21 @@ class PostgresVerifyRepository(
         }
     }
 
-    private fun mapperVerification(): RowMapper<Verification> {
+    private fun mapperVerification(): RowMapper<UserVerification> {
         return RowMapper { rs: ResultSet, _: Int ->
             val user = userRepository.getBy(UserId(rs.getString("user_id")))
             val verification = rs.getString("verification")
             val creationDate = rs.getTimestamp("creation_date").toLocalDateTime()
             val expirationDate = rs.getTimestamp("expiration_date").toLocalDateTime()
             val used = rs.getBoolean("used")
-            Verification(
+            UserVerification(
                 user = user,
-                verification = verification,
-                creationDate = creationDate,
-                expirationDate = expirationDate,
-                used = used
+                Verification(
+                    verification = verification,
+                    creationDate = creationDate,
+                    expirationDate = expirationDate,
+                    used = used
+                )
             )
         }
     }

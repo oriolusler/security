@@ -5,6 +5,7 @@ import com.oriolsoler.security.application.signup.SignUpUserRepository
 import com.oriolsoler.security.application.signup.VerifyService
 import com.oriolsoler.security.application.signup.VerifyServiceRepository
 import com.oriolsoler.security.domain.User
+import com.oriolsoler.security.domain.UserVerification
 import com.oriolsoler.security.domain.Verification
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
 import com.oriolsoler.security.infrastucutre.repository.test.VerificationRepositoryForTest
@@ -52,19 +53,20 @@ abstract class VerificationRepositoryTestCase {
 
     @Test
     fun `save verification`() {
-        val verificationCode = verifyService.generate()
-        val verification = Verification(user = user, verification = verificationCode)
+        val verification = verifyService.generate()
+        val userVerification = UserVerification(user, verification)
 
-        val result = verifyServiceRepository.save(verification)
+        val result = verifyServiceRepository.save(userVerification)
 
         assertNotNull(result)
     }
 
     @Test
     fun `get verification by user`() {
-        val verificationCode = verifyService.generate()
-        val verification = Verification(user = user, verification = verificationCode)
-        verifyServiceRepository.save(verification)
+        val verification = verifyService.generate()
+        val userVerification = UserVerification(user, verification)
+
+        verifyServiceRepository.save(userVerification)
 
         val result = verifyServiceRepository.getUnusedBy(user)
 

@@ -1,9 +1,9 @@
 package com.oriolsoler.security.application.signup
 
 import com.oriolsoler.security.domain.User
-import com.oriolsoler.security.domain.Verification
+import com.oriolsoler.security.domain.UserVerification
 
 interface VerifyServiceRepository {
-    fun save(verification: Verification)
-    fun getUnusedBy(user: User): Verification
+    fun save(verification: UserVerification)
+    fun getUnusedBy(user: User): UserVerification
 }

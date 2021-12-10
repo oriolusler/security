@@ -6,6 +6,7 @@ import com.oriolsoler.security.application.signup.EmailService
 import com.oriolsoler.security.application.signup.SignUpUserRepository
 import com.oriolsoler.security.application.signup.VerifyService
 import com.oriolsoler.security.application.signup.VerifyServiceRepository
+import com.oriolsoler.security.domain.services.ClockService
 import com.oriolsoler.security.domain.services.VerificationEmailService
 import com.oriolsoler.security.domain.services.JwtTokenService
 import com.oriolsoler.security.domain.services.PinVerifyService
@@ -61,24 +62,32 @@ class InfrastructureConfiguration {
     }
 
     @Bean
-    fun verifyService(): VerifyService {
-        return PinVerifyService()
+    fun verifyService(
+        clockService: ClockService,
+        @Value("\${verification.valid-minutes}") minutesValid: Long
+    ): VerifyService {
+        return PinVerifyService(clockService, minutesValid)
+    }
+
+    @Bean
+    fun clockService(): ClockService {
+        return ClockService()
     }
 
     @Bean
     fun emailService(
         javaMailSender: JavaMailSender,
-        @Value("\${verifier-email.sender}") emailSender: String
+        @Value("\${verification.email.from}") emailSender: String
     ): EmailService {
         return VerificationEmailService(javaMailSender, emailSender)
     }
 
     @Bean
     fun javaMailSender(
-        @Value("\${verifier-email.from}") from: String,
-        @Value("\${verifier-email.password}") password: String,
-        @Value("\${verifier-email.host}") host: String,
-        @Value("\${verifier-email.port}") port: Int
+        @Value("\${verification.email.from}") from: String,
+        @Value("\${verification.email.password}") password: String,
+        @Value("\${verification.email.host}") host: String,
+        @Value("\${verification.email.port}") port: Int
     ): JavaMailSender {
         val mailSender = JavaMailSenderImpl()
         mailSender.host = host

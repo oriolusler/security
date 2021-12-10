@@ -1,11 +1,9 @@
 package com.oriolsoler.security.application
 
 import com.nhaarman.mockito_kotlin.*
-import com.oriolsoler.security.application.signup.EmailService
-import com.oriolsoler.security.application.signup.SignUpEmailPasswordUseCase
-import com.oriolsoler.security.application.signup.SignUpUserRepository
-import com.oriolsoler.security.application.signup.VerifyService
+import com.oriolsoler.security.application.signup.*
 import com.oriolsoler.security.domain.User
+import com.oriolsoler.security.domain.Verification
 import com.oriolsoler.security.domain.user.UserRole.ROLE_USER
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpRequestCommand
 import org.junit.jupiter.api.Test
@@ -33,19 +31,24 @@ class SignUpEmailPasswordTestCase {
         }
 
         val pin = "527832"
+        val verification = Verification(verification = pin)
         val verifyService = mock<VerifyService> {
-            on { generate() } doReturn pin
+            on { generate() } doReturn verification
         }
 
         val emailService = mock<EmailService> {
             on { send(email, pin) } doReturn true
         }
 
+        val verifyServiceRepository = mock<VerifyServiceRepository> {}
+        doNothing().`when`(verifyServiceRepository).save(any())
+
         val signUpEmailPasswordTestCase = SignUpEmailPasswordUseCase(
             signUpUserRepository,
             passwordEncoder,
             verifyService,
-            emailService
+            emailService,
+            verifyServiceRepository
         )
 
         val signupRequestCommand = SignUpRequestCommand(email, password)
@@ -57,5 +60,6 @@ class SignUpEmailPasswordTestCase {
         verify(signUpUserRepository, times(1)).save(any())
         verify(verifyService, times(1)).generate()
         verify(emailService, times(1)).send(email, pin)
+        verify(verifyServiceRepository, times(1)).save(any())
     }
 }
