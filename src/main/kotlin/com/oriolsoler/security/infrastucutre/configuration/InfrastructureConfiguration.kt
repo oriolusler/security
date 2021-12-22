@@ -6,23 +6,20 @@ import com.oriolsoler.security.application.signup.EmailService
 import com.oriolsoler.security.application.signup.VerifyService
 import com.oriolsoler.security.application.signup.VerifyServiceRepository
 import com.oriolsoler.security.domain.services.ClockService
-import com.oriolsoler.security.domain.services.VerificationEmailService
 import com.oriolsoler.security.domain.services.JwtTokenService
 import com.oriolsoler.security.domain.services.PinVerifyService
+import com.oriolsoler.security.domain.services.VerificationEmailService
 import com.oriolsoler.security.infrastucutre.repository.PostgresUserRepository
 import com.oriolsoler.security.infrastucutre.repository.PostgresVerifyRepository
-import com.oriolsoler.security.infrastucutre.security.UserService
-import com.oriolsoler.security.infrastucutre.security.filter.AuthTokenFilter
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.JavaMailSenderImpl
-import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
-import java.util.*
+import java.util.Properties
 
 
 @Configuration
@@ -40,19 +37,6 @@ class InfrastructureConfiguration {
     @Bean
     fun tokenGenerator(@Value("\${jwt.secret}") jwtKey: String): TokenGenerator {
         return JwtTokenService(jwtKey)
-    }
-
-    @Bean
-    fun authenticationJwtTokenFilter(
-        tokenGenerator: TokenGenerator,
-        userDetailsService: UserDetailsService
-    ): AuthTokenFilter {
-        return AuthTokenFilter(tokenGenerator, userDetailsService)
-    }
-
-    @Bean
-    fun userService(userRepository: UserRepository): UserDetailsService {
-        return UserService(userRepository)
     }
 
     @Bean
