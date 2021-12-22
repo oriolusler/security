@@ -47,7 +47,7 @@ abstract class LoginWithEmailPasswordTestCase {
         val email = "email@hello.com"
         val password = "password"
         val roles = listOf(ROLE_USER)
-        val user = User(email = email, password = passwordEncoder.encode(password), roles = roles)
+        val user = User(email = email, password = passwordEncoder.encode(password), roles = roles, locked = false)
 
         userRepository.save(user)
 

@@ -17,11 +17,11 @@ import kotlin.test.assertTrue
 class LoginEmailPasswordTestCase {
 
     @Test
-    fun `sign up correctly with email and password`() {
+    fun `login with email and password`() {
         val email = "user@email.com"
         val password = "password"
         val encryptedPassword = "encrypted_password"
-        val user = User(email = email, password = encryptedPassword)
+        val user = User(email = email, password = encryptedPassword, locked = false)
 
         val userRepository = mock<UserRepository> {
             on { getBy(email) } doReturn user
@@ -58,11 +58,11 @@ class LoginEmailPasswordTestCase {
     }
 
     @Test
-    fun `sign up correctly with email and invalid password`() {
+    fun `login up with email and invalid password`() {
         val email = "user@email.com"
         val password = "invalid_password"
         val encryptedPassword = "encrypted_password"
-        val user = User(email = email, password = encryptedPassword)
+        val user = User(email = email, password = encryptedPassword, locked = false)
 
         val userRepository = mock<UserRepository> {
             on { getBy(email) } doReturn user
@@ -84,6 +84,37 @@ class LoginEmailPasswordTestCase {
         )
 
         val loginRequestCommand = LoginRequestCommand(email, password)
-        assertFailsWith<RuntimeException> { loginEmailPasswordTestCase.execute(loginRequestCommand) }
+        val exception = assertFailsWith<RuntimeException> { loginEmailPasswordTestCase.execute(loginRequestCommand) }
+        assertEquals("Invalid password", exception.message)
+    }
+
+    @Test
+    fun `login with locked user`() {
+        val email = "user@email.com"
+        val password = "password"
+        val encryptedPassword = "encrypted_password"
+        val user = User(email = email, password = encryptedPassword, locked = true)
+
+        val userRepository = mock<UserRepository> {
+            on { getBy(email) } doReturn user
+        }
+
+        val passwordEncoder = mock<PasswordEncoder> {
+            on { matches(password, encryptedPassword) } doReturn true
+        }
+
+        val tokenGenerator = mock<TokenGenerator> {
+            on { generate(any()) } doReturn Token("extremely_protected_jwt", "Bearer")
+        }
+
+        val loginEmailPasswordTestCase = LoginEmailPasswordUseCase(
+            userRepository,
+            passwordEncoder,
+            tokenGenerator
+        )
+
+        val loginRequestCommand = LoginRequestCommand(email, password)
+        val exception = assertFailsWith<RuntimeException> { loginEmailPasswordTestCase.execute(loginRequestCommand) }
+        assertEquals("User locked", exception.message)
     }
 }

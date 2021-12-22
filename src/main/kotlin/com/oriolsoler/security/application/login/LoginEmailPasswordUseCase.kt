@@ -1,6 +1,7 @@
 package com.oriolsoler.security.application.login
 
 import com.oriolsoler.security.application.UserRepository
+import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
 import com.oriolsoler.security.infrastucutre.controller.login.LoginResponse
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -12,15 +13,23 @@ class LoginEmailPasswordUseCase(
 ) {
     fun execute(loginRequestCommand: LoginRequestCommand): LoginResponse {
         val currentUser = userRepository.getBy(loginRequestCommand.email)
-        validPassword(loginRequestCommand.password, currentUser.password)
+
+        isValidUser(currentUser)
+        isValidPassword(loginRequestCommand.password, currentUser.password)
 
         val token = tokenGenerator.generate(currentUser.id)
         return LoginResponse(token.value, token.type, currentUser.id, currentUser.email)
     }
 
-    private fun validPassword(rawPassword: String, encodedPassword: String) {
+    private fun isValidUser(user: User) {
+        if (user.locked) {
+            throw RuntimeException("User locked")
+        }
+    }
+
+    private fun isValidPassword(rawPassword: String, encodedPassword: String) {
         if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
-            throw RuntimeException("Invalid username or password");
+            throw RuntimeException("Invalid password")
         }
     }
 }

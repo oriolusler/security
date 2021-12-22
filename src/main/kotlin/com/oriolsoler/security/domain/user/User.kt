@@ -9,8 +9,7 @@ class User(
     val email: String = "",
     val password: String = "",
     val roles: List<UserRole> = listOf(ROLE_USER),
-    val locked: Boolean = true,
-    val enabled: Boolean = true
+    val locked: Boolean = true
 ){
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

@@ -15,15 +15,14 @@ class PostgresUserRepository(
 ) : UserRepository {
     override fun save(user: User): User {
         val sql = """
-           INSERT INTO SECURITY_USER(ID, EMAIL, PASSWORD, ENABLED, LOCKED)
-           VALUES (:id, :email, :password, :enabled, :locked)
+           INSERT INTO SECURITY_USER(ID, EMAIL, PASSWORD, LOCKED)
+           VALUES (:id, :email, :password, :locked)
        """.trimIndent()
 
         val namedParameters = MapSqlParameterSource()
         namedParameters.addValue("id", user.id.value)
         namedParameters.addValue("email", user.email)
         namedParameters.addValue("password", user.password)
-        namedParameters.addValue("enabled", user.enabled)
         namedParameters.addValue("locked", user.locked)
         jdbcTemplate.update(sql, namedParameters)
 
@@ -59,7 +58,7 @@ class PostgresUserRepository(
 
     override fun getBy(email: String): User {
         val query = """
-            SELECT ID, EMAIL, PASSWORD, ENABLED, LOCKED
+            SELECT ID, EMAIL, PASSWORD, LOCKED
              FROM SECURITY_USER
              WHERE EMAIL=:email
         """.trimIndent()
@@ -76,7 +75,7 @@ class PostgresUserRepository(
 
     override fun getBy(userId: UserId): User {
         val query = """
-            SELECT ID, EMAIL, PASSWORD, ENABLED, LOCKED
+            SELECT ID, EMAIL, PASSWORD, LOCKED
              FROM SECURITY_USER
              WHERE ID=:id
         """.trimIndent()
@@ -96,10 +95,9 @@ class PostgresUserRepository(
             val id = UserId(rs.getString("id"))
             val email = rs.getString("email")
             val password = rs.getString("password")
-            val enabled = rs.getBoolean("enabled")
             val locked = rs.getBoolean("locked")
             val roles = getUserRolls(id)
-            User(id = id, email = email, password = password, roles = roles, enabled = enabled, locked = locked)
+            User(id = id, email = email, password = password, roles = roles, locked = locked)
         }
     }
 
