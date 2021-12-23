@@ -4,14 +4,16 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.interfaces.DecodedJWT
+import com.oriolsoler.security.application.accessVerification.TokenVerification
 import com.oriolsoler.security.domain.Token
 import com.oriolsoler.security.application.login.TokenGenerator
 import com.oriolsoler.security.domain.user.UserId
 
 
-class JwtTokenService(private val jwtKey: String) : TokenGenerator {
+class JwtTokenService(jwtKey: String) : TokenGenerator, TokenVerification {
+    private val algorithm: Algorithm = Algorithm.HMAC512(jwtKey)
+
     override fun generate(userId: UserId): Token {
-        val algorithm: Algorithm = Algorithm.HMAC512(jwtKey)
         return Token(
             JWT.create()
                 .withPayload(setUpPayload(userId))
@@ -20,9 +22,7 @@ class JwtTokenService(private val jwtKey: String) : TokenGenerator {
         )
     }
 
-    //TODO Test
-    override fun getUserIdFromToken(token: String): String {
-        val algorithm: Algorithm = Algorithm.HMAC512(jwtKey)
+    override fun validate(token: String): String {
         val verifier: JWTVerifier = JWT
             .require(algorithm)
             .build()
@@ -31,9 +31,8 @@ class JwtTokenService(private val jwtKey: String) : TokenGenerator {
         return jwt.subject
     }
 
-    //TODO Test
     override fun isValid(token: String): Boolean {
-        return getUserIdFromToken(token).isNotEmpty()
+        return validate(token).isNotEmpty()
     }
 
     private fun setUpPayload(userId: UserId): HashMap<String, String> {

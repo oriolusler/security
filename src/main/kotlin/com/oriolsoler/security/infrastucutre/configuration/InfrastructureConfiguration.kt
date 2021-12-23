@@ -3,8 +3,8 @@ package com.oriolsoler.security.infrastucutre.configuration
 import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.application.login.TokenGenerator
 import com.oriolsoler.security.application.signup.EmailService
-import com.oriolsoler.security.application.signup.VerifyService
-import com.oriolsoler.security.application.signup.VerifyServiceRepository
+import com.oriolsoler.security.application.validateverification.VerifyService
+import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
 import com.oriolsoler.security.domain.services.ClockService
 import com.oriolsoler.security.domain.services.JwtTokenService
 import com.oriolsoler.security.domain.services.PinVerifyService

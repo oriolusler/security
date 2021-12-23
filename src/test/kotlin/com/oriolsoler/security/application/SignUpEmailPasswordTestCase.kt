@@ -2,6 +2,8 @@ package com.oriolsoler.security.application
 
 import com.nhaarman.mockito_kotlin.*
 import com.oriolsoler.security.application.signup.*
+import com.oriolsoler.security.application.validateverification.VerifyService
+import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
 import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.domain.Verification
 import com.oriolsoler.security.domain.user.UserRole.ROLE_USER

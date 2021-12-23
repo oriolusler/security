@@ -1,8 +1,8 @@
 package com.oriolsoler.security.application
 
 import com.nhaarman.mockito_kotlin.*
-import com.oriolsoler.security.application.signup.VerifyService
-import com.oriolsoler.security.application.signup.VerifyServiceRepository
+import com.oriolsoler.security.application.validateverification.VerifyService
+import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
 import com.oriolsoler.security.application.validateverification.VerifyVerificationUseCase
 import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.domain.UserVerification
@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 class VerifyVerificationTestCase {
 
     @Test
-    fun `should verify token`() {
+    fun `should verify verification`() {
         val user = User(email = "email@online.com")
         val verification = "516797"
         val verifyVerificationCommand = VerifyVerificationCommand(user.email, verification)

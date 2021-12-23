@@ -1,8 +1,6 @@
 package com.oriolsoler.security.application.validateverification
 
 import com.oriolsoler.security.application.UserRepository
-import com.oriolsoler.security.application.signup.VerifyService
-import com.oriolsoler.security.application.signup.VerifyServiceRepository
 import com.oriolsoler.security.domain.UserVerification
 import com.oriolsoler.security.domain.verification.VerificationException
 import com.oriolsoler.security.infrastucutre.controller.verifyVerification.VerifyVerificationCommand

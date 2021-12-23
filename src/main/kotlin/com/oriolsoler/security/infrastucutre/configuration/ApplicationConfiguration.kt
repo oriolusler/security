@@ -4,6 +4,8 @@ import com.oriolsoler.security.application.login.LoginEmailPasswordUseCase
 import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.application.login.TokenGenerator
 import com.oriolsoler.security.application.signup.*
+import com.oriolsoler.security.application.validateverification.VerifyService
+import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
 import com.oriolsoler.security.application.validateverification.VerifyVerificationUseCase
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

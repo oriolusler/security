@@ -1,6 +1,8 @@
 package com.oriolsoler.security.application.signup
 
 import com.oriolsoler.security.application.UserRepository
+import com.oriolsoler.security.application.validateverification.VerifyService
+import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
 import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.domain.UserVerification
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpRequestCommand

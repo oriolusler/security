@@ -42,10 +42,11 @@ class JwtTokenServiceTest {
     @Test
     fun `should get uuid from a valid jwt`() {
         val expectedUuid = "b6c2458d-652c-4061-95e7-4f47b0de2b94"
-        val jwt = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJiNmMyNDU4ZC02NTJjLTQwNjEtOTVlNy" +
-                "00ZjQ3YjBkZTJiOTQifQ.BYGZ26WmXqSi5GWdKCGXzIjebofEZcIfSOQYqYuXkbqlFnHgZGXQrTRyVxi9BRypibNgrGKnspMM-eIayx1Rmw"
+        val jwt = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9" +
+                ".eyJzdWIiOiJiNmMyNDU4ZC02NTJjLTQwNjEtOTVlNy00ZjQ3YjBkZTJiOTQifQ" +
+                ".BYGZ26WmXqSi5GWdKCGXzIjebofEZcIfSOQYqYuXkbqlFnHgZGXQrTRyVxi9BRypibNgrGKnspMM-eIayx1Rmw"
 
-        val result = jwtTokenService.getUserIdFromToken(jwt)
+        val result = jwtTokenService.validate(jwt)
         val isValidJwt = jwtTokenService.isValid(jwt)
 
         assertTrue(isValidJwt)

@@ -1,4 +1,4 @@
-package com.oriolsoler.security.application.signup
+package com.oriolsoler.security.application.validateverification
 
 import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.domain.UserVerification
