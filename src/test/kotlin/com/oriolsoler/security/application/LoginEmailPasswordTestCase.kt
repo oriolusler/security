@@ -2,8 +2,9 @@ package com.oriolsoler.security.application
 
 import com.nhaarman.mockito_kotlin.*
 import com.oriolsoler.security.application.login.LoginEmailPasswordUseCase
-import com.oriolsoler.security.domain.Token
+import com.oriolsoler.security.application.login.LoginException
 import com.oriolsoler.security.application.login.TokenGenerator
+import com.oriolsoler.security.domain.Token
 import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
 import org.junit.jupiter.api.Test
@@ -84,8 +85,8 @@ class LoginEmailPasswordTestCase {
         )
 
         val loginRequestCommand = LoginRequestCommand(email, password)
-        val exception = assertFailsWith<RuntimeException> { loginEmailPasswordTestCase.execute(loginRequestCommand) }
-        assertEquals("Invalid password", exception.message)
+        val exception = assertFailsWith<LoginException> { loginEmailPasswordTestCase.execute(loginRequestCommand) }
+        assertEquals("Login error: Invalid password", exception.message)
     }
 
     @Test
@@ -114,7 +115,7 @@ class LoginEmailPasswordTestCase {
         )
 
         val loginRequestCommand = LoginRequestCommand(email, password)
-        val exception = assertFailsWith<RuntimeException> { loginEmailPasswordTestCase.execute(loginRequestCommand) }
-        assertEquals("User locked", exception.message)
+        val exception = assertFailsWith<LoginException> { loginEmailPasswordTestCase.execute(loginRequestCommand) }
+        assertEquals("Login error: User locked", exception.message)
     }
 }

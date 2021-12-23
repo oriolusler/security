@@ -38,7 +38,7 @@ class VerificationRepositoryForTest(
         return try {
             jdbcTemplate.queryForObject(query, namedParameter, mapperVerification())!!
         } catch (exception: EmptyResultDataAccessException) {
-            throw Exception("Empty USER result")
+            throw Exception("No verification found")
         }
     }
 

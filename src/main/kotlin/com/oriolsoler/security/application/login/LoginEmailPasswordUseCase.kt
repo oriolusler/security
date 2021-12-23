@@ -2,6 +2,7 @@ package com.oriolsoler.security.application.login
 
 import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.domain.User
+import com.oriolsoler.security.domain.user.UserException
 import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
 import com.oriolsoler.security.infrastucutre.controller.login.LoginResponse
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -22,14 +23,16 @@ class LoginEmailPasswordUseCase(
     }
 
     private fun isValidUser(user: User) {
-        if (user.locked) {
-            throw RuntimeException("User locked")
+        try {
+            user.isValid()
+        } catch (e: UserException) {
+            throw LoginException(e.message)
         }
     }
 
     private fun isValidPassword(rawPassword: String, encodedPassword: String) {
         if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
-            throw RuntimeException("Invalid password")
+            throw LoginException("Invalid password")
         }
     }
 }

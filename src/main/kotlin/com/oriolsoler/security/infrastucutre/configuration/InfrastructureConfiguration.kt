@@ -9,8 +9,8 @@ import com.oriolsoler.security.domain.services.ClockService
 import com.oriolsoler.security.domain.services.JwtTokenService
 import com.oriolsoler.security.domain.services.PinVerifyService
 import com.oriolsoler.security.domain.services.VerificationEmailService
-import com.oriolsoler.security.infrastucutre.repository.PostgresUserRepository
-import com.oriolsoler.security.infrastucutre.repository.PostgresVerifyRepository
+import com.oriolsoler.security.infrastucutre.repository.user.PostgresUserRepository
+import com.oriolsoler.security.infrastucutre.repository.verification.PostgresVerifyRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

@@ -1,4 +1,4 @@
-package com.oriolsoler.security.infrastucutre.repository
+package com.oriolsoler.security.infrastucutre.repository.verification
 
 import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.application.signup.VerifyServiceRepository
@@ -42,11 +42,7 @@ class PostgresVerifyRepository(
         val namedParameter = MapSqlParameterSource()
         namedParameter.addValue("user", user.id.value)
 
-        return try {
-            jdbcTemplate.queryForObject(query, namedParameter, mapperVerification())!!
-        } catch (exception: EmptyResultDataAccessException) {
-            throw Exception("Empty USER result")
-        }
+        return queryForVerification(query, namedParameter)
     }
 
     override fun getUnusedBy(user: User, verification: String): UserVerification {
@@ -61,10 +57,17 @@ class PostgresVerifyRepository(
         namedParameter.addValue("user", user.id.value)
         namedParameter.addValue("verification", verification)
 
+        return queryForVerification(query, namedParameter)
+    }
+
+    private fun queryForVerification(
+        query: String,
+        namedParameter: MapSqlParameterSource
+    ): UserVerification {
         return try {
             jdbcTemplate.queryForObject(query, namedParameter, mapperVerification())!!
         } catch (exception: EmptyResultDataAccessException) {
-            throw Exception("Empty USER result")
+            throw VerifyRepositoryError("No verification found")
         }
     }
 

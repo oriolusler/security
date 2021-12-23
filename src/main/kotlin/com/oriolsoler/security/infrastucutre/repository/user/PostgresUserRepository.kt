@@ -1,4 +1,4 @@
-package com.oriolsoler.security.infrastucutre.repository
+package com.oriolsoler.security.infrastucutre.repository.user
 
 import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.domain.User
@@ -66,11 +66,7 @@ class PostgresUserRepository(
         val namedParameter = MapSqlParameterSource()
         namedParameter.addValue("email", email)
 
-        return try {
-            jdbcTemplate.queryForObject(query, namedParameter, mapperUser())!!
-        } catch (exception: EmptyResultDataAccessException) {
-            throw Exception("Empty USER result")
-        }
+        return queryForUser(query, namedParameter)
     }
 
     override fun getBy(userId: UserId): User {
@@ -83,10 +79,17 @@ class PostgresUserRepository(
         val namedParameter = MapSqlParameterSource()
         namedParameter.addValue("id", userId.value)
 
+        return queryForUser(query, namedParameter)
+    }
+
+    private fun queryForUser(
+        query: String,
+        namedParameter: MapSqlParameterSource
+    ): User {
         return try {
             jdbcTemplate.queryForObject(query, namedParameter, mapperUser())!!
         } catch (exception: EmptyResultDataAccessException) {
-            throw Exception("Empty USER result")
+            throw UserRepositoryError("No user found")
         }
     }
 
