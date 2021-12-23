@@ -17,7 +17,7 @@ class PinVerifyService(private val clock: ClockService, private val minutesValid
     }
 
     override fun isValid(userVerification: UserVerification): Boolean {
-        return !userVerification.verification.used && clock.now().isBefore(userVerification.verification.expirationDate)
+        return userVerification.verification.isValid(clock.now())
     }
 
     private fun generateVerificationCode(): String {

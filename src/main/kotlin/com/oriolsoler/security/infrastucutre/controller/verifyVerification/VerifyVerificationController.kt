@@ -1,8 +1,12 @@
 package com.oriolsoler.security.infrastucutre.controller.verifyVerification
 
+import com.oriolsoler.security.application.validateverification.VerifyException
 import com.oriolsoler.security.application.validateverification.VerifyVerificationUseCase
-import org.springframework.http.HttpStatus.ACCEPTED
+import com.oriolsoler.security.domain.verification.VerificationExpiredException
+import com.oriolsoler.security.domain.verification.VerificationUsedException
+import org.springframework.http.HttpStatus.*
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
@@ -16,5 +20,18 @@ class VerifyVerificationController(
         return ResponseEntity
             .status(ACCEPTED)
             .body(verifyVerificationUseCase.execute(verificationCommand))
+    }
+
+    @ExceptionHandler(VerifyException::class)
+    fun handleVerificationError(error: VerifyException): ResponseEntity<String> {
+        if (error.cause is VerificationExpiredException) return ResponseEntity
+            .status(GONE)
+            .body(error.message)
+
+        if (error.cause is VerificationUsedException) return ResponseEntity
+            .status(CONFLICT)
+            .body(error.message)
+
+        return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(error.message)
     }
 }

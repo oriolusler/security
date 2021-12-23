@@ -7,12 +7,13 @@ import com.nhaarman.mockito_kotlin.verify
 import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.domain.UserVerification
 import com.oriolsoler.security.domain.Verification
+import com.oriolsoler.security.domain.verification.VerificationExpiredException
+import com.oriolsoler.security.domain.verification.VerificationUsedException
 import org.apache.commons.lang3.StringUtils
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -63,7 +64,7 @@ class PinVerifyServiceTest {
     }
 
     @Test
-    fun `should return false if pin is valid`() {
+    fun `should return exception if pin is expired`() {
         val user = User()
         val verification = Verification(verification = "543534")
         val userVerification = UserVerification(user, verification)
@@ -73,9 +74,8 @@ class PinVerifyServiceTest {
         }
         pinVerifyService = PinVerifyService(clock, minutesValid)
 
-        val result = pinVerifyService.isValid(userVerification)
-
-        assertFalse { result }
+        val throws = assertThrows<VerificationExpiredException> { pinVerifyService.isValid(userVerification) }
+        assertEquals("Expired", throws.message)
         verify(clock, times(1)).now()
     }
 
@@ -85,8 +85,7 @@ class PinVerifyServiceTest {
         val verification = Verification(verification = "923876", used = true)
         val userVerification = UserVerification(user, verification)
 
-        val result = pinVerifyService.isValid(userVerification)
-
-        assertFalse { result }
+        val throws = assertThrows<VerificationUsedException> { pinVerifyService.isValid(userVerification) }
+        assertEquals("Used", throws.message)
     }
 }
