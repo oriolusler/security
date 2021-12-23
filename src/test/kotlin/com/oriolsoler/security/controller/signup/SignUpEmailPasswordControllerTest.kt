@@ -1,17 +1,18 @@
 package com.oriolsoler.security.controller.signup
 
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.times
-import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockito_kotlin.*
 import com.oriolsoler.security.application.signup.SignUpEmailPasswordUseCase
+import com.oriolsoler.security.application.signup.SignUpException
 import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpEmailPasswordController
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpRequestCommand
+import com.oriolsoler.security.infrastucutre.repository.user.UserRepositoryError
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito.`when`
 import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.HttpStatus.CONFLICT
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -44,5 +45,15 @@ class SignUpEmailPasswordControllerTest {
         assertEquals(CREATED, response.statusCode)
         assertEquals("User with email $email created successfully", response.body)
         verify(signUpEmailPasswordUseCase, times(1)).execute(signupRequestCommand)
+    }
+
+    @Test
+    fun `should handle error if user already exists`() {
+        val error = "Email already used"
+
+        val response = signUpEmailPasswordController.handleSignUpError(SignUpException(error))
+
+        assertEquals(CONFLICT, response.statusCode)
+        assertEquals("SignUp error: $error", response.body)
     }
 }

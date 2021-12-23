@@ -7,7 +7,10 @@ import com.oriolsoler.security.application.login.TokenGenerator
 import com.oriolsoler.security.domain.Token
 import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
+import com.oriolsoler.security.infrastucutre.repository.user.UserRepositoryError
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito
+import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.security.crypto.password.PasswordEncoder
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -78,14 +81,11 @@ class LoginEmailPasswordTestCase {
             on { generate(any()) } doReturn token
         }
 
-        val loginEmailPasswordTestCase = LoginEmailPasswordUseCase(
-            userRepository,
-            passwordEncoder,
-            tokenGenerator
-        )
+        val loginEmailPasswordTestCase = LoginEmailPasswordUseCase(userRepository, passwordEncoder, tokenGenerator)
 
         val loginRequestCommand = LoginRequestCommand(email, password)
         val exception = assertFailsWith<LoginException> { loginEmailPasswordTestCase.execute(loginRequestCommand) }
+
         assertEquals("Login error: Invalid password", exception.message)
     }
 
@@ -108,14 +108,29 @@ class LoginEmailPasswordTestCase {
             on { generate(any()) } doReturn Token("extremely_protected_jwt", "Bearer")
         }
 
-        val loginEmailPasswordTestCase = LoginEmailPasswordUseCase(
-            userRepository,
-            passwordEncoder,
-            tokenGenerator
-        )
+        val loginEmailPasswordTestCase = LoginEmailPasswordUseCase(userRepository, passwordEncoder, tokenGenerator)
 
         val loginRequestCommand = LoginRequestCommand(email, password)
         val exception = assertFailsWith<LoginException> { loginEmailPasswordTestCase.execute(loginRequestCommand) }
+
         assertEquals("Login error: User locked", exception.message)
+    }
+
+    @Test
+    fun `login with unregistered user`() {
+        val email = "unregistred@email.com"
+        val password = "password"
+
+        val userRepository = mock<UserRepository> {}
+        given { userRepository.getBy(email) } willAnswer { throw UserRepositoryError("No user found") }
+
+        val passwordEncoder = mock<PasswordEncoder> {}
+        val tokenGenerator = mock<TokenGenerator> {}
+        val loginEmailPasswordTestCase = LoginEmailPasswordUseCase(userRepository, passwordEncoder, tokenGenerator)
+
+        val loginRequestCommand = LoginRequestCommand(email, password)
+        val exception = assertFailsWith<LoginException> { loginEmailPasswordTestCase.execute(loginRequestCommand) }
+
+        assertEquals("Login error: User repository error: No user found", exception.message)
     }
 }

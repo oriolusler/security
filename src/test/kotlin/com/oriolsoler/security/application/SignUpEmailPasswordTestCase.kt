@@ -6,7 +6,9 @@ import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.domain.Verification
 import com.oriolsoler.security.domain.user.UserRole.ROLE_USER
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpRequestCommand
+import com.oriolsoler.security.infrastucutre.repository.user.UserRepositoryError
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.security.crypto.password.PasswordEncoder
 import kotlin.test.assertEquals
 
@@ -25,6 +27,7 @@ class SignUpEmailPasswordTestCase {
         val signUpUserRepository = mock<UserRepository> {
             on { save(any()) } doReturn user
         }
+        given { signUpUserRepository.getBy(email) } willAnswer { throw UserRepositoryError("User not found") }
 
         val passwordEncoder = mock<PasswordEncoder> {
             on { encode(password) } doReturn encryptedPassword
@@ -61,5 +64,35 @@ class SignUpEmailPasswordTestCase {
         verify(verifyService, times(1)).generate()
         verify(emailService, times(1)).send(email, pin)
         verify(verifyServiceRepository, times(1)).save(any())
+    }
+
+    @Test
+    fun `handle error if email is already used`() {
+        val email = "user@email.com"
+        val password = "password"
+        val user = User(email = email, password = password)
+
+        val signUpUserRepository = mock<UserRepository> {
+            on { save(any()) } doReturn user
+            on { getBy(email) } doReturn user
+        }
+
+        val passwordEncoder = mock<PasswordEncoder> {}
+        val verifyService = mock<VerifyService> {}
+        val emailService = mock<EmailService> {}
+        val verifyServiceRepository = mock<VerifyServiceRepository> {}
+
+        val signUpEmailPasswordTestCase = SignUpEmailPasswordUseCase(
+            signUpUserRepository,
+            passwordEncoder,
+            verifyService,
+            emailService,
+            verifyServiceRepository
+        )
+
+        val command = SignUpRequestCommand(email, password)
+        val exception = assertThrows<SignUpException> { signUpEmailPasswordTestCase.execute(command) }
+        assertEquals("SignUp error: Email already used", exception.message)
+
     }
 }

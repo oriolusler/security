@@ -1,8 +1,11 @@
 package com.oriolsoler.security.infrastucutre.controller.signup
 
 import com.oriolsoler.security.application.signup.SignUpEmailPasswordUseCase
-import org.springframework.http.HttpStatus.CREATED
+import com.oriolsoler.security.application.signup.SignUpException
+import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.*
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
@@ -16,5 +19,12 @@ class SignUpEmailPasswordController(
         return ResponseEntity
             .status(CREATED)
             .body(SignUpResponse(signUpEmailPasswordUseCase.execute(signupRequestCommand)).response())
+    }
+
+    @ExceptionHandler(SignUpException::class)
+    fun handleSignUpError(exception: SignUpException): ResponseEntity<String> {
+        return ResponseEntity
+            .status(CONFLICT)
+            .body(exception.message)
     }
 }
