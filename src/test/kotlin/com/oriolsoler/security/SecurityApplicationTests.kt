@@ -46,4 +46,7 @@ class SecurityApplicationTests {
 
     @Nested
     inner class VerifyVerification : VerifyVerificationTestCase()
+
+    @Nested
+    inner class AccessVerification : AccessVerificationTestCase()
 }

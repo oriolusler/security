@@ -7,6 +7,7 @@ import com.nhaarman.mockito_kotlin.verify
 import com.oriolsoler.security.application.validateverification.VerifyException
 import com.oriolsoler.security.application.validateverification.VerifyVerificationUseCase
 import com.oriolsoler.security.domain.User
+import com.oriolsoler.security.domain.verification.VerificationException
 import com.oriolsoler.security.domain.verification.VerificationExpiredException
 import com.oriolsoler.security.domain.verification.VerificationUsedException
 import com.oriolsoler.security.infrastucutre.controller.verifyVerification.VerifyVerificationCommand
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.http.HttpStatus.ACCEPTED
 import org.springframework.http.HttpStatus.CONFLICT
 import org.springframework.http.HttpStatus.GONE
+import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -66,5 +68,14 @@ class VerifyVerificationControllerTest {
 
         assertEquals(CONFLICT, response.statusCode)
         assertEquals("Verification error: Used", response.body)
+    }
+
+    @Test
+    fun `should handle other errors`() {
+        val errorVerify = VerifyException("Unknown error", VerificationException("any"))
+        val response = verifyVerificationController.handleVerificationError(errorVerify)
+
+        assertEquals(INTERNAL_SERVER_ERROR, response.statusCode)
+        assertEquals("Verification error: Unknown error", response.body)
     }
 }

@@ -2,6 +2,8 @@ package com.oriolsoler.security.infrastucutre.configuration
 
 import com.oriolsoler.security.application.login.LoginEmailPasswordUseCase
 import com.oriolsoler.security.application.UserRepository
+import com.oriolsoler.security.application.accessverification.AccessVerificationUseCase
+import com.oriolsoler.security.application.accessverification.TokenVerification
 import com.oriolsoler.security.application.login.TokenGenerator
 import com.oriolsoler.security.application.signup.*
 import com.oriolsoler.security.application.validateverification.VerifyService
@@ -46,5 +48,13 @@ class ApplicationConfiguration {
         userRepository: UserRepository
     ): VerifyVerificationUseCase {
         return VerifyVerificationUseCase(verifyService, verifyServiceRepository, userRepository)
+    }
+
+    @Bean
+    fun accessVerificationUseCase(
+        tokenVerification: TokenVerification,
+        userRepository: UserRepository
+    ): AccessVerificationUseCase {
+        return AccessVerificationUseCase(tokenVerification, userRepository)
     }
 }

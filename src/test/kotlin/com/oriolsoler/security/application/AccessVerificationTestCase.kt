@@ -1,21 +1,20 @@
 package com.oriolsoler.security.application
 
 
-import com.nhaarman.mockito_kotlin.doReturn
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.times
-import com.nhaarman.mockito_kotlin.verify
-import com.oriolsoler.security.application.accessVerification.AccessVerificationException
-import com.oriolsoler.security.application.accessVerification.TokenVerification
-import com.oriolsoler.security.application.accessVerification.AccessVerificationUseCase
+import com.auth0.jwt.exceptions.InvalidClaimException
+import com.nhaarman.mockito_kotlin.*
+import com.oriolsoler.security.application.accessverification.AccessVerificationException
+import com.oriolsoler.security.application.accessverification.TokenVerification
+import com.oriolsoler.security.application.accessverification.AccessVerificationUseCase
 import com.oriolsoler.security.domain.User
-import com.oriolsoler.security.infrastucutre.controller.accessVerification.AccessVerificationCommand
+import com.oriolsoler.security.infrastucutre.controller.accessverification.AccessVerificationCommand
+import com.oriolsoler.security.infrastucutre.repository.user.UserRepositoryError
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-class TokenVerificationTestCase {
+class AccessVerificationTestCase {
 
     @Test
     fun `should verify access given a token`() {
@@ -64,4 +63,26 @@ class TokenVerificationTestCase {
 
         assertEquals("Access verification error: User locked", response.message)
     }
+
+    @Test
+    fun `should handle token error`() {
+        val token = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9" +
+                ".eyJzdWIiOiJmMzA0Yzc0ZC05MDI3LTQ0N2ItYTJmOC01Y2I4N2IzNTQ4ZTEifQ" +
+                ".SF8D4I7YFUX0DreosszjU83S1zk58zExq0_AYV5O3ooYw1Q-f_pE8NM2tNdxESgKz9RZq8cguViX2NdYNR6fTQ"
+
+        val tokenVerification = mock<TokenVerification> {}
+        given { tokenVerification.validate(token) } willAnswer { throw InvalidClaimException("Invalid issuer") }
+
+        val userRepository = mock<UserRepository> {}
+
+        val accessVerificationUseCase = AccessVerificationUseCase(tokenVerification, userRepository)
+        val accessVerificationCommand = AccessVerificationCommand(token)
+
+        val accessResult = assertThrows<AccessVerificationException> {
+            accessVerificationUseCase.execute(accessVerificationCommand)
+        }
+
+        assertEquals("Access verification error: Invalid issuer", accessResult.message)
+    }
+
 }

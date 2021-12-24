@@ -1,6 +1,7 @@
 package com.oriolsoler.security.infrastucutre.configuration
 
 import com.oriolsoler.security.application.UserRepository
+import com.oriolsoler.security.application.accessverification.TokenVerification
 import com.oriolsoler.security.application.login.TokenGenerator
 import com.oriolsoler.security.application.signup.EmailService
 import com.oriolsoler.security.application.validateverification.VerifyService
@@ -35,8 +36,19 @@ class InfrastructureConfiguration {
     }
 
     @Bean
-    fun tokenGenerator(@Value("\${jwt.secret}") jwtKey: String): TokenGenerator {
-        return JwtTokenService(jwtKey)
+    fun tokenGenerator(
+        @Value("\${jwt.secret}") jwtKey: String,
+        @Value("\${jwt.issuer}") jwtIssuer: String
+    ): TokenGenerator {
+        return JwtTokenService(jwtKey, jwtIssuer)
+    }
+
+    @Bean
+    fun tokenVerification(
+        @Value("\${jwt.secret}") jwtKey: String,
+        @Value("\${jwt.issuer}") jwtIssuer: String
+    ): TokenVerification {
+        return JwtTokenService(jwtKey, jwtIssuer)
     }
 
     @Bean
