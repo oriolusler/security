@@ -5,3 +5,11 @@ verification:
     host: "smtp.gmail.com"
     port: 587
   valid-minutes: 15
+
+jasypt:
+  encryptor:
+    gcm-secret-key-password: "chupacabras"
+    key-obtention-iterations: "1000"
+    gcm-secret-key-salt: "HrqoFr44GtkAhhYN+jP8Ag=="
+    gcm-secret-key-algorithm: "PBKDF2WithHmacSHA256"
+  test: ENC(wMOdQogVg0djeK67/mUFXkB+Co5IZjS+yRrmP+B/kEI=)

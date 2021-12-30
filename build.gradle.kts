@@ -33,7 +33,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.0")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:1.6.0")
     testImplementation("com.nhaarman:mockito-kotlin:1.6.0")
-    testImplementation("org.mockito:mockito-inline:4.1.0")
+    testImplementation("org.mockito:mockito-inline:4.2.0")
 
     //Security
     implementation("io.jsonwebtoken:jjwt:0.9.1")
@@ -42,7 +42,7 @@ dependencies {
     // Database
     implementation("org.springframework.boot:spring-boot-starter-jdbc:2.6.1")
     implementation("org.postgresql:postgresql:42.3.1")
-    implementation("org.flywaydb:flyway-core:8.1.0")
+    implementation("org.flywaydb:flyway-core:8.2.3")
 
     //Jwt
     implementation("com.auth0:java-jwt:3.18.2")
@@ -50,6 +50,8 @@ dependencies {
     //Email
     implementation("org.springframework.boot:spring-boot-starter-mail:2.6.1")
 
+    //Encryptable
+    implementation("com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.4")
 
 }
 

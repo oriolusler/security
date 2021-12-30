@@ -49,4 +49,7 @@ class SecurityApplicationTests {
 
     @Nested
     inner class AccessVerification : AccessVerificationTestCase()
+
+    @Nested
+    inner class Jaspy : JaspyTestCase()
 }

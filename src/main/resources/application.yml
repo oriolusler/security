@@ -30,3 +30,9 @@ verification:
     host: "smtp.gmail.com"
     port: 587
   valid-minutes: 15
+
+jasypt:
+  encryptor:
+    gcm-secret-key-password: ${SECURITY_JASPY_SECRET}
+    gcm-secret-key-salt: ${SECURITY_JASPY_SECRET}
+    gcm-secret-key-algorithm: ${SECURITY_JASPY_SECRET}
