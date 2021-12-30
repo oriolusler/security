@@ -10,7 +10,7 @@ spring:
       enabled: true
 
 database:
-  host: "postgres"
+  host: "localhost"
   port: 5432
   username: "root"
   password: "password"
@@ -20,13 +20,13 @@ server:
   port: 8080
 
 jwt:
-  secret: "8be5946d3b667b31b286ddd447c5cd948f7a6692e8603218d18e718344da323426d80aee0982b4a7816953d5787ff2a868e46833a3575454b548c205cf9aa789"
-  issuer: "NEA_OS"
+  secret: ENC(7NxeuF4Fua9h49fFp9AqonOrK53xcD3dy9cUzqV2JbPpffkqgvM0HIC7hq6O1kuG76MMfx2O+rlEkD5lXjBD8RwGF8PGGl8teTfZQynpiEvLiSZLM1pompD5k5AN9WbAMGWmEH/J+e9W+2XKLeSQ1+FsACedx4oYZ595jh7E9lx4JJn3v4REMW7fSMkMKcb3vIwJpswyxB53RvHc)
+  issuer: ENC(j7dv2PyCrwN+Lq1S5W0wI+KrclF2v+ximRXx3q8+ZwfsNg==)
 
 verification:
   email:
-    from: "cabot1997@gmail.com"
-    password: "eQo3jv3g%2D8#N!n"
+    from: ENC(5kEgP/YxYkGZHrAXoSUrK+09GcOtQiyueFDE1ZIpqOZPKSJkKAo0BDlJCgbc)
+    password: ENC(CLO9n2y8Z0BPW4Rs9h+DHqfpGrEiiZtINU89F6RenWaxSmoSykYRHvqW3kg=)
     host: "smtp.gmail.com"
     port: 587
   valid-minutes: 15
@@ -34,5 +34,5 @@ verification:
 jasypt:
   encryptor:
     gcm-secret-key-password: ${SECURITY_JASPY_SECRET}
-    gcm-secret-key-salt: ${SECURITY_JASPY_SECRET}
-    gcm-secret-key-algorithm: ${SECURITY_JASPY_SECRET}
+    gcm-secret-key-salt: ${SECURITY_JASPY_SALT}
+    gcm-secret-key-algorithm: ${SECURITY_JASPY_ALGORITHM}

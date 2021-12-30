@@ -11,6 +11,9 @@ services:
       - postgres
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/security
+      - SECURITY_JASPY_SECRET=${SECURITY_JASPY_SECRET}
+      - SECURITY_JASPY_SALT=${SECURITY_JASPY_SALT}
+      - SECURITY_JASPY_ALGORITHM=${SECURITY_JASPY_ALGORITHM}
 
   postgres:
     image: postgres:13.1-alpine
