@@ -6,6 +6,10 @@ verification:
     port: 587
   valid-minutes: 15
 
+jwt:
+  secret: "8be5946d3b667b31b286ddd447c5cd948f7a6692e8603218d18e718344da323426d80aee0982b4a7816953d5787ff2a868e46833a3575454b548c205cf9aa789"
+  issuer: "NEA_OS"
+
 jasypt:
   encryptor:
     gcm-secret-key-password: "chupacabras"

@@ -10,16 +10,22 @@ import com.oriolsoler.security.application.login.TokenGenerator
 import com.oriolsoler.security.domain.user.UserId
 
 
-class JwtTokenService(jwtKey: String, private val jwtIssuer: String) : TokenGenerator, TokenVerification {
+class JwtTokenService(
+    jwtKey: String,
+    private val jwtIssuer: String,
+    private val clock: ClockService
+) : TokenGenerator, TokenVerification {
     private val algorithm: Algorithm = Algorithm.HMAC512(jwtKey)
 
-    override fun generate(userId: UserId): Token {
+    override fun generate(userId: UserId, expirationDays: Long): Token {
         return Token(
             JWT.create()
+                .withExpiresAt(clock.nowDate(days = expirationDays))
+                .withIssuedAt(clock.nowDate())
                 .withPayload(setUpPayload(userId))
                 .withIssuer(jwtIssuer)
                 .sign(algorithm),
-            "Bearer"
+            "JWT"
         )
     }
 

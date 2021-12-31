@@ -38,17 +38,19 @@ class InfrastructureConfiguration {
     @Bean
     fun tokenGenerator(
         @Value("\${jwt.secret}") jwtKey: String,
-        @Value("\${jwt.issuer}") jwtIssuer: String
+        @Value("\${jwt.issuer}") jwtIssuer: String,
+        clock: ClockService
     ): TokenGenerator {
-        return JwtTokenService(jwtKey, jwtIssuer)
+        return JwtTokenService(jwtKey, jwtIssuer, clock)
     }
 
     @Bean
     fun tokenVerification(
         @Value("\${jwt.secret}") jwtKey: String,
-        @Value("\${jwt.issuer}") jwtIssuer: String
+        @Value("\${jwt.issuer}") jwtIssuer: String,
+        clock: ClockService
     ): TokenVerification {
-        return JwtTokenService(jwtKey, jwtIssuer)
+        return JwtTokenService(jwtKey, jwtIssuer, clock)
     }
 
     @Bean

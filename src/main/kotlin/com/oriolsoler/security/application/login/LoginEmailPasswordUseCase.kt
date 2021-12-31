@@ -19,7 +19,7 @@ class LoginEmailPasswordUseCase(
         isValidUser(currentUser)
         isValidPassword(loginRequestCommand.password, currentUser.password)
 
-        val token = tokenGenerator.generate(currentUser.id)
+        val token = tokenGenerator.generate(currentUser.id, 7)
         return LoginResponse(token.value, token.type, currentUser.id, currentUser.email)
     }
 
