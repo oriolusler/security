@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.InvalidClaimException
+import com.auth0.jwt.exceptions.TokenExpiredException
 import com.auth0.jwt.interfaces.DecodedJWT
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
@@ -15,16 +16,22 @@ import org.junit.jupiter.api.assertThrows
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.Date
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+
+private const val ACCESS_EXPIRATION_DAYS = 7L
+private const val REFRESH_EXPIRATION_DAYS = 50L
 
 class JwtTokenServiceTest {
 
     private val now = ClockService().now()
     private lateinit var clock: ClockService
 
-    private val jwtKey = "8be5946d3b667b31b286ddd447c5cd948f7a6692e8603218d18e718344da323426d80aee0982b4a" +
-            "7816953d5787ff2a868e46833a3575454b548c205cf9aa789"
+    private val accessTokenKey = "8be5946d3b667b31b286ddd447c5cd948f7a6692e8603218d18e718344da323426" +
+            "d80aee0982b4a7816953d5787ff2a868e46833a3575454b548c205cf9aa789"
+    private val refreshTokenKey = "5c5f678f443188633a1ca92c4cb801ddd657febe8045c5e68288d15f435395a72a" +
+            "b4978c62ff503bb750eee110bd4cac8a984eba38de7bd9b166ae1df98e8549"
 
     private val jwtIssuer = "NEA_OS"
     private lateinit var jwtTokenService: JwtTokenService
@@ -33,26 +40,33 @@ class JwtTokenServiceTest {
     fun setUp() {
         clock = mock {
             on { nowDate() } doReturn localDateTimeToDate(now)
-            on { nowDate(7) } doReturn localDateTimeToDate(now.plusDays(7))
+            on { nowDate(ACCESS_EXPIRATION_DAYS) } doReturn localDateTimeToDate(now.plusDays(ACCESS_EXPIRATION_DAYS))
+            on { nowDate(REFRESH_EXPIRATION_DAYS) } doReturn localDateTimeToDate(now.plusDays(REFRESH_EXPIRATION_DAYS))
         }
 
-        jwtTokenService = JwtTokenService(jwtKey, jwtIssuer, clock)
+        jwtTokenService = JwtTokenService(
+            accessTokenKey = accessTokenKey,
+            accessTokenKeyExpirationDays = ACCESS_EXPIRATION_DAYS,
+            refreshTokenKey = refreshTokenKey,
+            refreshTokenKeyExpirationDays = REFRESH_EXPIRATION_DAYS,
+            jwtIssuer = jwtIssuer,
+            clock = clock
+        )
     }
 
     @Test
-    fun `should generate jwt token from token id`() {
+    fun `should generate jwt access token from token id`() {
         val userId = UserId()
 
-        val jwtTokenGenerated = jwtTokenService.generate(userId, 7)
+        val jwtTokenGenerated = jwtTokenService.generate(userId)
 
-        val decodedToken = verifyAndDecodeJwtToken(jwtTokenGenerated.value)
+        val decodedToken = verifyAndDecodeJwtAccessToken(jwtTokenGenerated.accessToken)
         assertNotNull(decodedToken.expiresAt)
-        assertNotNull(jwtTokenGenerated)
         assertEquals(userId.value, UserId(decodedToken.subject).value)
         assertEquals(jwtIssuer, decodedToken.issuer)
         assertEquals(getInstantWithoutMilis(localDateTimeToDate(now)), getInstantWithoutMilis(decodedToken.issuedAt))
         assertEquals(
-            getInstantWithoutMilis(localDateTimeToDate(now.plusDays(7))),
+            getInstantWithoutMilis(localDateTimeToDate(now.plusDays(ACCESS_EXPIRATION_DAYS))),
             getInstantWithoutMilis(decodedToken.expiresAt)
         )
     }
@@ -61,8 +75,17 @@ class JwtTokenServiceTest {
         return date.toInstant().truncatedTo(ChronoUnit.SECONDS)
     }
 
-    private fun verifyAndDecodeJwtToken(token: String): DecodedJWT {
-        val algorithm: Algorithm = Algorithm.HMAC512(jwtKey)
+    private fun verifyAndDecodeJwtAccessToken(token: String): DecodedJWT {
+        val algorithm: Algorithm = Algorithm.HMAC512(accessTokenKey)
+        val verifier: JWTVerifier = JWT
+            .require(algorithm)
+            .build()
+
+        return verifier.verify(token)
+    }
+
+    private fun verifyAndDecodeJwtRefreshToken(token: String): DecodedJWT {
+        val algorithm: Algorithm = Algorithm.HMAC512(refreshTokenKey)
         val verifier: JWTVerifier = JWT
             .require(algorithm)
             .build()
@@ -73,9 +96,9 @@ class JwtTokenServiceTest {
     @Test
     fun `should get uuid from a valid jwt`() {
         val userId = UserId()
-        val jwtTokenGenerated = jwtTokenService.generate(userId, 7)
+        val jwtTokenGenerated = jwtTokenService.generate(userId)
 
-        val result = jwtTokenService.validate(jwtTokenGenerated.value)
+        val result = jwtTokenService.validateAccessToken(jwtTokenGenerated.accessToken)
 
         assertEquals(userId.value.toString(), result)
     }
@@ -83,10 +106,85 @@ class JwtTokenServiceTest {
     @Test
     fun `should fail if issuer is not accepted`() {
         val userId = UserId()
-        val generate = jwtTokenService.generate(userId, 7).value
+        val generate = jwtTokenService.generate(userId).accessToken
 
-        val jwtTokenServiceAux = JwtTokenService(jwtKey, "other", clock)
-        val exception = assertThrows<InvalidClaimException> { jwtTokenServiceAux.validate(generate) }
+        val jwtTokenServiceAux = JwtTokenService(
+            accessTokenKey = accessTokenKey,
+            accessTokenKeyExpirationDays = ACCESS_EXPIRATION_DAYS,
+            refreshTokenKey = refreshTokenKey,
+            refreshTokenKeyExpirationDays = REFRESH_EXPIRATION_DAYS,
+            jwtIssuer = "An other issuer",
+            clock = clock
+        )
+        val exception = assertThrows<InvalidClaimException> { jwtTokenServiceAux.validateAccessToken(generate) }
         assertEquals("The Claim 'iss' value doesn't match the required issuer.", exception.message)
+    }
+
+    @Test
+    fun `access token should fail if token is expired`() {
+        val userId = UserId()
+
+        val clockAux = mock<ClockService> {
+            on { nowDate() } doReturn localDateTimeToDate(now.minusDays(ACCESS_EXPIRATION_DAYS + 1))
+            on { nowDate(ACCESS_EXPIRATION_DAYS) } doReturn localDateTimeToDate(now.minusDays(ACCESS_EXPIRATION_DAYS + 1))
+            on { nowDate(REFRESH_EXPIRATION_DAYS) } doReturn localDateTimeToDate(now.plusDays(REFRESH_EXPIRATION_DAYS))
+        }
+
+        val jwtTokenServiceAux = JwtTokenService(
+            accessTokenKey = accessTokenKey,
+            accessTokenKeyExpirationDays = ACCESS_EXPIRATION_DAYS,
+            refreshTokenKey = refreshTokenKey,
+            refreshTokenKeyExpirationDays = REFRESH_EXPIRATION_DAYS,
+            jwtIssuer = jwtIssuer,
+            clock = clockAux
+        )
+
+        val generate = jwtTokenServiceAux.generate(userId).accessToken
+
+        val exception = assertThrows<TokenExpiredException> { jwtTokenServiceAux.validateAccessToken(generate) }
+        assertContains(exception.message.toString(), "The Token has expired")
+    }
+
+    @Test
+    fun `should creating refresh token from uuid`() {
+        val userId = UserId()
+
+        val jwtTokenGenerated = jwtTokenService.generate(userId)
+
+        val decodedToken = verifyAndDecodeJwtRefreshToken(jwtTokenGenerated.refreshToken)
+        assertNotNull(decodedToken.expiresAt)
+        assertEquals(userId.value, UserId(decodedToken.subject).value)
+        assertEquals(jwtIssuer, decodedToken.issuer)
+        assertEquals(getInstantWithoutMilis(localDateTimeToDate(now)), getInstantWithoutMilis(decodedToken.issuedAt))
+        assertEquals(
+            getInstantWithoutMilis(localDateTimeToDate(now.plusDays(REFRESH_EXPIRATION_DAYS))),
+            getInstantWithoutMilis(decodedToken.expiresAt)
+        )
+    }
+
+
+    @Test
+    fun `refresh token should fail if token is expired`() {
+        val userId = UserId()
+
+        val clockAux = mock<ClockService> {
+            on { nowDate() } doReturn localDateTimeToDate(now.minusDays(10))
+            on { nowDate(ACCESS_EXPIRATION_DAYS) } doReturn localDateTimeToDate(now.plusDays(ACCESS_EXPIRATION_DAYS))
+            on { nowDate(REFRESH_EXPIRATION_DAYS) } doReturn localDateTimeToDate(now.minusDays(REFRESH_EXPIRATION_DAYS))
+        }
+
+        val jwtTokenServiceAux = JwtTokenService(
+            accessTokenKey = accessTokenKey,
+            accessTokenKeyExpirationDays = ACCESS_EXPIRATION_DAYS,
+            refreshTokenKey = refreshTokenKey,
+            refreshTokenKeyExpirationDays = REFRESH_EXPIRATION_DAYS,
+            jwtIssuer = jwtIssuer,
+            clock = clockAux
+        )
+
+        val generate = jwtTokenServiceAux.generate(userId).refreshToken
+
+        val exception = assertThrows<TokenExpiredException> { jwtTokenServiceAux.validateRefreshToken(generate) }
+        assertContains(exception.message.toString(), "The Token has expired")
     }
 }

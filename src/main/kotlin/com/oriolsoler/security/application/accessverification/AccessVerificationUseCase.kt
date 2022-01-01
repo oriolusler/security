@@ -6,7 +6,6 @@ import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.domain.user.UserException
 import com.oriolsoler.security.domain.user.UserId
 import com.oriolsoler.security.infrastucutre.controller.accessverification.AccessVerificationCommand
-import java.util.*
 
 class AccessVerificationUseCase(
     private val tokenVerification: TokenVerification,
@@ -21,7 +20,7 @@ class AccessVerificationUseCase(
 
     private fun isValidVerification(token: String): UserId {
         try {
-            return UserId(tokenVerification.validate(token))
+            return UserId(tokenVerification.validateAccessToken(token))
         } catch (e: JWTVerificationException) {
             throw AccessVerificationException(e.message)
         }

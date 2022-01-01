@@ -11,27 +11,51 @@ import com.oriolsoler.security.domain.user.UserId
 
 
 class JwtTokenService(
-    jwtKey: String,
+    accessTokenKey: String,
     private val jwtIssuer: String,
-    private val clock: ClockService
+    private val clock: ClockService,
+    refreshTokenKey: String,
+    private val accessTokenKeyExpirationDays: Long,
+    private val refreshTokenKeyExpirationDays: Long
 ) : TokenGenerator, TokenVerification {
-    private val algorithm: Algorithm = Algorithm.HMAC512(jwtKey)
 
-    override fun generate(userId: UserId, expirationDays: Long): Token {
+    private val accessTokenAlgorithm: Algorithm = Algorithm.HMAC512(accessTokenKey)
+    private val refreshTokenAlgorithm: Algorithm = Algorithm.HMAC512(refreshTokenKey)
+
+    override fun generate(userId: UserId): Token {
         return Token(
-            JWT.create()
-                .withExpiresAt(clock.nowDate(days = expirationDays))
-                .withIssuedAt(clock.nowDate())
-                .withPayload(setUpPayload(userId))
-                .withIssuer(jwtIssuer)
-                .sign(algorithm),
-            "JWT"
+            generateAccessToken(userId),
+            generateRefreshToken(userId)
         )
     }
 
-    override fun validate(token: String): String {
+    private fun generateAccessToken(userId: UserId) = JWT.create()
+        .withExpiresAt(clock.nowDate(days = accessTokenKeyExpirationDays))
+        .withIssuedAt(clock.nowDate())
+        .withPayload(setUpPayload(userId))
+        .withIssuer(jwtIssuer)
+        .sign(accessTokenAlgorithm)
+
+    private fun generateRefreshToken(userId: UserId) = JWT.create()
+        .withExpiresAt(clock.nowDate(days = refreshTokenKeyExpirationDays))
+        .withIssuedAt(clock.nowDate())
+        .withPayload(setUpPayload(userId))
+        .withIssuer(jwtIssuer)
+        .sign(refreshTokenAlgorithm)
+
+    override fun validateAccessToken(token: String): String {
         val verifier: JWTVerifier = JWT
-            .require(algorithm)
+            .require(accessTokenAlgorithm)
+            .withIssuer(jwtIssuer)
+            .build()
+
+        val jwt: DecodedJWT = verifier.verify(token)
+        return jwt.subject
+    }
+
+    override fun validateRefreshToken(token: String): String {
+        val verifier: JWTVerifier = JWT
+            .require(refreshTokenAlgorithm)
             .withIssuer(jwtIssuer)
             .build()
 

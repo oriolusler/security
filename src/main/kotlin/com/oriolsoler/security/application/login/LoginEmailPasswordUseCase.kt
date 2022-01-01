@@ -5,6 +5,7 @@ import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.domain.user.UserException
 import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
 import com.oriolsoler.security.infrastucutre.controller.login.LoginResponse
+import com.oriolsoler.security.infrastucutre.controller.login.ResponseUser
 import com.oriolsoler.security.infrastucutre.repository.user.UserRepositoryError
 import org.springframework.security.crypto.password.PasswordEncoder
 
@@ -19,8 +20,11 @@ class LoginEmailPasswordUseCase(
         isValidUser(currentUser)
         isValidPassword(loginRequestCommand.password, currentUser.password)
 
-        val token = tokenGenerator.generate(currentUser.id, 7)
-        return LoginResponse(token.value, token.type, currentUser.id, currentUser.email)
+        val token = tokenGenerator.generate(currentUser.id)
+        return LoginResponse(
+            token = token,
+            user = ResponseUser(currentUser.id, currentUser.email)
+        )
     }
 
     private fun getUserByEmail(email: String): User {

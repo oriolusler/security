@@ -24,7 +24,7 @@ class AccessVerificationTestCase {
         val user = User(locked = false)
 
         val tokenVerification = mock<TokenVerification> {
-            on { validate(token) } doReturn user.id.value.toString()
+            on { validateAccessToken(token) } doReturn user.id.value.toString()
         }
         val userRepository = mock<UserRepository> {
             on { getBy(user.id) } doReturn user
@@ -36,7 +36,7 @@ class AccessVerificationTestCase {
         val accessResult = accessVerificationUseCase.execute(accessVerificationCommand)
 
         assertTrue(accessResult)
-        verify(tokenVerification, times(1)).validate(token)
+        verify(tokenVerification, times(1)).validateAccessToken(token)
         verify(userRepository, times(1)).getBy(user.id)
     }
 
@@ -48,7 +48,7 @@ class AccessVerificationTestCase {
         val user = User(locked = true)
 
         val tokenVerification = mock<TokenVerification> {
-            on { validate(token) } doReturn user.id.value.toString()
+            on { validateAccessToken(token) } doReturn user.id.value.toString()
         }
         val userRepository = mock<UserRepository> {
             on { getBy(user.id) } doReturn user
@@ -71,7 +71,7 @@ class AccessVerificationTestCase {
                 ".SF8D4I7YFUX0DreosszjU83S1zk58zExq0_AYV5O3ooYw1Q-f_pE8NM2tNdxESgKz9RZq8cguViX2NdYNR6fTQ"
 
         val tokenVerification = mock<TokenVerification> {}
-        given { tokenVerification.validate(token) } willAnswer { throw InvalidClaimException("Invalid issuer") }
+        given { tokenVerification.validateAccessToken(token) } willAnswer { throw InvalidClaimException("Invalid issuer") }
 
         val userRepository = mock<UserRepository> {}
 

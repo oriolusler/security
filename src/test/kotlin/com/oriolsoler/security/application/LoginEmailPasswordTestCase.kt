@@ -9,8 +9,6 @@ import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserRepositoryError
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito
-import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.security.crypto.password.PasswordEncoder
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -37,7 +35,7 @@ class LoginEmailPasswordTestCase {
 
         val token = Token("extremely_protected_jwt", "Bearer")
         val tokenGenerator = mock<TokenGenerator> {
-            on { generate(any(), any()) } doReturn token
+            on { generate(any()) } doReturn token
         }
 
         val loginEmailPasswordTestCase = LoginEmailPasswordUseCase(
@@ -51,14 +49,14 @@ class LoginEmailPasswordTestCase {
 
         assertNotNull(loginResponse)
         assertNotNull(loginResponse.token)
-        assertTrue { loginResponse.token.isNotEmpty() }
-        assertEquals("Bearer", loginResponse.type)
-        assertEquals(user.id.value, loginResponse.id.value)
-        assertEquals(email, loginResponse.email)
+        assertTrue { loginResponse.token.accessToken.isNotEmpty() }
+        assertTrue { loginResponse.token.refreshToken.isNotEmpty() }
+        assertEquals(user.id.value, loginResponse.user.id.value)
+        assertEquals(email, loginResponse.user.email)
 
         verify(passwordEncoder, times(1)).matches(password, encryptedPassword)
         verify(userRepository, times(1)).getBy(email)
-        verify(tokenGenerator, times(1)).generate(any(), any())
+        verify(tokenGenerator, times(1)).generate(any())
     }
 
     @Test
@@ -78,7 +76,7 @@ class LoginEmailPasswordTestCase {
 
         val token = Token("extremely_protected_jwt", "Bearer")
         val tokenGenerator = mock<TokenGenerator> {
-            on { generate(any(), any()) } doReturn token
+            on { generate(any()) } doReturn token
         }
 
         val loginEmailPasswordTestCase = LoginEmailPasswordUseCase(userRepository, passwordEncoder, tokenGenerator)
@@ -105,7 +103,7 @@ class LoginEmailPasswordTestCase {
         }
 
         val tokenGenerator = mock<TokenGenerator> {
-            on { generate(any(), any()) } doReturn Token("extremely_protected_jwt", "Bearer")
+            on { generate(any()) } doReturn Token("extremely_protected_jwt", "Bearer")
         }
 
         val loginEmailPasswordTestCase = LoginEmailPasswordUseCase(userRepository, passwordEncoder, tokenGenerator)

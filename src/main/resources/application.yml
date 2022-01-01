@@ -20,7 +20,12 @@ server:
   port: 8080
 
 jwt:
-  secret: ENC(7NxeuF4Fua9h49fFp9AqonOrK53xcD3dy9cUzqV2JbPpffkqgvM0HIC7hq6O1kuG76MMfx2O+rlEkD5lXjBD8RwGF8PGGl8teTfZQynpiEvLiSZLM1pompD5k5AN9WbAMGWmEH/J+e9W+2XKLeSQ1+FsACedx4oYZ595jh7E9lx4JJn3v4REMW7fSMkMKcb3vIwJpswyxB53RvHc)
+  access:
+    secret: ENC(7NxeuF4Fua9h49fFp9AqonOrK53xcD3dy9cUzqV2JbPpffkqgvM0HIC7hq6O1kuG76MMfx2O+rlEkD5lXjBD8RwGF8PGGl8teTfZQynpiEvLiSZLM1pompD5k5AN9WbAMGWmEH/J+e9W+2XKLeSQ1+FsACedx4oYZ595jh7E9lx4JJn3v4REMW7fSMkMKcb3vIwJpswyxB53RvHc)
+    expirationDays: 60
+  refresh:
+    secret: ENC(e8K6OLLC1J1SpUOcTQ/HngH0m5BlQkYmqs5MMeyGA6tVdhz2NccIYS33JOfKMy3/6vzi/M7fzeXHGI9HlwrCesU7XRmrodz6dMEDzy339BXfiBPyYFA6XdQMTUNJYFX385VVeFyGGVkUAdQTnSDJAW5vCkNcarQBemqRzni5VaTuPQX6MIoJWK4JFWLwscUedGcpP4hPpWVPwyNs)
+    expirationDays: 365
   issuer: ENC(j7dv2PyCrwN+Lq1S5W0wI+KrclF2v+ximRXx3q8+ZwfsNg==)
 
 verification:

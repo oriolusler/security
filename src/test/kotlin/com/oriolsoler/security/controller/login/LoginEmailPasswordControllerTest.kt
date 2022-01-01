@@ -3,10 +3,12 @@ package com.oriolsoler.security.controller.login
 import com.nhaarman.mockito_kotlin.mock
 import com.oriolsoler.security.application.login.LoginEmailPasswordUseCase
 import com.oriolsoler.security.application.login.LoginException
+import com.oriolsoler.security.domain.Token
 import com.oriolsoler.security.domain.user.UserId
 import com.oriolsoler.security.infrastucutre.controller.login.LoginEmailPasswordController
 import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
 import com.oriolsoler.security.infrastucutre.controller.login.LoginResponse
+import com.oriolsoler.security.infrastucutre.controller.login.ResponseUser
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -39,14 +41,17 @@ class LoginEmailPasswordControllerTest {
         val password = "password"
         val loginRequestCommand = LoginRequestCommand(email, password)
 
-        val loginResponse = LoginResponse(id = UserId(), email = "email@online.com")
+        val loginResponse = LoginResponse(
+            token = Token("", ""),
+            user = ResponseUser(UserId(), "email@online.com")
+        )
         `when`(loginEmailPasswordUseCase.execute(loginRequestCommand)).thenReturn(loginResponse)
 
         val response = loginEmailPasswordController.login(loginRequestCommand)
 
         assertEquals(OK, response.statusCode)
         assertNotNull(response.body)
-        assertEquals(loginResponse.id.value, response.body!!.id.value)
+        assertEquals(loginResponse.user.id.value, response.body!!.user.id.value)
     }
 
 

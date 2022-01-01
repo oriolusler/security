@@ -37,20 +37,40 @@ class InfrastructureConfiguration {
 
     @Bean
     fun tokenGenerator(
-        @Value("\${jwt.secret}") jwtKey: String,
+        @Value("\${jwt.access.secret}") accessSecret: String,
+        @Value("\${jwt.access.expirationDays}") accessExpiration: Long,
+        @Value("\${jwt.refresh.secret}") refreshSecret: String,
+        @Value("\${jwt.refresh.expirationDays}") refreshExpiration: Long,
         @Value("\${jwt.issuer}") jwtIssuer: String,
         clock: ClockService
     ): TokenGenerator {
-        return JwtTokenService(jwtKey, jwtIssuer, clock)
+        return JwtTokenService(
+            accessTokenKey = accessSecret,
+            accessTokenKeyExpirationDays = accessExpiration,
+            refreshTokenKey = refreshSecret,
+            refreshTokenKeyExpirationDays = refreshExpiration,
+            jwtIssuer = jwtIssuer,
+            clock = clock
+        )
     }
 
     @Bean
     fun tokenVerification(
-        @Value("\${jwt.secret}") jwtKey: String,
+        @Value("\${jwt.access.secret}") accessSecret: String,
+        @Value("\${jwt.access.expirationDays}") accessExpiration: Long,
+        @Value("\${jwt.refresh.secret}") refreshSecret: String,
+        @Value("\${jwt.refresh.expirationDays}") refreshExpiration: Long,
         @Value("\${jwt.issuer}") jwtIssuer: String,
         clock: ClockService
     ): TokenVerification {
-        return JwtTokenService(jwtKey, jwtIssuer, clock)
+        return JwtTokenService(
+            accessTokenKey = accessSecret,
+            accessTokenKeyExpirationDays = accessExpiration,
+            refreshTokenKey = refreshSecret,
+            refreshTokenKeyExpirationDays = refreshExpiration,
+            jwtIssuer = jwtIssuer,
+            clock = clock
+        )
     }
 
     @Bean

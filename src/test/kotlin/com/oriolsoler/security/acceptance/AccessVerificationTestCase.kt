@@ -84,7 +84,7 @@ abstract class AccessVerificationTestCase {
         val loginRequestCommand = LoginRequestCommand(email, password)
         val loginResponse = loginEmailPasswordController.login(loginRequestCommand)
 
-        val accessToken = loginResponse.body!!.token
+        val accessToken = loginResponse.body!!.token.accessToken
 
         given()
             .contentType("application/json")
