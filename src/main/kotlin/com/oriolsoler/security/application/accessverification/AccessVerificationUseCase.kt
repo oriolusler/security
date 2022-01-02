@@ -12,15 +12,15 @@ class AccessVerificationUseCase(
     private val userRepository: UserRepository
 ) {
     fun execute(accessVerificationCommand: AccessVerificationCommand): Boolean {
-        val currentUserUUID = isValidVerification(accessVerificationCommand.token)
+        val currentUserUUID = isValidVerification(accessVerificationCommand.accessToken)
         val user = userRepository.getBy(currentUserUUID)
         isValidUser(user)
         return true
     }
 
-    private fun isValidVerification(token: String): UserId {
+    private fun isValidVerification(accessToken: String): UserId {
         try {
-            return UserId(tokenVerification.validateAccessToken(token))
+            return UserId(tokenVerification.validateAccessToken(accessToken))
         } catch (e: JWTVerificationException) {
             throw AccessVerificationException(e.message)
         }

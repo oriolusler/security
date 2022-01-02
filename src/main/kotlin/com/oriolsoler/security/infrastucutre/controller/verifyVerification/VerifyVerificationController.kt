@@ -4,6 +4,7 @@ import com.oriolsoler.security.application.validateverification.VerifyException
 import com.oriolsoler.security.application.validateverification.VerifyVerificationUseCase
 import com.oriolsoler.security.domain.verification.VerificationExpiredException
 import com.oriolsoler.security.domain.verification.VerificationUsedException
+import com.oriolsoler.security.infrastucutre.repository.verification.VerifyRepositoryError
 import org.springframework.http.HttpStatus.*
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -30,6 +31,10 @@ class VerifyVerificationController(
 
         if (error.cause is VerificationUsedException) return ResponseEntity
             .status(CONFLICT)
+            .body(error.message)
+
+        if (error.cause is VerifyRepositoryError) return ResponseEntity
+            .status(NOT_FOUND)
             .body(error.message)
 
         return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(error.message)
