@@ -24,9 +24,7 @@ class AccessVerificationController(
     }
 
     @ExceptionHandler(AccessVerificationException::class)
-    fun handleAccessVerificationException(e: AccessVerificationException): ResponseEntity<String> {
-        return ResponseEntity
-            .status(HttpStatus.UNAUTHORIZED)
-            .body(e.message)
-    }
+    fun handleAccessVerificationException(e: AccessVerificationException) = ResponseEntity
+        .status(HttpStatus.UNAUTHORIZED)
+        .body(e.message)
 }
