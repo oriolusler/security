@@ -33,7 +33,7 @@ class LoginEmailPasswordTestCase {
             on { matches(password, encryptedPassword) } doReturn true
         }
 
-        val token = Token("extremely_protected_jwt", "Bearer")
+        val token = Token("extremely_protected_access_jwt", "extremely_protected_refresh_jwt")
         val tokenGenerator = mock<TokenGenerator> {
             on { generate(any()) } doReturn token
         }
@@ -74,7 +74,7 @@ class LoginEmailPasswordTestCase {
             on { matches(password, encryptedPassword) } doReturn false
         }
 
-        val token = Token("extremely_protected_jwt", "Bearer")
+        val token = Token("extremely_protected_access_jwt", "extremely_protected_refresh_jwt")
         val tokenGenerator = mock<TokenGenerator> {
             on { generate(any()) } doReturn token
         }
@@ -103,7 +103,10 @@ class LoginEmailPasswordTestCase {
         }
 
         val tokenGenerator = mock<TokenGenerator> {
-            on { generate(any()) } doReturn Token("extremely_protected_jwt", "Bearer")
+            on { generate(any()) } doReturn Token(
+                "extremely_protected_access_jwt",
+                "extremely_protected_refresh_jwt"
+            )
         }
 
         val loginEmailPasswordTestCase = LoginEmailPasswordUseCase(userRepository, passwordEncoder, tokenGenerator)
