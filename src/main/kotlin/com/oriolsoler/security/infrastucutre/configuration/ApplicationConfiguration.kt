@@ -5,7 +5,9 @@ import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.application.accessverification.AccessVerificationUseCase
 import com.oriolsoler.security.application.accessverification.TokenVerification
 import com.oriolsoler.security.application.login.TokenGenerator
-import com.oriolsoler.security.application.signup.*
+import com.oriolsoler.security.application.signup.EmailService
+import com.oriolsoler.security.application.signup.SignUpEmailPasswordUseCase
+import com.oriolsoler.security.application.validaterefreshtoken.ValidateRefreshTokenUseCase
 import com.oriolsoler.security.application.validateverification.VerifyService
 import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
 import com.oriolsoler.security.application.validateverification.VerifyVerificationUseCase
@@ -56,5 +58,14 @@ class ApplicationConfiguration {
         userRepository: UserRepository
     ): AccessVerificationUseCase {
         return AccessVerificationUseCase(tokenVerification, userRepository)
+    }
+
+    @Bean
+    fun validateRefreshTokenUseCase(
+        tokenVerification: TokenVerification,
+        userRepository: UserRepository,
+        tokenGenerator: TokenGenerator
+    ): ValidateRefreshTokenUseCase {
+        return ValidateRefreshTokenUseCase(tokenVerification, userRepository, tokenGenerator)
     }
 }

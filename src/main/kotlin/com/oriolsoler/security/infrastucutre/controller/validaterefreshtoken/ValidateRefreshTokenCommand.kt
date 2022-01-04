@@ -1,3 +1,3 @@
 package com.oriolsoler.security.infrastucutre.controller.validaterefreshtoken
 
-class ValidateRefreshTokenCommand(val refreshToken: String)
+class ValidateRefreshTokenCommand(val refreshToken: String = "")

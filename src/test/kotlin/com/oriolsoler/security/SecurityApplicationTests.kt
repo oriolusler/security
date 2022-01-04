@@ -52,4 +52,7 @@ class SecurityApplicationTests {
 
     @Nested
     inner class Jaspy : JaspyTestCase()
+
+    @Nested
+    inner class ValidateRefreshToken : ValidateRefreshTokenTestCase()
 }
