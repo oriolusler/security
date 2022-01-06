@@ -1,21 +1,26 @@
 package com.oriolsoler.security.application
 
 import com.nhaarman.mockito_kotlin.*
-import com.oriolsoler.security.application.signup.*
+import com.oriolsoler.security.application.signup.MailService
+import com.oriolsoler.security.application.signup.SignUpEmailPasswordUseCase
+import com.oriolsoler.security.application.signup.SignUpException
 import com.oriolsoler.security.application.validateverification.VerifyService
 import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
 import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.domain.Verification
+import com.oriolsoler.security.domain.email.ValidateEmailMailInformation
 import com.oriolsoler.security.domain.user.UserRole.ROLE_USER
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserRepositoryError
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.mail.MailSender
 import org.springframework.security.crypto.password.PasswordEncoder
 import kotlin.test.assertEquals
 
 
 class SignUpEmailPasswordTestCase {
+    private val mailFrom = "info@business.com"
 
     @Test
     fun `sign up correctly with email and password`() {
@@ -41,8 +46,12 @@ class SignUpEmailPasswordTestCase {
             on { generate() } doReturn verification
         }
 
-        val emailService = mock<EmailService> {
-            on { send(email, pin) } doReturn true
+        val mailSender = mock<MailSender> { }
+        doNothing().`when`(mailSender).send(any())
+
+        val emailInformation = ValidateEmailMailInformation(from = mailFrom, to = email, validation = pin)
+        val emailService = mock<MailService> {
+            on { send(emailInformation) } doReturn true
         }
 
         val verifyServiceRepository = mock<VerifyServiceRepository> {}
@@ -53,7 +62,8 @@ class SignUpEmailPasswordTestCase {
             passwordEncoder,
             verifyService,
             emailService,
-            verifyServiceRepository
+            verifyServiceRepository,
+            mailFrom
         )
 
         val signupRequestCommand = SignUpRequestCommand(email, password)
@@ -64,7 +74,7 @@ class SignUpEmailPasswordTestCase {
         verify(passwordEncoder, times(1)).encode(password)
         verify(signUpUserRepository, times(1)).save(any())
         verify(verifyService, times(1)).generate()
-        verify(emailService, times(1)).send(email, pin)
+        verify(emailService, times(1)).send(emailInformation)
         verify(verifyServiceRepository, times(1)).save(any())
     }
 
@@ -81,7 +91,7 @@ class SignUpEmailPasswordTestCase {
 
         val passwordEncoder = mock<PasswordEncoder> {}
         val verifyService = mock<VerifyService> {}
-        val emailService = mock<EmailService> {}
+        val emailService = mock<MailService> {}
         val verifyServiceRepository = mock<VerifyServiceRepository> {}
 
         val signUpEmailPasswordTestCase = SignUpEmailPasswordUseCase(
@@ -89,7 +99,8 @@ class SignUpEmailPasswordTestCase {
             passwordEncoder,
             verifyService,
             emailService,
-            verifyServiceRepository
+            verifyServiceRepository,
+            mailFrom
         )
 
         val command = SignUpRequestCommand(email, password)

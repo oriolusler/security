@@ -3,13 +3,13 @@ package com.oriolsoler.security.infrastucutre.configuration
 import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.application.accessverification.TokenVerification
 import com.oriolsoler.security.application.login.TokenGenerator
-import com.oriolsoler.security.application.signup.EmailService
+import com.oriolsoler.security.application.signup.MailService
 import com.oriolsoler.security.application.validateverification.VerifyService
 import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
 import com.oriolsoler.security.domain.services.ClockService
 import com.oriolsoler.security.domain.services.JwtTokenService
+import com.oriolsoler.security.domain.services.MailSenderService
 import com.oriolsoler.security.domain.services.PinVerifyService
-import com.oriolsoler.security.domain.services.VerificationEmailService
 import com.oriolsoler.security.infrastucutre.repository.user.PostgresUserRepository
 import com.oriolsoler.security.infrastucutre.repository.verification.PostgresVerifyRepository
 import org.springframework.beans.factory.annotation.Value
@@ -86,12 +86,11 @@ class InfrastructureConfiguration {
         return ClockService()
     }
 
-    @Bean
+    @Bean("emailVerificationService")
     fun emailService(
-        javaMailSender: JavaMailSender,
-        @Value("\${verification.email.from}") emailSender: String
-    ): EmailService {
-        return VerificationEmailService(javaMailSender, emailSender)
+        javaMailSender: JavaMailSender
+    ): MailService {
+        return MailSenderService(javaMailSender)
     }
 
     @Bean

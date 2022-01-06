@@ -5,6 +5,7 @@ import com.oriolsoler.security.application.validateverification.VerifyService
 import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
 import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.domain.UserVerification
+import com.oriolsoler.security.domain.email.ValidateEmailMailInformation
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserRepositoryError
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -13,15 +14,25 @@ class SignUpEmailPasswordUseCase(
     private val userRepository: UserRepository,
     private val passwordEncoder: PasswordEncoder,
     private val verifyService: VerifyService,
-    private val emailService: EmailService,
-    private val verifyServiceRepository: VerifyServiceRepository
+    private val mailService: MailService,
+    private val verifyServiceRepository: VerifyServiceRepository,
+    private val mailFrom: String
 ) {
     fun execute(signupRequestCommand: SignUpRequestCommand): User {
         val userCreated = saveNewUser(signupRequestCommand)
         val userVerification = UserVerification(userCreated, verifyService.generate())
         verifyServiceRepository.save(userVerification)
-        emailService.send(userVerification.user.email, userVerification.verification.verification)
+        sendMail(userVerification)
         return userCreated
+    }
+
+    private fun sendMail(userVerification: UserVerification) {
+        val validateEmailMailInformation = ValidateEmailMailInformation(
+            from = mailFrom,
+            to = userVerification.user.email,
+            validation = userVerification.verification.verification
+        )
+        mailService.send(validateEmailMailInformation)
     }
 
     private fun saveNewUser(signupRequestCommand: SignUpRequestCommand): User {
