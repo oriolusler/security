@@ -55,4 +55,7 @@ class SecurityApplicationTests {
 
     @Nested
     inner class ValidateRefreshToken : ValidateRefreshTokenTestCase()
+
+    @Nested
+    inner class ForgotPassword : ForgotPasswordTestCase()
 }

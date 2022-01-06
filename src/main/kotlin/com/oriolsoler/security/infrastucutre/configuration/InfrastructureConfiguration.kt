@@ -95,6 +95,7 @@ class InfrastructureConfiguration {
 
     @Bean
     fun javaMailSender(
+        @Value("\${verification.email.auth-enabled}") authEnabled: Boolean,
         @Value("\${verification.email.from}") from: String,
         @Value("\${verification.email.password}") password: String,
         @Value("\${verification.email.host}") host: String,
@@ -103,12 +104,14 @@ class InfrastructureConfiguration {
         val mailSender = JavaMailSenderImpl()
         mailSender.host = host
         mailSender.port = port
-        mailSender.username = from
-        mailSender.password = password
+        if (authEnabled) {
+            mailSender.username = from
+            mailSender.password = password
+        }
         val props: Properties = mailSender.javaMailProperties
         props["mail.transport.protocol"] = "smtp"
-        props["mail.smtp.auth"] = "true"
-        props["mail.smtp.starttls.enable"] = "true"
+        props["mail.smtp.auth"] = authEnabled.toString()
+        props["mail.smtp.starttls.enable"] = authEnabled.toString()
         props["mail.debug"] = "true"
         return mailSender
     }

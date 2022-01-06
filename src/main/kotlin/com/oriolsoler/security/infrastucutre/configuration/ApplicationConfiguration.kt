@@ -4,6 +4,7 @@ import com.oriolsoler.security.application.login.LoginEmailPasswordUseCase
 import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.application.accessverification.AccessVerificationUseCase
 import com.oriolsoler.security.application.accessverification.TokenVerification
+import com.oriolsoler.security.application.forgotpassword.ForgotPasswordUseCase
 import com.oriolsoler.security.application.login.TokenGenerator
 import com.oriolsoler.security.application.signup.MailService
 import com.oriolsoler.security.application.signup.SignUpEmailPasswordUseCase
@@ -71,5 +72,16 @@ class ApplicationConfiguration {
         tokenGenerator: TokenGenerator
     ): ValidateRefreshTokenUseCase {
         return ValidateRefreshTokenUseCase(tokenVerification, userRepository, tokenGenerator)
+    }
+
+    @Bean
+    fun forgotPasswordUseCase(
+        verifyService: VerifyService,
+        emailService: MailService,
+        verifyServiceRepository: VerifyServiceRepository,
+        userRepository: UserRepository,
+        @Value("\${verification.email.from}") emailSender: String
+    ): ForgotPasswordUseCase {
+        return ForgotPasswordUseCase(verifyService, emailService, verifyServiceRepository, userRepository, emailSender)
     }
 }

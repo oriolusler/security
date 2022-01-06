@@ -30,10 +30,11 @@ jwt:
 
 verification:
   email:
+    auth-enabled: false
     from: ENC(5kEgP/YxYkGZHrAXoSUrK+09GcOtQiyueFDE1ZIpqOZPKSJkKAo0BDlJCgbc)
     password: ENC(CLO9n2y8Z0BPW4Rs9h+DHqfpGrEiiZtINU89F6RenWaxSmoSykYRHvqW3kg=)
-    host: "smtp.gmail.com"
-    port: 587
+    host: "mailserver"
+    port: 1025
   valid-minutes: 15
 
 jasypt:

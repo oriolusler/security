@@ -5,4 +5,9 @@ To run the application locally:
 - If first time, execute: `./gradlew bootJar && docker-compose up -d --build`
 - If not, execute: `docker-compose up -d`
 
-The application will run on a docker container with port 8080 exposed
+Docker compose will expose:
+- Application on port 8080
+- Postgres database on port 5432
+- Mail Server
+  - SMTP service on port 1025
+  - Dashboard on port 1080 (check http://localhost:1080)

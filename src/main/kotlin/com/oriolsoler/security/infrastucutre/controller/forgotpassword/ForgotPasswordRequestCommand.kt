@@ -1,3 +1,3 @@
 package com.oriolsoler.security.infrastucutre.controller.forgotpassword
 
-class ForgotPasswordRequestCommand(val email: String)
+class ForgotPasswordRequestCommand(val email: String = "")
