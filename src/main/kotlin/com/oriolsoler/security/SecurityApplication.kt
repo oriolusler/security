@@ -11,8 +11,8 @@ import org.springframework.boot.runApplication
     ]
 )
 @EnableEncryptableProperties
-class SecurityApplication {
-    fun main(args: Array<String>) {
-        runApplication<SecurityApplication>(*args)
-    }
+class SecurityApplication
+
+fun main(args: Array<String>) {
+    runApplication<SecurityApplication>(*args)
 }

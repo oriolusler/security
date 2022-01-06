@@ -10,6 +10,7 @@ import com.oriolsoler.security.domain.Verification
 import com.oriolsoler.security.domain.email.ForgotPasswordMailInformation
 import com.oriolsoler.security.infrastucutre.controller.forgotpassword.ForgotPasswordRequestCommand
 import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
 
 class ForgotPasswordTestCase {
     private val emailFrom = "email@online.com"
@@ -53,6 +54,9 @@ class ForgotPasswordTestCase {
 
         forgotPasswordTestCase.execute(forgotPasswordRequestCommand)
 
+        assertEquals("Este es su código para cambiar la contraseña: $pin", emailInformation.subject)
+        assertEquals("Has solicitado el cambio de la contraseña, " +
+                "introduce este código para seguir con el proceso: $pin", emailInformation.body)
         verify(userRepository, times(1)).getBy(userMail)
         verify(verifyService, times(1)).generate()
         verify(emailService, times(1)).send(emailInformation)
