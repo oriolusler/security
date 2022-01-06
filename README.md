@@ -2,8 +2,8 @@
 
 ## Run it locally
 To run the application locally:
-- If first time, execute: `./gradlew bootJar && docker-compose up -d --build`
-- If not, execute: `docker-compose up -d`
+- If first time, execute on project root: `./gradlew bootJar && docker-compose up -d --build`
+- If not, execute on project root: `docker-compose up -d`
 
 Docker compose will expose:
 - Application on port 8080
