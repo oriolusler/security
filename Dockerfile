@@ -1,8 +1,6 @@
-FROM gradle:7.3-jdk17-alpine
-
-#RUN apk add --update gradle
-COPY . /project
-RUN  cd /project && gradle build -x test
-
-#run the spring boot application
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom", "-Dblabla", "-jar","/project/build/libs/security-0.0.1-SNAPSHOT.jar"]
+FROM openjdk:17-alpine
+EXPOSE 8080
+USER root
+WORKDIR /usr/src/java-app
+COPY build/libs/*.jar ./opt/app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
