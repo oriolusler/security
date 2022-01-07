@@ -7,11 +7,15 @@ import org.testcontainers.containers.wait.strategy.WaitAllStrategy
 import java.io.File
 import java.lang.System.setProperty
 
+private const val POSTGRES = "postgres"
+private const val POSTGRES_PORT = 5432
+
+private const val MAIL_SERVER = "mailserver"
+private const val MAIL_SERVER_PORT = 1025
+
 class DockerComposeHelper {
 
     private val container: DockerComposeContainer<*>
-    private val POSTGRES = "postgres"
-    private val POSTGRES_PORT = 5432
 
     init {
         container = DockerComposeContainer<Nothing>(File("docker-compose.test.yml"))
@@ -31,6 +35,13 @@ class DockerComposeHelper {
                             )
                         }
                 )
+            }.apply {
+                withExposedService(
+                    MAIL_SERVER,
+                    MAIL_SERVER_PORT,
+                    WaitAllStrategy(WaitAllStrategy.Mode.WITH_INDIVIDUAL_TIMEOUTS_ONLY)
+                        .apply { withStrategy(forListeningPort()) }
+                )
             }
     }
 
@@ -42,7 +53,7 @@ class DockerComposeHelper {
         setProperty("database.port", postgresPort.toString())
     }
 
-    fun stop(){
+    fun stop() {
         container.stop()
     }
 }

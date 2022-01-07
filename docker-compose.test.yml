@@ -9,3 +9,10 @@ services:
       POSTGRES_USER: "root"
       POSTGRES_PASSWORD: "password"
       POSTGRES_DB: "security"
+
+  mailserver:
+    image: reachfive/fake-smtp-server
+    restart: always
+    ports:
+      - "1080:1080"
+      - "1025:1025"

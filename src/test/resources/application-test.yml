@@ -1,9 +1,10 @@
 verification:
   email:
-    from: "email@online.com"
-    password: "xxxxxxxxxxxxxxxxxx"
-    host: "smtp.gmail.com"
-    port: 587
+    auth-enabled: false
+    from: "from@email.com"
+    password: "-"
+    host: "localhost"
+    port: 1025
   valid-minutes: 15
 
 jwt:
