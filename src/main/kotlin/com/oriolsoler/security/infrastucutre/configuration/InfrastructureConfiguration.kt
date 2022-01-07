@@ -1,15 +1,13 @@
 package com.oriolsoler.security.infrastucutre.configuration
 
+import com.oriolsoler.security.application.PasswordService
 import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.application.accessverification.TokenVerification
 import com.oriolsoler.security.application.login.TokenGenerator
 import com.oriolsoler.security.application.signup.MailService
 import com.oriolsoler.security.application.validateverification.VerifyService
 import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
-import com.oriolsoler.security.domain.services.ClockService
-import com.oriolsoler.security.domain.services.JwtTokenService
-import com.oriolsoler.security.domain.services.MailSenderService
-import com.oriolsoler.security.domain.services.PinVerifyService
+import com.oriolsoler.security.domain.services.*
 import com.oriolsoler.security.infrastucutre.repository.user.PostgresUserRepository
 import com.oriolsoler.security.infrastucutre.repository.verification.PostgresVerifyRepository
 import org.springframework.beans.factory.annotation.Value
@@ -122,5 +120,12 @@ class InfrastructureConfiguration {
         userRepository: UserRepository
     ): VerifyServiceRepository {
         return PostgresVerifyRepository(jdbcTemplate, userRepository)
+    }
+
+    @Bean
+    fun passwordService(
+        passwordEncoder: PasswordEncoder
+    ): PasswordService {
+        return SpringEncoderPasswordService(passwordEncoder)
     }
 }

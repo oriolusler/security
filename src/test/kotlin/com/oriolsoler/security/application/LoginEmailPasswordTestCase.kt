@@ -9,7 +9,6 @@ import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserRepositoryError
 import org.junit.jupiter.api.Test
-import org.springframework.security.crypto.password.PasswordEncoder
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
@@ -29,7 +28,7 @@ class LoginEmailPasswordTestCase {
             on { getBy(email) } doReturn user
         }
 
-        val passwordEncoder = mock<PasswordEncoder> {
+        val passwordService = mock<PasswordService> {
             on { matches(password, encryptedPassword) } doReturn true
         }
 
@@ -40,7 +39,7 @@ class LoginEmailPasswordTestCase {
 
         val loginEmailPasswordTestCase = LoginEmailPasswordUseCase(
             userRepository,
-            passwordEncoder,
+            passwordService,
             tokenGenerator
         )
 
@@ -54,7 +53,7 @@ class LoginEmailPasswordTestCase {
         assertEquals(user.id.value, loginResponse.user.id.value)
         assertEquals(email, loginResponse.user.email)
 
-        verify(passwordEncoder, times(1)).matches(password, encryptedPassword)
+        verify(passwordService, times(1)).matches(password, encryptedPassword)
         verify(userRepository, times(1)).getBy(email)
         verify(tokenGenerator, times(1)).generate(any())
     }
@@ -70,7 +69,7 @@ class LoginEmailPasswordTestCase {
             on { getBy(email) } doReturn user
         }
 
-        val passwordEncoder = mock<PasswordEncoder> {
+        val passwordService = mock<PasswordService> {
             on { matches(password, encryptedPassword) } doReturn false
         }
 
@@ -79,7 +78,7 @@ class LoginEmailPasswordTestCase {
             on { generate(any()) } doReturn token
         }
 
-        val loginEmailPasswordTestCase = LoginEmailPasswordUseCase(userRepository, passwordEncoder, tokenGenerator)
+        val loginEmailPasswordTestCase = LoginEmailPasswordUseCase(userRepository, passwordService, tokenGenerator)
 
         val loginRequestCommand = LoginRequestCommand(email, password)
         val exception = assertFailsWith<LoginException> { loginEmailPasswordTestCase.execute(loginRequestCommand) }
@@ -98,7 +97,7 @@ class LoginEmailPasswordTestCase {
             on { getBy(email) } doReturn user
         }
 
-        val passwordEncoder = mock<PasswordEncoder> {
+        val passwordService = mock<PasswordService> {
             on { matches(password, encryptedPassword) } doReturn true
         }
 
@@ -109,7 +108,7 @@ class LoginEmailPasswordTestCase {
             )
         }
 
-        val loginEmailPasswordTestCase = LoginEmailPasswordUseCase(userRepository, passwordEncoder, tokenGenerator)
+        val loginEmailPasswordTestCase = LoginEmailPasswordUseCase(userRepository, passwordService, tokenGenerator)
 
         val loginRequestCommand = LoginRequestCommand(email, password)
         val exception = assertFailsWith<LoginException> { loginEmailPasswordTestCase.execute(loginRequestCommand) }
@@ -125,9 +124,9 @@ class LoginEmailPasswordTestCase {
         val userRepository = mock<UserRepository> {}
         given { userRepository.getBy(email) } willAnswer { throw UserRepositoryError("No user found") }
 
-        val passwordEncoder = mock<PasswordEncoder> {}
+        val passwordService = mock<PasswordService> {}
         val tokenGenerator = mock<TokenGenerator> {}
-        val loginEmailPasswordTestCase = LoginEmailPasswordUseCase(userRepository, passwordEncoder, tokenGenerator)
+        val loginEmailPasswordTestCase = LoginEmailPasswordUseCase(userRepository, passwordService, tokenGenerator)
 
         val loginRequestCommand = LoginRequestCommand(email, password)
         val exception = assertFailsWith<LoginException> { loginEmailPasswordTestCase.execute(loginRequestCommand) }

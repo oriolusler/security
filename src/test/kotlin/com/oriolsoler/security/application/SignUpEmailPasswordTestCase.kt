@@ -15,7 +15,6 @@ import com.oriolsoler.security.infrastucutre.repository.user.UserRepositoryError
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.mail.MailSender
-import org.springframework.security.crypto.password.PasswordEncoder
 import kotlin.test.assertEquals
 
 
@@ -36,7 +35,7 @@ class SignUpEmailPasswordTestCase {
         }
         given { signUpUserRepository.getBy(email) } willAnswer { throw UserRepositoryError("User not found") }
 
-        val passwordEncoder = mock<PasswordEncoder> {
+        val passwordService = mock<PasswordService> {
             on { encode(password) } doReturn encryptedPassword
         }
 
@@ -59,7 +58,7 @@ class SignUpEmailPasswordTestCase {
 
         val signUpEmailPasswordTestCase = SignUpEmailPasswordUseCase(
             signUpUserRepository,
-            passwordEncoder,
+            passwordService,
             verifyService,
             emailService,
             verifyServiceRepository,
@@ -71,7 +70,7 @@ class SignUpEmailPasswordTestCase {
 
         assertEquals(user.id, userCreated.id)
         assertEquals(user.password, userCreated.password)
-        verify(passwordEncoder, times(1)).encode(password)
+        verify(passwordService, times(1)).encode(password)
         verify(signUpUserRepository, times(1)).save(any())
         verify(verifyService, times(1)).generate()
         verify(emailService, times(1)).send(emailInformation)
@@ -89,14 +88,14 @@ class SignUpEmailPasswordTestCase {
             on { getBy(email) } doReturn user
         }
 
-        val passwordEncoder = mock<PasswordEncoder> {}
+        val passwordService = mock<PasswordService> {}
         val verifyService = mock<VerifyService> {}
         val emailService = mock<MailService> {}
         val verifyServiceRepository = mock<VerifyServiceRepository> {}
 
         val signUpEmailPasswordTestCase = SignUpEmailPasswordUseCase(
             signUpUserRepository,
-            passwordEncoder,
+            passwordService,
             verifyService,
             emailService,
             verifyServiceRepository,

@@ -1,5 +1,6 @@
 package com.oriolsoler.security.application.login
 
+import com.oriolsoler.security.application.PasswordService
 import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.domain.user.UserException
@@ -7,11 +8,10 @@ import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestComman
 import com.oriolsoler.security.infrastucutre.controller.login.LoginResponse
 import com.oriolsoler.security.infrastucutre.controller.login.ResponseUser
 import com.oriolsoler.security.infrastucutre.repository.user.UserRepositoryError
-import org.springframework.security.crypto.password.PasswordEncoder
 
 class LoginEmailPasswordUseCase(
     private val userRepository: UserRepository,
-    private val passwordEncoder: PasswordEncoder,
+    private val passwordEncoder: PasswordService,
     private val tokenGenerator: TokenGenerator
 ) {
     fun execute(loginRequestCommand: LoginRequestCommand): LoginResponse {

@@ -1,5 +1,6 @@
 package com.oriolsoler.security.infrastucutre.configuration
 
+import com.oriolsoler.security.application.PasswordService
 import com.oriolsoler.security.application.login.LoginEmailPasswordUseCase
 import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.application.accessverification.AccessVerificationUseCase
@@ -16,13 +17,12 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.crypto.password.PasswordEncoder
 
 @Configuration
 class ApplicationConfiguration {
     @Bean
     fun signUpEmailPasswordUseCase(
-        passwordEncoder: PasswordEncoder,
+        passwordService: PasswordService,
         userRepository: UserRepository,
         verifyService: VerifyService,
         @Qualifier("emailVerificationService") emailService: MailService,
@@ -31,7 +31,7 @@ class ApplicationConfiguration {
     ): SignUpEmailPasswordUseCase {
         return SignUpEmailPasswordUseCase(
             userRepository,
-            passwordEncoder,
+            passwordService,
             verifyService,
             emailService,
             verifyServiceRepository,
@@ -42,10 +42,10 @@ class ApplicationConfiguration {
     @Bean
     fun loginEmailPasswordUserCase(
         userRepository: UserRepository,
-        passwordEncoder: PasswordEncoder,
+        passwordService: PasswordService,
         tokenGenerator: TokenGenerator
     ): LoginEmailPasswordUseCase {
-        return LoginEmailPasswordUseCase(userRepository, passwordEncoder, tokenGenerator)
+        return LoginEmailPasswordUseCase(userRepository, passwordService, tokenGenerator)
     }
 
     @Bean

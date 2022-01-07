@@ -1,5 +1,6 @@
 package com.oriolsoler.security.application.signup
 
+import com.oriolsoler.security.application.PasswordService
 import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.application.validateverification.VerifyService
 import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
@@ -8,11 +9,10 @@ import com.oriolsoler.security.domain.UserVerification
 import com.oriolsoler.security.domain.email.ValidateEmailMailInformation
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserRepositoryError
-import org.springframework.security.crypto.password.PasswordEncoder
 
 class SignUpEmailPasswordUseCase(
     private val userRepository: UserRepository,
-    private val passwordEncoder: PasswordEncoder,
+    private val passwordService: PasswordService,
     private val verifyService: VerifyService,
     private val mailService: MailService,
     private val verifyServiceRepository: VerifyServiceRepository,
@@ -42,7 +42,7 @@ class SignUpEmailPasswordUseCase(
         return userRepository.save(
             User(
                 email = signupRequestCommand.email,
-                password = passwordEncoder.encode(signupRequestCommand.password)
+                password = passwordService.encode(signupRequestCommand.password)
             )
         )
     }
