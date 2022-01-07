@@ -11,7 +11,8 @@ import com.oriolsoler.security.domain.Verification
 import com.oriolsoler.security.domain.email.ValidateEmailMailInformation
 import com.oriolsoler.security.domain.user.UserRole.ROLE_USER
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpRequestCommand
-import com.oriolsoler.security.infrastucutre.repository.user.UserRepositoryError
+import com.oriolsoler.security.infrastucutre.repository.user.UserAlreadyExistsException
+import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.mail.MailSender
@@ -33,7 +34,7 @@ class SignUpEmailPasswordTestCase {
         val signUpUserRepository = mock<UserRepository> {
             on { save(any()) } doReturn user
         }
-        given { signUpUserRepository.getBy(email) } willAnswer { throw UserRepositoryError("User not found") }
+        given { signUpUserRepository.getBy(email) } willAnswer { throw UserNotFoundException() }
 
         val passwordService = mock<PasswordService> {
             on { encode(password) } doReturn encryptedPassword
@@ -83,10 +84,11 @@ class SignUpEmailPasswordTestCase {
         val password = "password"
         val user = User(email = email, password = password)
 
-        val signUpUserRepository = mock<UserRepository> {
+        val userRepository = mock<UserRepository> {
             on { save(any()) } doReturn user
             on { getBy(email) } doReturn user
         }
+        given { userRepository.checkIfUserAlreadyExists(email) } willAnswer { throw UserAlreadyExistsException() }
 
         val passwordService = mock<PasswordService> {}
         val verifyService = mock<VerifyService> {}
@@ -94,7 +96,7 @@ class SignUpEmailPasswordTestCase {
         val verifyServiceRepository = mock<VerifyServiceRepository> {}
 
         val signUpEmailPasswordTestCase = SignUpEmailPasswordUseCase(
-            signUpUserRepository,
+            userRepository,
             passwordService,
             verifyService,
             emailService,
@@ -104,7 +106,7 @@ class SignUpEmailPasswordTestCase {
 
         val command = SignUpRequestCommand(email, password)
         val exception = assertThrows<SignUpException> { signUpEmailPasswordTestCase.execute(command) }
-        assertEquals("SignUp error: Email already used", exception.message)
+        assertEquals("SignUp error: User already exists", exception.message)
 
     }
 }

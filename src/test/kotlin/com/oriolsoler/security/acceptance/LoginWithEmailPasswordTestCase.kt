@@ -14,8 +14,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.HttpStatus.OK
-import org.springframework.http.HttpStatus.UNAUTHORIZED
+import org.springframework.http.HttpStatus.*
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.web.servlet.MockMvc
 
@@ -63,7 +62,7 @@ abstract class LoginWithEmailPasswordTestCase {
     }
 
     @Test
-    internal fun `should handle exception`() {
+    internal fun `should handle exception if user is locked`() {
         val email = "email@hello.com"
         val password = "password"
         val roles = listOf(ROLE_USER)
@@ -77,7 +76,26 @@ abstract class LoginWithEmailPasswordTestCase {
             .body(signUpRequestCommand)
             .post("/api/auth/login")
             .then()
-            .status(UNAUTHORIZED)
+            .status(FORBIDDEN)
             .body(equalTo("Login error: User locked"))
+    }
+
+    @Test
+    internal fun `should handle exception if credentials are wrong`() {
+        val email = "email@hello.com"
+        val password = "password"
+        val roles = listOf(ROLE_USER)
+        val user = User(email = email, password = passwordEncoder.encode(password), roles = roles, locked = false)
+
+        userRepository.save(user)
+
+        val signUpRequestCommand = LoginRequestCommand(email, "INVALID")
+        given()
+            .contentType("application/json")
+            .body(signUpRequestCommand)
+            .post("/api/auth/login")
+            .then()
+            .status(UNAUTHORIZED)
+            .body(equalTo("Login error: Invalid password"))
     }
 }

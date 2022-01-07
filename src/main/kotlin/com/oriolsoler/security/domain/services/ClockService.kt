@@ -2,7 +2,7 @@ package com.oriolsoler.security.domain.services
 
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.util.Date
+import java.util.*
 
 class ClockService {
     fun now(): LocalDateTime {

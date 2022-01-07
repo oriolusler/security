@@ -30,8 +30,8 @@ class SpringEncoderPasswordServiceTest {
             on { matches(passwordRaw, passwordEncrypted) } doReturn true
         }
         val passwordService = SpringEncoderPasswordService(passwordEncoder)
-        val matchResult = passwordService.matches(passwordRaw, passwordEncrypted)
-        assertTrue { matchResult }
+        passwordService.matches(passwordRaw, passwordEncrypted)
+        assertTrue { true }
     }
 
     @Test

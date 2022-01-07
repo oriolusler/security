@@ -4,14 +4,15 @@ import com.nhaarman.mockito_kotlin.mock
 import com.oriolsoler.security.application.validaterefreshtoken.ValidateRefreshTokenException
 import com.oriolsoler.security.application.validaterefreshtoken.ValidateRefreshTokenUseCase
 import com.oriolsoler.security.domain.Token
+import com.oriolsoler.security.domain.services.exceptions.TokenValidationException
 import com.oriolsoler.security.infrastucutre.controller.validaterefreshtoken.ValidateRefreshTokenCommand
 import com.oriolsoler.security.infrastucutre.controller.validaterefreshtoken.ValidateRefreshTokenController
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito.`when`
-import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.HttpStatus.OK
+import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -52,12 +53,12 @@ class ValidateRefreshTokenControllerTest {
 
     @Test
     fun `should unauthorized request if refresh token validation fails`() {
-        val verificationError = "Invalid refresh token"
+        val verificationError = TokenValidationException("Expired")
+        val validateRefreshToken = ValidateRefreshTokenException(verificationError.message, verificationError)
 
-        val response =
-            verificationController.handleValidateRefreshTokenException(ValidateRefreshTokenException(verificationError))
+        val response = verificationController.handleValidateRefreshTokenException(validateRefreshToken)
 
         assertEquals(UNAUTHORIZED, response.statusCode)
-        assertEquals("Refresh token validation error: $verificationError", response.body)
+        assertEquals(validateRefreshToken.message, response.body)
     }
 }

@@ -4,17 +4,19 @@ import com.nhaarman.mockito_kotlin.mock
 import com.oriolsoler.security.application.login.LoginEmailPasswordUseCase
 import com.oriolsoler.security.application.login.LoginException
 import com.oriolsoler.security.domain.Token
+import com.oriolsoler.security.domain.services.exceptions.InvalidPasswordException
 import com.oriolsoler.security.domain.user.UserId
+import com.oriolsoler.security.domain.user.UserLockedException
 import com.oriolsoler.security.infrastucutre.controller.login.LoginEmailPasswordController
 import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
 import com.oriolsoler.security.infrastucutre.controller.login.LoginResponse
 import com.oriolsoler.security.infrastucutre.controller.login.ResponseUser
+import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito.`when`
-import org.springframework.http.HttpStatus.OK
-import org.springframework.http.HttpStatus.UNAUTHORIZED
+import org.springframework.http.HttpStatus.*
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -54,14 +56,33 @@ class LoginEmailPasswordControllerTest {
         assertEquals(loginResponse.user.id.value, response.body!!.user.id.value)
     }
 
+    @Test
+    fun `should handle users locked`() {
+        val userLockedException = UserLockedException()
+        val loginException = LoginException(userLockedException.message, userLockedException)
+        val response = loginEmailPasswordController.handleLoginException(loginException)
+
+        assertEquals(FORBIDDEN, response.statusCode)
+        assertEquals(loginException.message, response.body)
+    }
 
     @Test
-    fun `should handle exceptions user`() {
-        val loginError = "Invalid user"
-
-        val response = loginEmailPasswordController.handleLoginException(LoginException(loginError))
+    fun `should handle bad password`() {
+        val invalidPasswordException = InvalidPasswordException()
+        val loginException = LoginException(invalidPasswordException.message, invalidPasswordException)
+        val response = loginEmailPasswordController.handleLoginException(loginException)
 
         assertEquals(UNAUTHORIZED, response.statusCode)
-        assertEquals("Login error: $loginError", response.body)
+        assertEquals(loginException.message, response.body)
+    }
+
+    @Test
+    fun `should handle user not found`() {
+        val userNotFoundException = UserNotFoundException()
+        val loginException = LoginException(userNotFoundException.message, userNotFoundException)
+        val response = loginEmailPasswordController.handleLoginException(loginException)
+
+        assertEquals(UNAUTHORIZED, response.statusCode)
+        assertEquals(loginException.message, response.body)
     }
 }

@@ -1,6 +1,5 @@
 package com.oriolsoler.security.application
 
-import com.auth0.jwt.exceptions.InvalidClaimException
 import com.nhaarman.mockito_kotlin.*
 import com.oriolsoler.security.application.validateverification.VerifyException
 import com.oriolsoler.security.application.validateverification.VerifyService

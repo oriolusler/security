@@ -1,7 +1,7 @@
 package com.oriolsoler.security.domain
 
-import com.oriolsoler.security.domain.user.UserException
 import com.oriolsoler.security.domain.user.UserId
+import com.oriolsoler.security.domain.user.UserLockedException
 import com.oriolsoler.security.domain.user.UserRole
 import com.oriolsoler.security.domain.user.UserRole.ROLE_USER
 
@@ -13,7 +13,7 @@ class User(
     val locked: Boolean = true
 ) {
     fun isValid() {
-        if (locked) throw UserException("User locked")
+        if (locked) throw UserLockedException()
     }
 
     override fun equals(other: Any?): Boolean {

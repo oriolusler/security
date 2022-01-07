@@ -6,8 +6,9 @@ import com.oriolsoler.security.application.login.LoginException
 import com.oriolsoler.security.application.login.TokenGenerator
 import com.oriolsoler.security.domain.Token
 import com.oriolsoler.security.domain.User
+import com.oriolsoler.security.domain.services.exceptions.InvalidPasswordException
 import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
-import com.oriolsoler.security.infrastucutre.repository.user.UserRepositoryError
+import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -28,9 +29,8 @@ class LoginEmailPasswordTestCase {
             on { getBy(email) } doReturn user
         }
 
-        val passwordService = mock<PasswordService> {
-            on { matches(password, encryptedPassword) } doReturn true
-        }
+        val passwordService = mock<PasswordService> { }
+        doNothing().`when`(passwordService).matches(password, encryptedPassword)
 
         val token = Token("extremely_protected_access_jwt", "extremely_protected_refresh_jwt")
         val tokenGenerator = mock<TokenGenerator> {
@@ -69,9 +69,8 @@ class LoginEmailPasswordTestCase {
             on { getBy(email) } doReturn user
         }
 
-        val passwordService = mock<PasswordService> {
-            on { matches(password, encryptedPassword) } doReturn false
-        }
+        val passwordService = mock<PasswordService> {}
+        given { passwordService.matches(password, encryptedPassword) } willAnswer { throw InvalidPasswordException() }
 
         val token = Token("extremely_protected_access_jwt", "extremely_protected_refresh_jwt")
         val tokenGenerator = mock<TokenGenerator> {
@@ -97,9 +96,8 @@ class LoginEmailPasswordTestCase {
             on { getBy(email) } doReturn user
         }
 
-        val passwordService = mock<PasswordService> {
-            on { matches(password, encryptedPassword) } doReturn true
-        }
+        val passwordService = mock<PasswordService> {}
+        doNothing().`when`(passwordService).matches(password, encryptedPassword)
 
         val tokenGenerator = mock<TokenGenerator> {
             on { generate(any()) } doReturn Token(
@@ -122,7 +120,7 @@ class LoginEmailPasswordTestCase {
         val password = "password"
 
         val userRepository = mock<UserRepository> {}
-        given { userRepository.getBy(email) } willAnswer { throw UserRepositoryError("No user found") }
+        given { userRepository.getBy(email) } willAnswer { throw UserNotFoundException() }
 
         val passwordService = mock<PasswordService> {}
         val tokenGenerator = mock<TokenGenerator> {}
@@ -131,6 +129,6 @@ class LoginEmailPasswordTestCase {
         val loginRequestCommand = LoginRequestCommand(email, password)
         val exception = assertFailsWith<LoginException> { loginEmailPasswordTestCase.execute(loginRequestCommand) }
 
-        assertEquals("Login error: User repository error: No user found", exception.message)
+        assertEquals("Login error: User not found", exception.message)
     }
 }

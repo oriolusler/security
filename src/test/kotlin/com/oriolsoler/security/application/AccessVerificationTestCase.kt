@@ -1,14 +1,13 @@
 package com.oriolsoler.security.application
 
 
-import com.auth0.jwt.exceptions.InvalidClaimException
 import com.nhaarman.mockito_kotlin.*
 import com.oriolsoler.security.application.accessverification.AccessVerificationException
-import com.oriolsoler.security.application.accessverification.TokenVerification
 import com.oriolsoler.security.application.accessverification.AccessVerificationUseCase
+import com.oriolsoler.security.application.accessverification.TokenVerification
 import com.oriolsoler.security.domain.User
+import com.oriolsoler.security.domain.services.exceptions.TokenValidationException
 import com.oriolsoler.security.infrastucutre.controller.accessverification.AccessVerificationCommand
-import com.oriolsoler.security.infrastucutre.repository.user.UserRepositoryError
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
@@ -71,7 +70,7 @@ class AccessVerificationTestCase {
                 ".SF8D4I7YFUX0DreosszjU83S1zk58zExq0_AYV5O3ooYw1Q-f_pE8NM2tNdxESgKz9RZq8cguViX2NdYNR6fTQ"
 
         val tokenVerification = mock<TokenVerification> {}
-        given { tokenVerification.validateAccessToken(token) } willAnswer { throw InvalidClaimException("Invalid issuer") }
+        given { tokenVerification.validateAccessToken(token) } willAnswer { throw TokenValidationException("Invalid issuer") }
 
         val userRepository = mock<UserRepository> {}
 
@@ -82,7 +81,7 @@ class AccessVerificationTestCase {
             accessVerificationUseCase.execute(accessVerificationCommand)
         }
 
-        assertEquals("Access verification error: Invalid issuer", accessResult.message)
+        assertEquals("Access verification error: Invalid token: Invalid issuer", accessResult.message)
     }
 
 }

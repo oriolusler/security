@@ -5,8 +5,10 @@ import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.domain.user.UserId
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
+import com.oriolsoler.security.infrastucutre.repository.user.UserAlreadyExistsException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import kotlin.test.*
@@ -71,5 +73,14 @@ abstract class UserRepositoryTestCase {
 
         val userPost = userRepository.getBy(user.id)
         assertFalse { userPost.locked }
+    }
+
+    @Test
+    fun `should throw error if user already exists`() {
+        val user = User(email = email, password = password)
+        userRepository.save(user)
+
+        val e = assertThrows<UserAlreadyExistsException> { userRepository.checkIfUserAlreadyExists(user.email) }
+        assertEquals("User already exists", e.message)
     }
 }

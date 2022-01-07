@@ -1,6 +1,5 @@
 package com.oriolsoler.security.application
 
-import com.auth0.jwt.exceptions.JWTVerificationException
 import com.nhaarman.mockito_kotlin.*
 import com.oriolsoler.security.application.accessverification.TokenVerification
 import com.oriolsoler.security.application.login.TokenGenerator
@@ -8,6 +7,7 @@ import com.oriolsoler.security.application.validaterefreshtoken.ValidateRefreshT
 import com.oriolsoler.security.application.validaterefreshtoken.ValidateRefreshTokenUseCase
 import com.oriolsoler.security.domain.Token
 import com.oriolsoler.security.domain.User
+import com.oriolsoler.security.domain.services.exceptions.TokenValidationException
 import com.oriolsoler.security.infrastucutre.controller.validaterefreshtoken.ValidateRefreshTokenCommand
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -80,11 +80,12 @@ class ValidateRefreshTokenTestCase {
     @Test
     fun `should return error if refresh token is not valid`() {
         val refreshToken = "Secure_refresh_token"
-        val user = User(email = "email@online.com", locked = false)
         val validateRefreshTokenCommand = ValidateRefreshTokenCommand(refreshToken = refreshToken)
 
         val tokenVerification = mock<TokenVerification> { }
-        given { tokenVerification.validateRefreshToken(refreshToken) } willAnswer { throw JWTVerificationException("Error with refresh token validation") }
+        given { tokenVerification.validateRefreshToken(refreshToken) } willAnswer {
+            throw TokenValidationException("Error with refresh token validation")
+        }
 
         val userRepository = mock<UserRepository> { }
         val tokenGenerator = mock<TokenGenerator> { }
@@ -99,7 +100,10 @@ class ValidateRefreshTokenTestCase {
             validateRefreshTokenUseCase.execute(validateRefreshTokenCommand)
         }
 
-        assertEquals("Refresh token validation error: Error with refresh token validation", exception.message)
+        assertEquals(
+            "Refresh token validation error: Invalid token: Error with refresh token validation",
+            exception.message
+        )
     }
 
 }

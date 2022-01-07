@@ -5,10 +5,8 @@ import com.oriolsoler.security.domain.services.exceptions.InvalidPasswordExcepti
 import org.springframework.security.crypto.password.PasswordEncoder
 
 class SpringEncoderPasswordService(private val passwordEncoder: PasswordEncoder) : PasswordService {
-    override fun matches(rawPassword: String, encryptedPassword: String): Boolean {
-        return if (passwordEncoder.matches(rawPassword, encryptedPassword)) {
-            true
-        } else {
+    override fun matches(rawPassword: String, encryptedPassword: String) {
+        if (!passwordEncoder.matches(rawPassword, encryptedPassword)) {
             throw InvalidPasswordException()
         }
     }

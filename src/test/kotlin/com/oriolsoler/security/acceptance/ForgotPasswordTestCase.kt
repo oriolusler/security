@@ -4,19 +4,16 @@ import com.oriolsoler.security.SecurityApplication
 import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.infrastucutre.controller.forgotpassword.ForgotPasswordRequestCommand
-import com.oriolsoler.security.infrastucutre.controller.signup.SignUpRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import io.restassured.module.mockmvc.RestAssuredMockMvc.given
-import org.hamcrest.CoreMatchers.equalTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.HttpStatus.*
+import org.springframework.http.HttpStatus.ACCEPTED
 import org.springframework.test.web.servlet.MockMvc
-import kotlin.test.assertTrue
 
 @SpringBootTest(
     classes = [SecurityApplication::class],

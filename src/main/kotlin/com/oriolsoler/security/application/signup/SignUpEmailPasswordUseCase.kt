@@ -8,7 +8,7 @@ import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.domain.UserVerification
 import com.oriolsoler.security.domain.email.ValidateEmailMailInformation
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpRequestCommand
-import com.oriolsoler.security.infrastucutre.repository.user.UserRepositoryError
+import com.oriolsoler.security.infrastucutre.repository.user.UserAlreadyExistsException
 
 class SignUpEmailPasswordUseCase(
     private val userRepository: UserRepository,
@@ -36,9 +36,8 @@ class SignUpEmailPasswordUseCase(
     }
 
     private fun saveNewUser(signupRequestCommand: SignUpRequestCommand): User {
-        if (userAlreadyExists(signupRequestCommand.email)) {
-            throw SignUpException("Email already used")
-        }
+        checkIfUserAlreadyExists(signupRequestCommand.email)
+
         return userRepository.save(
             User(
                 email = signupRequestCommand.email,
@@ -47,12 +46,11 @@ class SignUpEmailPasswordUseCase(
         )
     }
 
-    private fun userAlreadyExists(email: String): Boolean {
-        return try {
-            userRepository.getBy(email)
-            true
-        } catch (e: UserRepositoryError) {
-            false
+    private fun checkIfUserAlreadyExists(email: String) {
+        try {
+            userRepository.checkIfUserAlreadyExists(email)
+        } catch (e: UserAlreadyExistsException) {
+            throw SignUpException(e.message, e)
         }
     }
 }

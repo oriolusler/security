@@ -2,7 +2,6 @@ package com.oriolsoler.security.domain.services
 
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import java.util.*
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue

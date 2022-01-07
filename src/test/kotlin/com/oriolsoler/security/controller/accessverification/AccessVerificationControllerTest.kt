@@ -3,6 +3,7 @@ package com.oriolsoler.security.controller.accessverification
 import com.nhaarman.mockito_kotlin.mock
 import com.oriolsoler.security.application.accessverification.AccessVerificationException
 import com.oriolsoler.security.application.accessverification.AccessVerificationUseCase
+import com.oriolsoler.security.domain.user.UserLockedException
 import com.oriolsoler.security.infrastucutre.controller.accessverification.AccessVerificationCommand
 import com.oriolsoler.security.infrastucutre.controller.accessverification.AccessVerificationController
 import org.junit.jupiter.api.BeforeEach
@@ -62,13 +63,13 @@ class AccessVerificationControllerTest {
 
     @Test
     fun `should handle user exceptions`() {
-        val verificationError = "User locked"
+        val userLockedException = UserLockedException()
 
-        val response = accessVerificationController
-            .handleAccessVerificationException(AccessVerificationException(verificationError))
+        val accessVerificationException = AccessVerificationException(userLockedException.message, userLockedException)
+        val response = accessVerificationController.handleAccessVerificationException(accessVerificationException)
 
         assertEquals(UNAUTHORIZED, response.statusCode)
-        assertEquals("Access verification error: $verificationError", response.body)
+        assertEquals("Access verification error: ${userLockedException.message}", response.body)
     }
 
     @Test

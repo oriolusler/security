@@ -3,10 +3,12 @@ package com.oriolsoler.security.domain.services
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
+import com.auth0.jwt.exceptions.JWTVerificationException
 import com.auth0.jwt.interfaces.DecodedJWT
 import com.oriolsoler.security.application.accessverification.TokenVerification
-import com.oriolsoler.security.domain.Token
 import com.oriolsoler.security.application.login.TokenGenerator
+import com.oriolsoler.security.domain.Token
+import com.oriolsoler.security.domain.services.exceptions.TokenValidationException
 import com.oriolsoler.security.domain.user.UserId
 
 
@@ -44,23 +46,25 @@ class JwtTokenService(
         .sign(refreshTokenAlgorithm)
 
     override fun validateAccessToken(token: String): String {
-        val verifier: JWTVerifier = JWT
-            .require(accessTokenAlgorithm)
-            .withIssuer(jwtIssuer)
-            .build()
-
-        val jwt: DecodedJWT = verifier.verify(token)
-        return jwt.subject
+        return validateToken(accessTokenAlgorithm, token)
     }
 
     override fun validateRefreshToken(token: String): String {
-        val verifier: JWTVerifier = JWT
-            .require(refreshTokenAlgorithm)
-            .withIssuer(jwtIssuer)
-            .build()
+        return validateToken(refreshTokenAlgorithm, token)
+    }
 
-        val jwt: DecodedJWT = verifier.verify(token)
-        return jwt.subject
+    private fun validateToken(algorithm: Algorithm, token: String): String {
+        try {
+            val verifier: JWTVerifier = JWT
+                .require(algorithm)
+                .withIssuer(jwtIssuer)
+                .build()
+
+            val jwt: DecodedJWT = verifier.verify(token)
+            return jwt.subject
+        } catch (e: JWTVerificationException) {
+            throw TokenValidationException(e.message)
+        }
     }
 
     private fun setUpPayload(userId: UserId): HashMap<String, String> {

@@ -42,6 +42,14 @@ class PostgresUserRepository(
         jdbcTemplate.update(sql, namedParameters)
     }
 
+    override fun checkIfUserAlreadyExists(email: String) {
+        try {
+            getBy(email)
+            throw UserAlreadyExistsException()
+        } catch (_: UserNotFoundException) {
+        }
+    }
+
     private fun saveRoles(newUser: User) {
         val sql = """
            INSERT INTO SECURITY_USER_ROLE(USER_ID, ROLE)
@@ -89,7 +97,7 @@ class PostgresUserRepository(
         return try {
             jdbcTemplate.queryForObject(query, namedParameter, mapperUser())!!
         } catch (exception: EmptyResultDataAccessException) {
-            throw UserRepositoryError("No user found")
+            throw UserNotFoundException()
         }
     }
 

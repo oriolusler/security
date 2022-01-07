@@ -3,19 +3,18 @@ package com.oriolsoler.security.domain.services
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
-import com.auth0.jwt.exceptions.InvalidClaimException
-import com.auth0.jwt.exceptions.TokenExpiredException
 import com.auth0.jwt.interfaces.DecodedJWT
 import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.oriolsoler.security.domain.services.ClockService.Companion.localDateTimeToDate
+import com.oriolsoler.security.domain.services.exceptions.TokenValidationException
 import com.oriolsoler.security.domain.user.UserId
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.Date
+import java.util.*
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -116,8 +115,8 @@ class JwtTokenServiceTest {
             jwtIssuer = "An other issuer",
             clock = clock
         )
-        val exception = assertThrows<InvalidClaimException> { jwtTokenServiceAux.validateAccessToken(generate) }
-        assertEquals("The Claim 'iss' value doesn't match the required issuer.", exception.message)
+        val exception = assertThrows<TokenValidationException> { jwtTokenServiceAux.validateAccessToken(generate) }
+        assertEquals("Invalid token: The Claim 'iss' value doesn't match the required issuer.", exception.message)
     }
 
     @Test
@@ -141,7 +140,7 @@ class JwtTokenServiceTest {
 
         val generate = jwtTokenServiceAux.generate(userId).accessToken
 
-        val exception = assertThrows<TokenExpiredException> { jwtTokenServiceAux.validateAccessToken(generate) }
+        val exception = assertThrows<TokenValidationException> { jwtTokenServiceAux.validateAccessToken(generate) }
         assertContains(exception.message.toString(), "The Token has expired")
     }
 
@@ -184,7 +183,7 @@ class JwtTokenServiceTest {
 
         val generate = jwtTokenServiceAux.generate(userId).refreshToken
 
-        val exception = assertThrows<TokenExpiredException> { jwtTokenServiceAux.validateRefreshToken(generate) }
+        val exception = assertThrows<TokenValidationException> { jwtTokenServiceAux.validateRefreshToken(generate) }
         assertContains(exception.message.toString(), "The Token has expired")
     }
 }

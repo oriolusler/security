@@ -1,6 +1,6 @@
 package com.oriolsoler.security.domain.user
 
-import java.util.UUID
+import java.util.*
 
 class UserId(val value: UUID = UUID.randomUUID()) {
     constructor(value: String) : this(UUID.fromString(value))
