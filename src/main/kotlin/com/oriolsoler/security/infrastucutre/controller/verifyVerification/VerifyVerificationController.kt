@@ -6,7 +6,11 @@ import com.oriolsoler.security.domain.verification.VerificationExpiredException
 import com.oriolsoler.security.domain.verification.VerificationUsedException
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
 import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException
-import org.springframework.http.HttpStatus.*
+import org.springframework.http.HttpStatus.ACCEPTED
+import org.springframework.http.HttpStatus.CONFLICT
+import org.springframework.http.HttpStatus.GONE
+import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.PostMapping
@@ -38,6 +42,6 @@ class VerifyVerificationController(
             .status(NOT_FOUND)
             .body(error.message)
 
-        return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(error.message)
+        return ResponseEntity.status(SERVICE_UNAVAILABLE).body(error.message)
     }
 }
