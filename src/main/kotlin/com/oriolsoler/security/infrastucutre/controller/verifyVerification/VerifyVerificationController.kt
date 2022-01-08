@@ -4,7 +4,8 @@ import com.oriolsoler.security.application.validateverification.VerifyException
 import com.oriolsoler.security.application.validateverification.VerifyVerificationUseCase
 import com.oriolsoler.security.domain.verification.VerificationExpiredException
 import com.oriolsoler.security.domain.verification.VerificationUsedException
-import com.oriolsoler.security.infrastucutre.repository.verification.VerifyRepositoryError
+import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
+import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException
 import org.springframework.http.HttpStatus.*
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -33,7 +34,7 @@ class VerifyVerificationController(
             .status(CONFLICT)
             .body(error.message)
 
-        if (error.cause is VerifyRepositoryError) return ResponseEntity
+        if (error.cause is VerificationNotFoundException || error.cause is UserNotFoundException) return ResponseEntity
             .status(NOT_FOUND)
             .body(error.message)
 

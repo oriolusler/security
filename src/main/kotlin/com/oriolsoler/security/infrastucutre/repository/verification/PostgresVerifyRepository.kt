@@ -67,7 +67,7 @@ class PostgresVerifyRepository(
         return try {
             jdbcTemplate.queryForObject(query, namedParameter, mapperVerification())!!
         } catch (exception: EmptyResultDataAccessException) {
-            throw VerifyRepositoryError("No verification found")
+            throw VerificationNotFoundException()
         }
     }
 

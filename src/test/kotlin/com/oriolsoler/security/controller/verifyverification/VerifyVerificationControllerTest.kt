@@ -12,7 +12,8 @@ import com.oriolsoler.security.domain.verification.VerificationExpiredException
 import com.oriolsoler.security.domain.verification.VerificationUsedException
 import com.oriolsoler.security.infrastucutre.controller.verifyVerification.VerifyVerificationCommand
 import com.oriolsoler.security.infrastucutre.controller.verifyVerification.VerifyVerificationController
-import com.oriolsoler.security.infrastucutre.repository.verification.VerifyRepositoryError
+import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
+import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -79,11 +80,21 @@ class VerifyVerificationControllerTest {
 
     @Test
     fun `should handle validation not found`() {
-        val error = VerifyRepositoryError("Token not found")
+        val error = VerificationNotFoundException()
         val errorVerify = VerifyException(error.message, error)
         val response = verifyVerificationController.handleVerificationError(errorVerify)
 
         assertEquals(NOT_FOUND, response.statusCode)
-        assertEquals("Verification error: Verify repository error: Token not found", response.body)
+        assertEquals("Verification error: No verification found", response.body)
+    }
+
+    @Test
+    fun `should handle user not found`() {
+        val error = UserNotFoundException()
+        val errorVerify = VerifyException(error.message, error)
+        val response = verifyVerificationController.handleVerificationError(errorVerify)
+
+        assertEquals(NOT_FOUND, response.statusCode)
+        assertEquals("Verification error: User not found", response.body)
     }
 }

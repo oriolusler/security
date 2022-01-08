@@ -5,7 +5,8 @@ import com.oriolsoler.security.domain.User
 import com.oriolsoler.security.domain.UserVerification
 import com.oriolsoler.security.domain.verification.VerificationException
 import com.oriolsoler.security.infrastucutre.controller.verifyVerification.VerifyVerificationCommand
-import com.oriolsoler.security.infrastucutre.repository.verification.VerifyRepositoryError
+import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
+import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException
 
 class VerifyVerificationUseCase(
     val verifyService: VerifyService,
@@ -13,7 +14,7 @@ class VerifyVerificationUseCase(
     val userRepository: UserRepository
 ) {
     fun execute(verifyVerificationCommand: VerifyVerificationCommand) {
-        val user = userRepository.getBy(verifyVerificationCommand.email)
+        val user = getUserByEmail(verifyVerificationCommand.email)
         val userVerification = getUserVerification(user, verifyVerificationCommand)
         if (isValid(userVerification)) {
             verifyServiceRepository.setToUsed(userVerification)
@@ -21,9 +22,17 @@ class VerifyVerificationUseCase(
         }
     }
 
+    private fun getUserByEmail(email: String): User {
+        return try {
+            userRepository.getBy(email)
+        } catch (e: UserNotFoundException) {
+            throw VerifyException(e.message, e)
+        }
+    }
+
     private fun getUserVerification(user: User, verifyVerificationCommand: VerifyVerificationCommand) = try {
         verifyServiceRepository.getUnusedBy(user, verifyVerificationCommand.verification)
-    } catch (e: VerifyRepositoryError) {
+    } catch (e: VerificationNotFoundException) {
         throw VerifyException(e.message, e)
     }
 

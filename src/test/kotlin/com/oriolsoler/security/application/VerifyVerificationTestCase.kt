@@ -10,7 +10,8 @@ import com.oriolsoler.security.domain.UserVerification
 import com.oriolsoler.security.domain.Verification
 import com.oriolsoler.security.domain.verification.VerificationException
 import com.oriolsoler.security.infrastucutre.controller.verifyVerification.VerifyVerificationCommand
-import com.oriolsoler.security.infrastucutre.repository.verification.VerifyRepositoryError
+import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
+import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
@@ -91,7 +92,7 @@ class VerifyVerificationTestCase {
         val verifyServiceRepository = mock<VerifyServiceRepository> {}
         given {
             verifyServiceRepository.getUnusedBy(user, verification)
-        } willAnswer { throw VerifyRepositoryError("Token not found") }
+        } willAnswer { throw VerificationNotFoundException() }
 
         val verifyVerificationUseCase = VerifyVerificationUseCase(
             verifyService,
@@ -100,7 +101,27 @@ class VerifyVerificationTestCase {
         )
 
         val exception = assertThrows<VerifyException> { verifyVerificationUseCase.execute(verifyVerificationCommand) }
-        assertEquals("Verification error: Verify repository error: Token not found", exception.message)
+        assertEquals("Verification error: No verification found", exception.message)
+    }
 
+    @Test
+    fun `should return an exception if user does not exists`() {
+        val user = User(email = "email@online.com")
+        val verification = "516797"
+        val verifyVerificationCommand = VerifyVerificationCommand(user.email, verification)
+
+        val verifyService = mock<VerifyService> {}
+        val userRepository = mock<UserRepository> {}
+        given { userRepository.getBy(user.email) } willAnswer { throw UserNotFoundException() }
+        val verifyServiceRepository = mock<VerifyServiceRepository> {}
+
+        val verifyVerificationUseCase = VerifyVerificationUseCase(
+            verifyService,
+            verifyServiceRepository,
+            userRepository
+        )
+
+        val exception = assertThrows<VerifyException> { verifyVerificationUseCase.execute(verifyVerificationCommand) }
+        assertEquals("Verification error: User not found", exception.message)
     }
 }
