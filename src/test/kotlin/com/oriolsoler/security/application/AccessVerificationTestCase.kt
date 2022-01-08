@@ -5,7 +5,7 @@ import com.nhaarman.mockito_kotlin.*
 import com.oriolsoler.security.application.accessverification.AccessVerificationException
 import com.oriolsoler.security.application.accessverification.AccessVerificationUseCase
 import com.oriolsoler.security.application.accessverification.TokenVerification
-import com.oriolsoler.security.domain.User
+import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.services.exceptions.TokenValidationException
 import com.oriolsoler.security.infrastucutre.controller.accessverification.AccessVerificationCommand
 import org.junit.jupiter.api.Test

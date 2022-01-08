@@ -5,7 +5,7 @@ import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.oriolsoler.security.application.signup.SignUpEmailPasswordUseCase
 import com.oriolsoler.security.application.signup.SignUpException
-import com.oriolsoler.security.domain.User
+import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpEmailPasswordController
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserAlreadyExistsException

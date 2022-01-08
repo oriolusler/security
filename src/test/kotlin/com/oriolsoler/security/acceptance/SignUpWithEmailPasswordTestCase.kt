@@ -2,7 +2,7 @@ package com.oriolsoler.security.acceptance
 
 import com.oriolsoler.security.SecurityApplication
 import com.oriolsoler.security.application.UserRepository
-import com.oriolsoler.security.domain.User
+import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
 import io.restassured.module.mockmvc.RestAssuredMockMvc

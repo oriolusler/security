@@ -4,8 +4,8 @@ import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.application.signup.MailService
 import com.oriolsoler.security.application.validateverification.VerifyService
 import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
-import com.oriolsoler.security.domain.User
-import com.oriolsoler.security.domain.UserVerification
+import com.oriolsoler.security.domain.user.User
+import com.oriolsoler.security.domain.verification.UserVerification
 import com.oriolsoler.security.domain.email.ForgotPasswordMailInformation
 import com.oriolsoler.security.infrastucutre.controller.forgotpassword.ForgotPasswordRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException

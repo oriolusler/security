@@ -1,8 +1,5 @@
-package com.oriolsoler.security.domain
+package com.oriolsoler.security.domain.user
 
-import com.oriolsoler.security.domain.user.UserId
-import com.oriolsoler.security.domain.user.UserLockedException
-import com.oriolsoler.security.domain.user.UserRole
 import com.oriolsoler.security.domain.user.UserRole.ROLE_USER
 
 class User(

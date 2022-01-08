@@ -1,8 +1,8 @@
 package com.oriolsoler.security.infrastucutre.repository.test
 
 import com.oriolsoler.security.application.UserRepository
-import com.oriolsoler.security.domain.UserVerification
-import com.oriolsoler.security.domain.Verification
+import com.oriolsoler.security.domain.verification.UserVerification
+import com.oriolsoler.security.domain.verification.Verification
 import com.oriolsoler.security.domain.user.UserId
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.RowMapper

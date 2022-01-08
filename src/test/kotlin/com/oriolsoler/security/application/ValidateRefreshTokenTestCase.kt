@@ -6,7 +6,7 @@ import com.oriolsoler.security.application.login.TokenGenerator
 import com.oriolsoler.security.application.validaterefreshtoken.ValidateRefreshTokenException
 import com.oriolsoler.security.application.validaterefreshtoken.ValidateRefreshTokenUseCase
 import com.oriolsoler.security.domain.Token
-import com.oriolsoler.security.domain.User
+import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.services.exceptions.TokenValidationException
 import com.oriolsoler.security.infrastucutre.controller.validaterefreshtoken.ValidateRefreshTokenCommand
 import org.junit.jupiter.api.Test

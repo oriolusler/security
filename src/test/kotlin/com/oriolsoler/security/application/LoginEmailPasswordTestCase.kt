@@ -5,7 +5,7 @@ import com.oriolsoler.security.application.login.LoginEmailPasswordUseCase
 import com.oriolsoler.security.application.login.LoginException
 import com.oriolsoler.security.application.login.TokenGenerator
 import com.oriolsoler.security.domain.Token
-import com.oriolsoler.security.domain.User
+import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.services.exceptions.InvalidPasswordException
 import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException

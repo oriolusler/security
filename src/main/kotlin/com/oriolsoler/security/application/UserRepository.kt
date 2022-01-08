@@ -1,6 +1,6 @@
 package com.oriolsoler.security.application
 
-import com.oriolsoler.security.domain.User
+import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.user.UserId
 
 interface UserRepository {

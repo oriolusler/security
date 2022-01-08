@@ -4,9 +4,9 @@ import com.oriolsoler.security.SecurityApplication
 import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.application.validateverification.VerifyService
 import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
-import com.oriolsoler.security.domain.User
-import com.oriolsoler.security.domain.UserVerification
-import com.oriolsoler.security.domain.Verification
+import com.oriolsoler.security.domain.user.User
+import com.oriolsoler.security.domain.verification.UserVerification
+import com.oriolsoler.security.domain.verification.Verification
 import com.oriolsoler.security.infrastucutre.controller.verifyVerification.VerifyVerificationCommand
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
 import com.oriolsoler.security.infrastucutre.repository.test.VerificationRepositoryForTest

@@ -6,8 +6,8 @@ import com.oriolsoler.security.application.signup.SignUpEmailPasswordUseCase
 import com.oriolsoler.security.application.signup.SignUpException
 import com.oriolsoler.security.application.validateverification.VerifyService
 import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
-import com.oriolsoler.security.domain.User
-import com.oriolsoler.security.domain.Verification
+import com.oriolsoler.security.domain.user.User
+import com.oriolsoler.security.domain.verification.Verification
 import com.oriolsoler.security.domain.email.ValidateEmailMailInformation
 import com.oriolsoler.security.domain.user.UserRole.ROLE_USER
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpRequestCommand

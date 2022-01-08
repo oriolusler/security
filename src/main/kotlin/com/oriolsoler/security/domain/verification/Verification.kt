@@ -1,7 +1,6 @@
-package com.oriolsoler.security.domain
+package com.oriolsoler.security.domain.verification
 
-import com.oriolsoler.security.domain.verification.VerificationExpiredException
-import com.oriolsoler.security.domain.verification.VerificationUsedException
+import com.oriolsoler.security.domain.user.User
 import java.time.LocalDateTime
 
 class Verification(

@@ -1,7 +1,7 @@
 package com.oriolsoler.security.domain.services
 
 import com.nhaarman.mockito_kotlin.*
-import com.oriolsoler.security.domain.User
+import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.email.MailInformation
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentCaptor

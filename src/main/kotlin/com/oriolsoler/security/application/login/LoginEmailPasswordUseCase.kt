@@ -2,7 +2,7 @@ package com.oriolsoler.security.application.login
 
 import com.oriolsoler.security.application.PasswordService
 import com.oriolsoler.security.application.UserRepository
-import com.oriolsoler.security.domain.User
+import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.services.exceptions.InvalidPasswordException
 import com.oriolsoler.security.domain.user.UserLockedException
 import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand

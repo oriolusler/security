@@ -1,6 +1,6 @@
 package com.oriolsoler.security.infrastucutre.repository.test
 
-import com.oriolsoler.security.domain.User
+import com.oriolsoler.security.domain.user.User
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 

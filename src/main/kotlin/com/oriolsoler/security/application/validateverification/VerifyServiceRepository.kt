@@ -1,7 +1,7 @@
 package com.oriolsoler.security.application.validateverification
 
-import com.oriolsoler.security.domain.User
-import com.oriolsoler.security.domain.UserVerification
+import com.oriolsoler.security.domain.user.User
+import com.oriolsoler.security.domain.verification.UserVerification
 
 interface VerifyServiceRepository {
     fun save(userVerification: UserVerification)

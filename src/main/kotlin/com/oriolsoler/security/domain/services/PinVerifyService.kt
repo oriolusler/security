@@ -1,8 +1,8 @@
 package com.oriolsoler.security.domain.services
 
 import com.oriolsoler.security.application.validateverification.VerifyService
-import com.oriolsoler.security.domain.UserVerification
-import com.oriolsoler.security.domain.Verification
+import com.oriolsoler.security.domain.verification.UserVerification
+import com.oriolsoler.security.domain.verification.Verification
 import java.util.concurrent.ThreadLocalRandom
 
 class PinVerifyService(private val clock: ClockService, private val minutesValid: Long) : VerifyService {

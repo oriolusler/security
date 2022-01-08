@@ -6,7 +6,7 @@ import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.oriolsoler.security.application.validateverification.VerifyException
 import com.oriolsoler.security.application.validateverification.VerifyVerificationUseCase
-import com.oriolsoler.security.domain.User
+import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.VerificationException
 import com.oriolsoler.security.domain.verification.VerificationExpiredException
 import com.oriolsoler.security.domain.verification.VerificationUsedException

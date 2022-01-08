@@ -4,7 +4,7 @@ import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.application.accessverification.TokenVerification
 import com.oriolsoler.security.application.login.TokenGenerator
 import com.oriolsoler.security.domain.Token
-import com.oriolsoler.security.domain.User
+import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.services.exceptions.TokenValidationException
 import com.oriolsoler.security.domain.user.UserId
 import com.oriolsoler.security.domain.user.UserLockedException

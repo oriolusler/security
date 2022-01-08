@@ -4,9 +4,9 @@ import com.nhaarman.mockito_kotlin.doReturn
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
-import com.oriolsoler.security.domain.User
-import com.oriolsoler.security.domain.UserVerification
-import com.oriolsoler.security.domain.Verification
+import com.oriolsoler.security.domain.user.User
+import com.oriolsoler.security.domain.verification.UserVerification
+import com.oriolsoler.security.domain.verification.Verification
 import com.oriolsoler.security.domain.verification.VerificationExpiredException
 import com.oriolsoler.security.domain.verification.VerificationUsedException
 import org.apache.commons.lang3.StringUtils
