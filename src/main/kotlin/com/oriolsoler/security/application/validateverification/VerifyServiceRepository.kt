@@ -7,4 +7,5 @@ interface VerifyServiceRepository {
     fun save(userVerification: UserVerification)
     fun getBy(user: User, verification: String): UserVerification
     fun setToUsed(userVerification: UserVerification)
+    fun setToDeleted(userVerification: UserVerification)
 }

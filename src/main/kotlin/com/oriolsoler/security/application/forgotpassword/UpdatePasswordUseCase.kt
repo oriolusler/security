@@ -6,6 +6,7 @@ import com.oriolsoler.security.application.validateverification.VerifyService
 import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.UserVerification
+import com.oriolsoler.security.domain.verification.VerificationDeletedException
 import com.oriolsoler.security.domain.verification.VerificationNotVerifiedException
 import com.oriolsoler.security.infrastucutre.controller.forgotpassword.UpdatePasswordRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
@@ -20,14 +21,22 @@ class UpdatePasswordUseCase(
     fun execute(updatePasswordCommand: UpdatePasswordRequestCommand) {
         val currentUser = getUserByEmail(updatePasswordCommand.email)
         val userVerification = getUserVerification(currentUser, updatePasswordCommand)
-        checkIfUserVerificationHasNotBeenUsed(userVerification)
+        checkIfValidVerification(userVerification)
+        updateVerificationStatus(userVerification)
         userRepository.updatePassword(currentUser, passwordService.encode(updatePasswordCommand.newPassword))
     }
 
-    private fun checkIfUserVerificationHasNotBeenUsed(userVerification: UserVerification) {
+    private fun updateVerificationStatus(userVerification: UserVerification) {
+        verifyServiceRepository.setToDeleted(userVerification)
+    }
+
+    private fun checkIfValidVerification(userVerification: UserVerification) {
         try {
             verifyService.validateIfNotUsed(userVerification.verification)
+            verifyService.validateIfNotDeleted(userVerification.verification)
         } catch (e: VerificationNotVerifiedException) {
+            throw UpdatePasswordException(e.message, e)
+        } catch (e: VerificationDeletedException) {
             throw UpdatePasswordException(e.message, e)
         }
     }

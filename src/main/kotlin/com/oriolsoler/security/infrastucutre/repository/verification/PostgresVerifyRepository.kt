@@ -18,8 +18,8 @@ class PostgresVerifyRepository(
 ) : VerifyServiceRepository {
     override fun save(userVerification: UserVerification) {
         val sql = """
-           INSERT INTO VERIFY(USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, USED)
-           VALUES (:user, :verification, :creation_date, :expiration_date, :used)
+           INSERT INTO VERIFY(USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, USED, DELETED)
+           VALUES (:user, :verification, :creation_date, :expiration_date, :used, :deleted)
        """.trimIndent()
 
         val namedParameters = MapSqlParameterSource()
@@ -28,12 +28,13 @@ class PostgresVerifyRepository(
         namedParameters.addValue("creation_date", userVerification.verification.creationDate)
         namedParameters.addValue("expiration_date", userVerification.verification.expirationDate)
         namedParameters.addValue("used", userVerification.verification.used)
+        namedParameters.addValue("deleted", userVerification.verification.deleted)
         jdbcTemplate.update(sql, namedParameters)
     }
 
     override fun getBy(user: User, verification: String): UserVerification {
         val query = """
-                SELECT USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, USED
+                SELECT USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, USED, DELETED
                  FROM VERIFY
                  WHERE USER_ID=:user
                  AND VERIFICATION=:verification
@@ -65,6 +66,21 @@ class PostgresVerifyRepository(
         jdbcTemplate.update(query, namedParameter)
     }
 
+    override fun setToDeleted(userVerification: UserVerification) {
+        val query = """
+            UPDATE VERIFY
+             SET DELETED=TRUE
+             WHERE USER_ID=:user
+              AND VERIFICATION=:verification
+        """.trimIndent()
+
+        val namedParameter = MapSqlParameterSource()
+        namedParameter.addValue("user", userVerification.user.id.value)
+        namedParameter.addValue("verification", userVerification.verification.verification)
+
+        jdbcTemplate.update(query, namedParameter)
+    }
+
     private fun mapperVerification(): RowMapper<UserVerification> {
         return RowMapper { rs: ResultSet, _: Int ->
             val user = userRepository.getBy(UserId(rs.getString("user_id")))
@@ -72,13 +88,15 @@ class PostgresVerifyRepository(
             val creationDate = rs.getTimestamp("creation_date").toLocalDateTime()
             val expirationDate = rs.getTimestamp("expiration_date").toLocalDateTime()
             val used = rs.getBoolean("used")
+            val deleted = rs.getBoolean("deleted")
             UserVerification(
                 user = user,
                 Verification(
                     verification = verification,
                     creationDate = creationDate,
                     expirationDate = expirationDate,
-                    used = used
+                    used = used,
+                    deleted = deleted
                 )
             )
         }

@@ -2,9 +2,7 @@ package com.oriolsoler.security.application.validateverification
 
 import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.domain.user.User
-import com.oriolsoler.security.domain.verification.UserVerification
-import com.oriolsoler.security.domain.verification.VerificationException
-import com.oriolsoler.security.domain.verification.VerificationUsedException
+import com.oriolsoler.security.domain.verification.*
 import com.oriolsoler.security.infrastucutre.controller.verifyVerification.VerifyVerificationCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
 import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException
@@ -18,8 +16,12 @@ class VerifyVerificationUseCase(
         val user = getUserByEmail(verifyVerificationCommand.email)
         val userVerification = getUserVerification(user, verifyVerificationCommand)
         checkIfTokenIsValid(userVerification)
-        verifyServiceRepository.setToUsed(userVerification)
+        updateVerificationStatus(userVerification)
         userRepository.setUnlocked(user)
+    }
+
+    private fun updateVerificationStatus(userVerification: UserVerification) {
+        verifyServiceRepository.setToUsed(userVerification)
     }
 
     private fun getUserByEmail(email: String): User {
@@ -36,10 +38,12 @@ class VerifyVerificationUseCase(
         throw VerifyException(e.message, e)
     }
 
-
     private fun checkIfTokenIsValid(userVerification: UserVerification) = try {
-        verifyService.validateIfValid(userVerification.verification)
-    } catch (e: VerificationException) {
+        verifyService.validateIfUsed(userVerification.verification)
+        verifyService.validateIfExpired(userVerification.verification)
+    } catch (e: VerificationExpiredException) {
+        throw VerifyException(e.message, e)
+    } catch (e: VerificationUsedException) {
         throw VerifyException(e.message, e)
     }
 }

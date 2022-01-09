@@ -54,7 +54,7 @@ class PinVerifyServiceTest {
         val verification = Verification(verification = "856423")
         val userVerification = UserVerification(user, verification)
 
-        pinVerifyService.validateIfValid(userVerification.verification)
+        pinVerifyService.validateIfExpired(userVerification.verification)
 
         assertTrue { true }
         verify(clock, times(1)).now()
@@ -72,7 +72,7 @@ class PinVerifyServiceTest {
         pinVerifyService = PinVerifyService(clock, minutesValid)
 
         val throws = assertThrows<VerificationExpiredException> {
-            pinVerifyService.validateIfValid(userVerification.verification)
+            pinVerifyService.validateIfExpired(userVerification.verification)
         }
         assertEquals("Verification expired", throws.message)
         verify(clock, times(1)).now()
@@ -85,7 +85,7 @@ class PinVerifyServiceTest {
         val userVerification = UserVerification(user, verification)
 
         val throws = assertThrows<VerificationUsedException> {
-            pinVerifyService.validateIfValid(userVerification.verification)
+            pinVerifyService.validateIfUsed(userVerification.verification)
         }
         assertEquals("Verification already used", throws.message)
     }
@@ -100,5 +100,17 @@ class PinVerifyServiceTest {
             pinVerifyService.validateIfNotUsed(userVerification.verification)
         }
         assertEquals("Verification has not been verified", throws.message)
+    }
+
+    @Test
+    fun `should return exception if pin is deleted`() {
+        val user = User()
+        val verification = Verification(verification = "923876", used = false, deleted = true)
+        val userVerification = UserVerification(user, verification)
+
+        val throws = assertThrows<VerificationDeletedException> {
+            pinVerifyService.validateIfNotDeleted(userVerification.verification)
+        }
+        assertEquals("Verification deleted", throws.message)
     }
 }

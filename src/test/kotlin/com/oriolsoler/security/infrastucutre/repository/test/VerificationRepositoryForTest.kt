@@ -27,7 +27,7 @@ class VerificationRepositoryForTest(
 
     fun getBy(userVerification: UserVerification): UserVerification {
         val query = """
-            SELECT USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, USED
+            SELECT USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, USED, DELETED
              FROM VERIFY
              WHERE USER_ID=:user
              AND VERIFICATION=:verification
@@ -46,7 +46,7 @@ class VerificationRepositoryForTest(
 
     fun getUnusedBy(user: User): UserVerification {
         val query = """
-            SELECT USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, USED
+            SELECT USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, USED, DELETED
              FROM VERIFY
              WHERE USER_ID=:user
              AND used=FALSE
@@ -76,13 +76,15 @@ class VerificationRepositoryForTest(
             val creationDate = rs.getTimestamp("creation_date").toLocalDateTime()
             val expirationDate = rs.getTimestamp("expiration_date").toLocalDateTime()
             val used = rs.getBoolean("used")
+            val deleted = rs.getBoolean("deleted")
             UserVerification(
                 user = user,
                 Verification(
                     verification = verification,
                     creationDate = creationDate,
                     expirationDate = expirationDate,
-                    used = used
+                    used = used,
+                    deleted = deleted
                 )
             )
         }

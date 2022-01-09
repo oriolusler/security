@@ -15,12 +15,20 @@ class PinVerifyService(private val clock: ClockService, private val minutesValid
         )
     }
 
-    override fun validateIfValid(verification: Verification) {
-        verification.validateIfValid(clock.now())
+    override fun validateIfExpired(verification: Verification) {
+        verification.validateIfExpired(clock.now())
+    }
+
+    override fun validateIfUsed(verification: Verification) {
+        verification.validateIfUsed()
     }
 
     override fun validateIfNotUsed(verification: Verification) {
         verification.validateIfNotUsed()
+    }
+
+    override fun validateIfNotDeleted(verification: Verification) {
+        verification.validateIfDeleted()
     }
 
     private fun generateVerificationCode(): String {

@@ -8,6 +8,7 @@ import com.oriolsoler.security.application.validateverification.VerifyServiceRep
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.Verification
 import com.oriolsoler.security.domain.verification.UserVerification
+import com.oriolsoler.security.domain.verification.VerificationDeletedException
 import com.oriolsoler.security.domain.verification.VerificationNotVerifiedException
 import com.oriolsoler.security.infrastucutre.controller.forgotpassword.UpdatePasswordRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
@@ -57,6 +58,8 @@ class UpdatePasswordTestCase {
         verify(passwordService, times(1)).encode(newPassword)
         verify(verifyServiceRepository, times(1)).getBy(user, verification)
         verify(verifyService, times(1)).validateIfNotUsed(verificationObject)
+        verify(verifyService, times(1)).validateIfNotDeleted(verificationObject)
+        verify(verifyServiceRepository, times(1)).setToDeleted(userVerification)
         verify(userRepository, times(1)).updatePassword(user, encryptedNewPassword)
         verify(userRepository, times(1)).getBy(mail)
         assertTrue { true }
@@ -90,6 +93,7 @@ class UpdatePasswordTestCase {
         verify(userRepository, times(1)).getBy(mail)
         verify(verifyServiceRepository, times(0)).getBy(any(), any())
         verify(verifyService, times(0)).validateIfNotUsed(any())
+        verify(verifyService, times(0)).validateIfNotDeleted(any())
         verify(passwordService, times(0)).encode(any())
         verify(userRepository, times(0)).updatePassword(any(), any())
     }
@@ -127,6 +131,7 @@ class UpdatePasswordTestCase {
         verify(userRepository, times(1)).getBy(mail)
         verify(verifyServiceRepository, times(1)).getBy(user, verification)
         verify(verifyService, times(0)).validateIfNotUsed(any())
+        verify(verifyService, times(0)).validateIfNotDeleted(any())
         verify(passwordService, times(0)).encode(any())
         verify(userRepository, times(0)).updatePassword(any(), any())
     }
@@ -168,6 +173,50 @@ class UpdatePasswordTestCase {
         verify(userRepository, times(1)).getBy(mail)
         verify(verifyServiceRepository, times(1)).getBy(user, verification)
         verify(verifyService, times(1)).validateIfNotUsed(verificationObject)
+        verify(verifyService, times(0)).validateIfNotDeleted(verificationObject)
+        verify(passwordService, times(0)).encode(any())
+        verify(userRepository, times(0)).updatePassword(any(), any())
+    }
+
+    @Test
+    fun `should throw exception if verification is deleted`() {
+        val verification = "527832"
+        val verificationObject = Verification(verification)
+        val mail = "user@email.com"
+        val user = User(email = mail)
+        val newPassword = "NEW_PASSWORD"
+        val userVerification = UserVerification(user, verificationObject)
+
+        val userRepository = mock<UserRepository> {
+            on { getBy(mail) } doReturn user
+        }
+        val passwordService = mock<PasswordService> {}
+        val verifyServiceRepository = mock<VerifyServiceRepository> {
+            on { getBy(user, verification) } doReturn userVerification
+        }
+        val verifyService = mock<VerifyService> {}
+        doNothing().`when`(verifyService).validateIfNotUsed(verificationObject)
+        given { verifyService.validateIfNotDeleted(verificationObject) } willAnswer {
+            throw VerificationDeletedException()
+        }
+
+        val updatePasswordUseCase = UpdatePasswordUseCase(
+            userRepository,
+            verifyService,
+            verifyServiceRepository,
+            passwordService
+        )
+
+        val updatePasswordCommand = UpdatePasswordRequestCommand(mail, verification, newPassword)
+
+        val exception = assertThrows<UpdatePasswordException> {
+            updatePasswordUseCase.execute(updatePasswordCommand)
+        }
+        assertEquals("Update password error: Verification deleted", exception.message)
+        verify(userRepository, times(1)).getBy(mail)
+        verify(verifyServiceRepository, times(1)).getBy(user, verification)
+        verify(verifyService, times(1)).validateIfNotUsed(verificationObject)
+        verify(verifyService, times(1)).validateIfNotDeleted(verificationObject)
         verify(passwordService, times(0)).encode(any())
         verify(userRepository, times(0)).updatePassword(any(), any())
     }

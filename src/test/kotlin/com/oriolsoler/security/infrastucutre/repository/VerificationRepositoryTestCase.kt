@@ -91,4 +91,16 @@ abstract class VerificationRepositoryTestCase {
         val verificationPost = verificationRepositoryForTest.getBy(userVerification)
         assertTrue { verificationPost.verification.used }
     }
+
+    @Test
+    fun `should update verification if deleted`() {
+        val verification = Verification(verification = "455123", used = false, deleted = false)
+        val userVerification = UserVerification(user, verification)
+        verifyServiceRepository.save(userVerification)
+
+        verifyServiceRepository.setToDeleted(userVerification)
+
+        val verificationPost = verificationRepositoryForTest.getBy(userVerification)
+        assertTrue { verificationPost.verification.deleted }
+    }
 }

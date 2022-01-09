@@ -1,9 +1,6 @@
 package com.oriolsoler.security.domain
 
-import com.oriolsoler.security.domain.verification.Verification
-import com.oriolsoler.security.domain.verification.VerificationExpiredException
-import com.oriolsoler.security.domain.verification.VerificationNotVerifiedException
-import com.oriolsoler.security.domain.verification.VerificationUsedException
+import com.oriolsoler.security.domain.verification.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
@@ -25,10 +22,17 @@ class VerificationTest {
     }
 
     @Test
+    fun `should throw exception if deleted`() {
+        val verification = Verification(verification = "489324", used = true, deleted = true)
+        val exception = assertThrows<VerificationDeletedException> { verification.validateIfDeleted() }
+        assertEquals("Verification deleted", exception.message)
+    }
+
+    @Test
     fun `should throw exception if not valid`() {
         val verification = Verification(verification = "489324", used = false)
         val exception = assertThrows<VerificationExpiredException> {
-            verification.validateIfValid(
+            verification.validateIfExpired(
                 LocalDateTime.now().plusDays(1)
             )
         }
