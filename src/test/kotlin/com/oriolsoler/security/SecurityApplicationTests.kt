@@ -58,4 +58,7 @@ class SecurityApplicationTests {
 
     @Nested
     inner class ForgotPassword : ForgotPasswordTestCase()
+
+    @Nested
+    inner class UpdatePassword : UpdatePasswordTestCase()
 }

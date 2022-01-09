@@ -9,7 +9,7 @@ import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.Verification
 import com.oriolsoler.security.domain.verification.UserVerification
 import com.oriolsoler.security.domain.verification.VerificationNotVerifiedException
-import com.oriolsoler.security.infrastucutre.controller.forgotpassword.UpdatePasswordCommand
+import com.oriolsoler.security.infrastucutre.controller.forgotpassword.UpdatePasswordRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
 import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException
 import org.junit.jupiter.api.Test
@@ -51,7 +51,7 @@ class UpdatePasswordTestCase {
             passwordService
         )
 
-        val updatePasswordCommand = UpdatePasswordCommand(mail, verification, newPassword)
+        val updatePasswordCommand = UpdatePasswordRequestCommand(mail, verification, newPassword)
         updatePasswordUseCase.execute(updatePasswordCommand)
 
         verify(passwordService, times(1)).encode(newPassword)
@@ -81,7 +81,7 @@ class UpdatePasswordTestCase {
             passwordService
         )
 
-        val updatePasswordCommand = UpdatePasswordCommand(mail, verification, newPassword)
+        val updatePasswordCommand = UpdatePasswordRequestCommand(mail, verification, newPassword)
 
         val exception = assertThrows<UpdatePasswordException> {
             updatePasswordUseCase.execute(updatePasswordCommand)
@@ -118,7 +118,7 @@ class UpdatePasswordTestCase {
             passwordService
         )
 
-        val updatePasswordCommand = UpdatePasswordCommand(mail, verification, newPassword)
+        val updatePasswordCommand = UpdatePasswordRequestCommand(mail, verification, newPassword)
 
         val exception = assertThrows<UpdatePasswordException> {
             updatePasswordUseCase.execute(updatePasswordCommand)
@@ -159,7 +159,7 @@ class UpdatePasswordTestCase {
             passwordService
         )
 
-        val updatePasswordCommand = UpdatePasswordCommand(mail, verification, newPassword)
+        val updatePasswordCommand = UpdatePasswordRequestCommand(mail, verification, newPassword)
 
         val exception = assertThrows<UpdatePasswordException> {
             updatePasswordUseCase.execute(updatePasswordCommand)

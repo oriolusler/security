@@ -18,8 +18,8 @@ class LoginEmailPasswordUseCase(
     fun execute(loginRequestCommand: LoginRequestCommand): LoginResponse {
         val currentUser = getUserByEmail(loginRequestCommand.email)
 
-        isValidUser(currentUser)
-        isValidPassword(loginRequestCommand.password, currentUser.password)
+        validateUser(currentUser)
+        validatePassword(loginRequestCommand.password, currentUser.password)
 
         val token = tokenGenerator.generate(currentUser.id)
         return LoginResponse(
@@ -36,7 +36,7 @@ class LoginEmailPasswordUseCase(
         }
     }
 
-    private fun isValidUser(user: User) {
+    private fun validateUser(user: User) {
         try {
             user.isValid()
         } catch (e: UserLockedException) {
@@ -44,7 +44,7 @@ class LoginEmailPasswordUseCase(
         }
     }
 
-    private fun isValidPassword(rawPassword: String, encodedPassword: String) {
+    private fun validatePassword(rawPassword: String, encodedPassword: String) {
         try {
             passwordService.matches(rawPassword, encodedPassword)
         } catch (e: InvalidPasswordException) {

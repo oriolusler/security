@@ -7,7 +7,7 @@ import com.oriolsoler.security.application.validateverification.VerifyServiceRep
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.UserVerification
 import com.oriolsoler.security.domain.verification.VerificationNotVerifiedException
-import com.oriolsoler.security.infrastucutre.controller.forgotpassword.UpdatePasswordCommand
+import com.oriolsoler.security.infrastucutre.controller.forgotpassword.UpdatePasswordRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
 import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException
 
@@ -17,12 +17,11 @@ class UpdatePasswordUseCase(
     private val verifyServiceRepository: VerifyServiceRepository,
     private val passwordService: PasswordService
 ) {
-    fun execute(updatePasswordCommand: UpdatePasswordCommand) {
-        val currentUser = getUserByEmail(updatePasswordCommand.mail)
+    fun execute(updatePasswordCommand: UpdatePasswordRequestCommand) {
+        val currentUser = getUserByEmail(updatePasswordCommand.email)
         val userVerification = getUserVerification(currentUser, updatePasswordCommand)
         checkIfUserVerificationHasNotBeenUsed(userVerification)
-        val encodedPassword = passwordService.encode(updatePasswordCommand.newPassword)
-        userRepository.updatePassword(currentUser, encodedPassword)
+        userRepository.updatePassword(currentUser, passwordService.encode(updatePasswordCommand.newPassword))
     }
 
     private fun checkIfUserVerificationHasNotBeenUsed(userVerification: UserVerification) {
@@ -35,7 +34,7 @@ class UpdatePasswordUseCase(
 
     private fun getUserVerification(
         currentUser: User,
-        updatePasswordCommand: UpdatePasswordCommand
+        updatePasswordCommand: UpdatePasswordRequestCommand
     ): UserVerification {
         try {
             return verifyServiceRepository.getBy(currentUser, updatePasswordCommand.verification)
