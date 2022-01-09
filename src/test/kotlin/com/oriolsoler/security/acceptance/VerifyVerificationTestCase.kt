@@ -99,7 +99,7 @@ abstract class VerifyVerificationTestCase {
             .post("/api/auth/verify")
             .then()
             .status(GONE)
-            .body(equalTo("Verification error: Expired"))
+            .body(equalTo("Verify error: Verification expired"))
     }
 
     @Test
@@ -119,6 +119,24 @@ abstract class VerifyVerificationTestCase {
             .post("/api/auth/verify")
             .then()
             .status(CONFLICT)
-            .body(equalTo("Verification error: Used"))
+            .body(equalTo("Verify error: Verification already used"))
+    }
+
+    @Test
+    internal fun `should handle error if verification not found`() {
+        val user = User(email = "email@online.com", password = "extremely_safe_password", locked = true)
+        userRepository.save(user)
+
+        val verification = Verification("000000", used = true)
+
+        val verifyVerificationCommand = VerifyVerificationCommand(user.email, verification.verification)
+
+        given()
+            .contentType("application/json")
+            .body(verifyVerificationCommand)
+            .post("/api/auth/verify")
+            .then()
+            .status(NOT_FOUND)
+            .body(equalTo("Verify error: No verification found"))
     }
 }

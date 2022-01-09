@@ -5,10 +5,7 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.oriolsoler.security.domain.user.User
-import com.oriolsoler.security.domain.verification.UserVerification
-import com.oriolsoler.security.domain.verification.Verification
-import com.oriolsoler.security.domain.verification.VerificationExpiredException
-import com.oriolsoler.security.domain.verification.VerificationUsedException
+import com.oriolsoler.security.domain.verification.*
 import org.apache.commons.lang3.StringUtils
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -57,14 +54,14 @@ class PinVerifyServiceTest {
         val verification = Verification(verification = "856423")
         val userVerification = UserVerification(user, verification)
 
-        val result = pinVerifyService.isValid(userVerification)
+        pinVerifyService.validateIfValid(userVerification.verification)
 
-        assertTrue { result }
+        assertTrue { true }
         verify(clock, times(1)).now()
     }
 
     @Test
-    fun `should return exception if pin is expired`() {
+    fun `should return exception if pin is not valid`() {
         val user = User()
         val verification = Verification(verification = "543534")
         val userVerification = UserVerification(user, verification)
@@ -74,18 +71,34 @@ class PinVerifyServiceTest {
         }
         pinVerifyService = PinVerifyService(clock, minutesValid)
 
-        val throws = assertThrows<VerificationExpiredException> { pinVerifyService.isValid(userVerification) }
-        assertEquals("Expired", throws.message)
+        val throws = assertThrows<VerificationExpiredException> {
+            pinVerifyService.validateIfValid(userVerification.verification)
+        }
+        assertEquals("Verification expired", throws.message)
         verify(clock, times(1)).now()
     }
 
     @Test
-    fun `should return false if pin is already used`() {
+    fun `should return exception if pin is already used`() {
         val user = User()
         val verification = Verification(verification = "923876", used = true)
         val userVerification = UserVerification(user, verification)
 
-        val throws = assertThrows<VerificationUsedException> { pinVerifyService.isValid(userVerification) }
-        assertEquals("Used", throws.message)
+        val throws = assertThrows<VerificationUsedException> {
+            pinVerifyService.validateIfValid(userVerification.verification)
+        }
+        assertEquals("Verification already used", throws.message)
+    }
+
+    @Test
+    fun `should return exception if pin is not used`() {
+        val user = User()
+        val verification = Verification(verification = "923876", used = false)
+        val userVerification = UserVerification(user, verification)
+
+        val throws = assertThrows<VerificationNotVerifiedException> {
+            pinVerifyService.validateIfNotUsed(userVerification.verification)
+        }
+        assertEquals("Verification has not been verified", throws.message)
     }
 }

@@ -69,7 +69,7 @@ abstract class VerificationRepositoryTestCase {
 
         verifyServiceRepository.save(userVerification)
 
-        val result = verifyServiceRepository.getUnusedBy(user)
+        val result = verificationRepositoryForTest.getUnusedBy(user)
 
         assertNotNull(result)
         assertEquals(user, result.user)
@@ -77,7 +77,7 @@ abstract class VerificationRepositoryTestCase {
 
     @Test
     fun `expect error if no validation found`() {
-        assertFailsWith<Exception> { verifyServiceRepository.getUnusedBy(user) }
+        assertFailsWith<Exception> { verificationRepositoryForTest.getUnusedBy(user) }
     }
 
     @Test

@@ -2,7 +2,6 @@ package com.oriolsoler.security.acceptance
 
 import com.oriolsoler.security.SecurityApplication
 import com.oriolsoler.security.application.UserRepository
-import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
 import com.oriolsoler.security.infrastucutre.controller.login.LoginEmailPasswordController
 import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpEmailPasswordController
@@ -11,6 +10,7 @@ import com.oriolsoler.security.infrastucutre.controller.validaterefreshtoken.Val
 import com.oriolsoler.security.infrastucutre.controller.verifyVerification.VerifyVerificationCommand
 import com.oriolsoler.security.infrastucutre.controller.verifyVerification.VerifyVerificationController
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
+import com.oriolsoler.security.infrastucutre.repository.test.VerificationRepositoryForTest
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import io.restassured.module.mockmvc.RestAssuredMockMvc.given
 import org.junit.jupiter.api.BeforeEach
@@ -48,7 +48,7 @@ abstract class ValidateRefreshTokenTestCase {
     private lateinit var verifyVerificationController: VerifyVerificationController
 
     @Autowired
-    private lateinit var verificationRepository: VerifyServiceRepository
+    private lateinit var verificationRepositoryForTest: VerificationRepositoryForTest
 
     @BeforeEach
     fun setUp() {
@@ -65,7 +65,7 @@ abstract class ValidateRefreshTokenTestCase {
         signupController.register(signUpRequestCommand)
 
         val user = userRepository.getBy(email)
-        val verification = verificationRepository.getUnusedBy(user)
+        val verification = verificationRepositoryForTest.getUnusedBy(user)
         val verifyCommand = VerifyVerificationCommand(email, verification.verification.verification)
         verifyVerificationController.verify(verifyCommand)
 
@@ -92,7 +92,7 @@ abstract class ValidateRefreshTokenTestCase {
         signupController.register(signUpRequestCommand)
 
         val user = userRepository.getBy(email)
-        val verification = verificationRepository.getUnusedBy(user)
+        val verification = verificationRepositoryForTest.getUnusedBy(user)
         val verifyCommand = VerifyVerificationCommand(email, verification.verification.verification)
         verifyVerificationController.verify(verifyCommand)
 

@@ -4,6 +4,7 @@ import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.UserVerification
 import com.oriolsoler.security.domain.verification.VerificationException
+import com.oriolsoler.security.domain.verification.VerificationUsedException
 import com.oriolsoler.security.infrastucutre.controller.verifyVerification.VerifyVerificationCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
 import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException
@@ -16,10 +17,9 @@ class VerifyVerificationUseCase(
     fun execute(verifyVerificationCommand: VerifyVerificationCommand) {
         val user = getUserByEmail(verifyVerificationCommand.email)
         val userVerification = getUserVerification(user, verifyVerificationCommand)
-        if (isValid(userVerification)) {
-            verifyServiceRepository.setToUsed(userVerification)
-            userRepository.setUnlocked(user)
-        }
+        checkIfTokenIsValid(userVerification)
+        verifyServiceRepository.setToUsed(userVerification)
+        userRepository.setUnlocked(user)
     }
 
     private fun getUserByEmail(email: String): User {
@@ -31,14 +31,14 @@ class VerifyVerificationUseCase(
     }
 
     private fun getUserVerification(user: User, verifyVerificationCommand: VerifyVerificationCommand) = try {
-        verifyServiceRepository.getUnusedBy(user, verifyVerificationCommand.verification)
+        verifyServiceRepository.getBy(user, verifyVerificationCommand.verification)
     } catch (e: VerificationNotFoundException) {
         throw VerifyException(e.message, e)
     }
 
 
-    private fun isValid(userVerification: UserVerification) = try {
-        verifyService.isValid(userVerification)
+    private fun checkIfTokenIsValid(userVerification: UserVerification) = try {
+        verifyService.validateIfValid(userVerification.verification)
     } catch (e: VerificationException) {
         throw VerifyException(e.message, e)
     }

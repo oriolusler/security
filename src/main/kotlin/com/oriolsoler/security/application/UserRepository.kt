@@ -9,4 +9,5 @@ interface UserRepository {
     fun save(user: User): User
     fun setUnlocked(user: User)
     fun checkIfUserAlreadyExists(email: String)
+    fun updatePassword(user: User, newPassword: String)
 }

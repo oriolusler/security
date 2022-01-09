@@ -1,3 +1,3 @@
 package com.oriolsoler.security.domain.verification
 
-class VerificationExpiredException : VerificationException("Expired")
+class VerificationExpiredException : VerificationException("Verification expired")

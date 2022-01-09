@@ -31,39 +31,18 @@ class PostgresVerifyRepository(
         jdbcTemplate.update(sql, namedParameters)
     }
 
-    override fun getUnusedBy(user: User): UserVerification {
+    override fun getBy(user: User, verification: String): UserVerification {
         val query = """
-            SELECT USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, USED
-             FROM VERIFY
-             WHERE USER_ID=:user
-             AND used=FALSE
-        """.trimIndent()
-
-        val namedParameter = MapSqlParameterSource()
-        namedParameter.addValue("user", user.id.value)
-
-        return queryForVerification(query, namedParameter)
-    }
-
-    override fun getUnusedBy(user: User, verification: String): UserVerification {
-        val query = """
-            SELECT USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, USED
-             FROM VERIFY
-             WHERE USER_ID=:user
-             AND VERIFICATION=:verification
-        """.trimIndent()
+                SELECT USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, USED
+                 FROM VERIFY
+                 WHERE USER_ID=:user
+                 AND VERIFICATION=:verification
+            """.trimIndent()
 
         val namedParameter = MapSqlParameterSource()
         namedParameter.addValue("user", user.id.value)
         namedParameter.addValue("verification", verification)
 
-        return queryForVerification(query, namedParameter)
-    }
-
-    private fun queryForVerification(
-        query: String,
-        namedParameter: MapSqlParameterSource
-    ): UserVerification {
         return try {
             jdbcTemplate.queryForObject(query, namedParameter, mapperVerification())!!
         } catch (exception: EmptyResultDataAccessException) {

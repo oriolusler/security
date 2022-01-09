@@ -1,9 +1,11 @@
 package com.oriolsoler.security.infrastucutre.repository.test
 
 import com.oriolsoler.security.application.UserRepository
+import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.UserVerification
 import com.oriolsoler.security.domain.verification.Verification
 import com.oriolsoler.security.domain.user.UserId
+import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
@@ -39,6 +41,31 @@ class VerificationRepositoryForTest(
             jdbcTemplate.queryForObject(query, namedParameter, mapperVerification())!!
         } catch (exception: EmptyResultDataAccessException) {
             throw Exception("No verification found")
+        }
+    }
+
+    fun getUnusedBy(user: User): UserVerification {
+        val query = """
+            SELECT USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, USED
+             FROM VERIFY
+             WHERE USER_ID=:user
+             AND used=FALSE
+        """.trimIndent()
+
+        val namedParameter = MapSqlParameterSource()
+        namedParameter.addValue("user", user.id.value)
+
+        return queryForVerification(query, namedParameter)
+    }
+
+    private fun queryForVerification(
+        query: String,
+        namedParameter: MapSqlParameterSource
+    ): UserVerification {
+        return try {
+            jdbcTemplate.queryForObject(query, namedParameter, mapperVerification())!!
+        } catch (exception: EmptyResultDataAccessException) {
+            throw VerificationNotFoundException()
         }
     }
 

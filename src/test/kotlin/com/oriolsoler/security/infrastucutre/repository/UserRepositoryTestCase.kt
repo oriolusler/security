@@ -83,4 +83,18 @@ abstract class UserRepositoryTestCase {
         val e = assertThrows<UserAlreadyExistsException> { userRepository.checkIfUserAlreadyExists(user.email) }
         assertEquals("User already exists", e.message)
     }
+
+    @Test
+    fun `should update the password`() {
+        val user = User(email = email, password = password)
+        val userSaved = userRepository.save(user)
+        assertEquals(password, userSaved.password)
+
+        val newPassword = "newPassword"
+        userRepository.updatePassword(user, newPassword)
+
+        val userSavedWithNewPassword = userRepository.getBy(user.id)
+        assertNotEquals(password, userSavedWithNewPassword.password)
+        assertEquals(newPassword, userSavedWithNewPassword.password)
+    }
 }

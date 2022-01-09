@@ -25,14 +25,13 @@ class VerifyVerificationTestCase {
         val verifyVerificationCommand = VerifyVerificationCommand(user.email, verification)
         val userVerification = UserVerification(user, Verification(verification = verification))
 
-        val verifyService = mock<VerifyService> {
-            on { isValid(any()) } doReturn true
-        }
+        val verifyService = mock<VerifyService> {}
+        doNothing().`when`(verifyService).validateIfValid(any())
         val userRepository = mock<UserRepository> {
             on { getBy(user.email) } doReturn user
         }
         val verifyServiceRepository = mock<VerifyServiceRepository> {
-            on { getUnusedBy(user, verification) } doReturn userVerification
+            on { getBy(user, verification) } doReturn userVerification
         }
 
         val verifyVerificationUseCase = VerifyVerificationUseCase(
@@ -44,8 +43,8 @@ class VerifyVerificationTestCase {
         verifyVerificationUseCase.execute(verifyVerificationCommand)
 
         verify(userRepository, times(1)).getBy(user.email)
-        verify(verifyServiceRepository, times(1)).getUnusedBy(user, verification)
-        verify(verifyService, times(1)).isValid(any())
+        verify(verifyServiceRepository, times(1)).getBy(user, verification)
+        verify(verifyService, times(1)).validateIfValid(any())
         verify(verifyServiceRepository, times(1)).setToUsed(userVerification)
         verify(userRepository, times(1)).setUnlocked(user)
     }
@@ -59,14 +58,14 @@ class VerifyVerificationTestCase {
 
         val verifyService = mock<VerifyService> { }
         given {
-            verifyService.isValid(any())
+            verifyService.validateIfValid(any())
         } willAnswer { throw VerificationException("Invalid verification") }
 
         val userRepository = mock<UserRepository> {
             on { getBy(user.email) } doReturn user
         }
         val verifyServiceRepository = mock<VerifyServiceRepository> {
-            on { getUnusedBy(user, verification) } doReturn userVerification
+            on { getBy(user, verification) } doReturn userVerification
         }
 
         val verifyVerificationUseCase = VerifyVerificationUseCase(
@@ -76,7 +75,7 @@ class VerifyVerificationTestCase {
         )
 
         val exception = assertThrows<VerifyException> { verifyVerificationUseCase.execute(verifyVerificationCommand) }
-        assertEquals("Verification error: Invalid verification", exception.message)
+        assertEquals("Verify error: Invalid verification", exception.message)
     }
 
     @Test
@@ -91,7 +90,7 @@ class VerifyVerificationTestCase {
         }
         val verifyServiceRepository = mock<VerifyServiceRepository> {}
         given {
-            verifyServiceRepository.getUnusedBy(user, verification)
+            verifyServiceRepository.getBy(user, verification)
         } willAnswer { throw VerificationNotFoundException() }
 
         val verifyVerificationUseCase = VerifyVerificationUseCase(
@@ -101,7 +100,7 @@ class VerifyVerificationTestCase {
         )
 
         val exception = assertThrows<VerifyException> { verifyVerificationUseCase.execute(verifyVerificationCommand) }
-        assertEquals("Verification error: No verification found", exception.message)
+        assertEquals("Verify error: No verification found", exception.message)
     }
 
     @Test
@@ -122,6 +121,6 @@ class VerifyVerificationTestCase {
         )
 
         val exception = assertThrows<VerifyException> { verifyVerificationUseCase.execute(verifyVerificationCommand) }
-        assertEquals("Verification error: User not found", exception.message)
+        assertEquals("Verify error: User not found", exception.message)
     }
 }

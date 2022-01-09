@@ -50,6 +50,19 @@ class PostgresUserRepository(
         }
     }
 
+    override fun updatePassword(user: User, newPassword: String) {
+        val sql = """
+           UPDATE SECURITY_USER
+           SET PASSWORD=:newPassword
+           WHERE ID=:id
+       """.trimIndent()
+
+        val namedParameters = MapSqlParameterSource()
+        namedParameters.addValue("newPassword", newPassword)
+        namedParameters.addValue("id", user.id.value)
+        jdbcTemplate.update(sql, namedParameters)
+    }
+
     private fun saveRoles(newUser: User) {
         val sql = """
            INSERT INTO SECURITY_USER_ROLE(USER_ID, ROLE)

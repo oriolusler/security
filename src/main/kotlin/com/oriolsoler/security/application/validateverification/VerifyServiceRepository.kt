@@ -5,7 +5,6 @@ import com.oriolsoler.security.domain.verification.UserVerification
 
 interface VerifyServiceRepository {
     fun save(userVerification: UserVerification)
-    fun getUnusedBy(user: User): UserVerification
-    fun getUnusedBy(user: User, verification: String): UserVerification
+    fun getBy(user: User, verification: String): UserVerification
     fun setToUsed(userVerification: UserVerification)
 }

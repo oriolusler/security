@@ -17,7 +17,11 @@ import com.oriolsoler.security.infrastucutre.repository.verification.Verificatio
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.http.HttpStatus.*
+import org.springframework.http.HttpStatus.ACCEPTED
+import org.springframework.http.HttpStatus.GONE
+import org.springframework.http.HttpStatus.CONFLICT
+import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
+import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -56,7 +60,7 @@ class VerifyVerificationControllerTest {
         val response = verifyVerificationController.handleVerificationError(errorVerify)
 
         assertEquals(GONE, response.statusCode)
-        assertEquals("Verification error: Expired", response.body)
+        assertEquals("Verify error: Verification expired", response.body)
     }
 
     @Test
@@ -66,7 +70,7 @@ class VerifyVerificationControllerTest {
         val response = verifyVerificationController.handleVerificationError(errorVerify)
 
         assertEquals(CONFLICT, response.statusCode)
-        assertEquals("Verification error: Used", response.body)
+        assertEquals("Verify error: Verification already used", response.body)
     }
 
     @Test
@@ -74,8 +78,8 @@ class VerifyVerificationControllerTest {
         val errorVerify = VerifyException("Unknown error", VerificationException("any"))
         val response = verifyVerificationController.handleVerificationError(errorVerify)
 
-        assertEquals(INTERNAL_SERVER_ERROR, response.statusCode)
-        assertEquals("Verification error: Unknown error", response.body)
+        assertEquals(SERVICE_UNAVAILABLE, response.statusCode)
+        assertEquals("Verify error: Unknown error", response.body)
     }
 
     @Test
@@ -85,7 +89,7 @@ class VerifyVerificationControllerTest {
         val response = verifyVerificationController.handleVerificationError(errorVerify)
 
         assertEquals(NOT_FOUND, response.statusCode)
-        assertEquals("Verification error: No verification found", response.body)
+        assertEquals("Verify error: No verification found", response.body)
     }
 
     @Test
@@ -95,6 +99,6 @@ class VerifyVerificationControllerTest {
         val response = verifyVerificationController.handleVerificationError(errorVerify)
 
         assertEquals(NOT_FOUND, response.statusCode)
-        assertEquals("Verification error: User not found", response.body)
+        assertEquals("Verify error: User not found", response.body)
     }
 }
