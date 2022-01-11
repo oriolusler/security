@@ -14,7 +14,7 @@ class VerifyVerificationUseCase(
 ) {
     fun execute(verifyVerificationCommand: VerifyVerificationCommand) {
         val user = getUserByEmail(verifyVerificationCommand.email)
-        val userVerification = getUserVerification(user, verifyVerificationCommand)
+        val userVerification = getUserVerification(user, verifyVerificationCommand.verification)
         checkIfTokenIsValid(userVerification)
         updateVerificationStatus(userVerification)
         userRepository.setUnlocked(user)
@@ -32,8 +32,8 @@ class VerifyVerificationUseCase(
         }
     }
 
-    private fun getUserVerification(user: User, verifyVerificationCommand: VerifyVerificationCommand) = try {
-        verifyServiceRepository.getBy(user, verifyVerificationCommand.verification)
+    private fun getUserVerification(user: User, verification: String) = try {
+        verifyServiceRepository.getBy(user, verification)
     } catch (e: VerificationNotFoundException) {
         throw VerifyException(e.message, e)
     }
