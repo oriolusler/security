@@ -8,4 +8,4 @@ class LoginResponse(
     val user: ResponseUser
 )
 
-data class ResponseUser(val id: UserId, val email: String)
+data class ResponseUser(val id: String, val email: String)

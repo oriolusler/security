@@ -50,7 +50,7 @@ class LoginEmailPasswordTestCase {
         assertNotNull(loginResponse.token)
         assertTrue { loginResponse.token.accessToken.isNotEmpty() }
         assertTrue { loginResponse.token.refreshToken.isNotEmpty() }
-        assertEquals(user.id.value, loginResponse.user.id.value)
+        assertEquals(user.id.value.toString(), loginResponse.user.id)
         assertEquals(email, loginResponse.user.email)
 
         verify(passwordService, times(1)).matches(password, encryptedPassword)

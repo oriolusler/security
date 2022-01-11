@@ -24,7 +24,7 @@ class LoginEmailPasswordUseCase(
         val token = tokenGenerator.generate(currentUser.id)
         return LoginResponse(
             token = token,
-            user = ResponseUser(currentUser.id, currentUser.email)
+            user = ResponseUser(currentUser.id.value.toString(), currentUser.email)
         )
     }
 

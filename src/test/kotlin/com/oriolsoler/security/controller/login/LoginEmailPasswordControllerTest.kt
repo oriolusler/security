@@ -43,17 +43,17 @@ class LoginEmailPasswordControllerTest {
         val password = "password"
         val loginRequestCommand = LoginRequestCommand(email, password)
 
-        val loginResponse = LoginResponse(
+        val loginResponseExpected = LoginResponse(
             token = Token("", ""),
-            user = ResponseUser(UserId(), "email@online.com")
+            user = ResponseUser(UserId().value.toString(), "email@online.com")
         )
-        `when`(loginEmailPasswordUseCase.execute(loginRequestCommand)).thenReturn(loginResponse)
+        `when`(loginEmailPasswordUseCase.execute(loginRequestCommand)).thenReturn(loginResponseExpected)
 
         val response = loginEmailPasswordController.login(loginRequestCommand)
 
         assertEquals(OK, response.statusCode)
         assertNotNull(response.body)
-        assertEquals(loginResponse.user.id.value, response.body!!.user.id.value)
+        assertEquals(loginResponseExpected.user.id, response.body!!.user.id)
     }
 
     @Test

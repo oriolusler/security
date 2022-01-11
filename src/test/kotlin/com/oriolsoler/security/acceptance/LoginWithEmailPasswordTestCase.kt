@@ -8,7 +8,7 @@ import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestComman
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import io.restassured.module.mockmvc.RestAssuredMockMvc.given
-import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus.*
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 @SpringBootTest(
     classes = [SecurityApplication::class],
@@ -59,6 +60,10 @@ abstract class LoginWithEmailPasswordTestCase {
             .post("/api/auth/login")
             .then()
             .status(OK)
+            .body("user.id", equalTo(user.id.value.toString()))
+            .body("user.email", equalTo(user.email))
+            .body("token.accessToken", notNullValue())
+            .body("token.refreshToken", notNullValue())
     }
 
     @Test
