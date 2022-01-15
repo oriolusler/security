@@ -4,8 +4,6 @@ import com.nhaarman.mockito_kotlin.*
 import com.oriolsoler.security.application.signup.MailService
 import com.oriolsoler.security.application.signup.SignUpEmailPasswordUseCase
 import com.oriolsoler.security.application.signup.SignUpException
-import com.oriolsoler.security.application.validateverification.VerifyService
-import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.Verification
 import com.oriolsoler.security.domain.email.ValidateEmailMailInformation

@@ -7,8 +7,8 @@ import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestComman
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpEmailPasswordController
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpRequestCommand
 import com.oriolsoler.security.infrastucutre.controller.validaterefreshtoken.ValidateRefreshTokenCommand
-import com.oriolsoler.security.infrastucutre.controller.verifyVerification.VerifyVerificationCommand
-import com.oriolsoler.security.infrastucutre.controller.verifyVerification.VerifyVerificationController
+import com.oriolsoler.security.infrastucutre.controller.validateuser.ValidateUserCommand
+import com.oriolsoler.security.infrastucutre.controller.validateuser.ValidateUserController
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
 import com.oriolsoler.security.infrastucutre.repository.test.VerificationRepositoryForTest
 import io.restassured.module.mockmvc.RestAssuredMockMvc
@@ -45,7 +45,7 @@ abstract class ValidateRefreshTokenTestCase {
     private lateinit var signupController: SignUpEmailPasswordController
 
     @Autowired
-    private lateinit var verifyVerificationController: VerifyVerificationController
+    private lateinit var validateUserController: ValidateUserController
 
     @Autowired
     private lateinit var verificationRepositoryForTest: VerificationRepositoryForTest
@@ -66,8 +66,8 @@ abstract class ValidateRefreshTokenTestCase {
 
         val user = userRepository.getBy(email)
         val verification = verificationRepositoryForTest.getUnusedBy(user)
-        val verifyCommand = VerifyVerificationCommand(email, verification.verification.verification)
-        verifyVerificationController.verify(verifyCommand)
+        val verifyCommand = ValidateUserCommand(email, verification.verification.verification)
+        validateUserController.verify(verifyCommand)
 
         val loginRequestCommand = LoginRequestCommand(email, password)
         val loginResponse = loginEmailPasswordController.login(loginRequestCommand)
@@ -93,8 +93,8 @@ abstract class ValidateRefreshTokenTestCase {
 
         val user = userRepository.getBy(email)
         val verification = verificationRepositoryForTest.getUnusedBy(user)
-        val verifyCommand = VerifyVerificationCommand(email, verification.verification.verification)
-        verifyVerificationController.verify(verifyCommand)
+        val verifyCommand = ValidateUserCommand(email, verification.verification.verification)
+        validateUserController.verify(verifyCommand)
 
         val loginRequestCommand = LoginRequestCommand(email, password)
         val loginResponse = loginEmailPasswordController.login(loginRequestCommand)

@@ -5,8 +5,8 @@ import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.application.accessverification.TokenVerification
 import com.oriolsoler.security.application.login.TokenGenerator
 import com.oriolsoler.security.application.signup.MailService
-import com.oriolsoler.security.application.validateverification.VerifyService
-import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
+import com.oriolsoler.security.application.VerifyService
+import com.oriolsoler.security.application.VerifyServiceRepository
 import com.oriolsoler.security.domain.services.*
 import com.oriolsoler.security.infrastucutre.repository.user.PostgresUserRepository
 import com.oriolsoler.security.infrastucutre.repository.verification.PostgresVerifyRepository

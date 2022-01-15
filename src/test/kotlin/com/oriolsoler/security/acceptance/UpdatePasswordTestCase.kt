@@ -3,12 +3,13 @@ package com.oriolsoler.security.acceptance
 import com.oriolsoler.security.SecurityApplication
 import com.oriolsoler.security.application.PasswordService
 import com.oriolsoler.security.application.UserRepository
-import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
+import com.oriolsoler.security.application.VerifyServiceRepository
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.UserVerification
 import com.oriolsoler.security.domain.verification.Verification
 import com.oriolsoler.security.infrastucutre.controller.forgotpassword.UpdatePasswordRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
+import com.oriolsoler.security.infrastucutre.repository.test.VerificationRepositoryForTest
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import io.restassured.module.mockmvc.RestAssuredMockMvc.given
 import org.junit.jupiter.api.BeforeEach
@@ -44,6 +45,9 @@ abstract class UpdatePasswordTestCase {
     @Autowired
     private lateinit var passwordService: PasswordService
 
+    @Autowired
+    private lateinit var verificationRepositoryForTest: VerificationRepositoryForTest
+
     @BeforeEach
     fun setUp() {
         userRepositoryForTest.clean()
@@ -73,5 +77,9 @@ abstract class UpdatePasswordTestCase {
 
         val userAfter = userRepository.getBy(email)
         assertDoesNotThrow { passwordService.matches(newPassword, userAfter.password) }
+
+        val verificationPost = verificationRepositoryForTest.getBy(userVerification)
+        assertTrue { verificationPost.verification.used }
+        assertTrue { verificationPost.verification.deleted }
     }
 }

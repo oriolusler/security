@@ -11,9 +11,10 @@ import com.oriolsoler.security.application.login.TokenGenerator
 import com.oriolsoler.security.application.signup.MailService
 import com.oriolsoler.security.application.signup.SignUpEmailPasswordUseCase
 import com.oriolsoler.security.application.validaterefreshtoken.ValidateRefreshTokenUseCase
-import com.oriolsoler.security.application.validateverification.VerifyService
-import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
-import com.oriolsoler.security.application.validateverification.VerifyVerificationUseCase
+import com.oriolsoler.security.application.VerifyService
+import com.oriolsoler.security.application.VerifyServiceRepository
+import com.oriolsoler.security.application.validateupdatepassword.ValidateUpdatePasswordUseCase
+import com.oriolsoler.security.application.validateuser.ValidateUserUseCase
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -50,12 +51,21 @@ class ApplicationConfiguration {
     }
 
     @Bean
-    fun verifyVerificationUseCase(
+    fun validateUpdatePasswordUseCase(
         verifyService: VerifyService,
         verifyServiceRepository: VerifyServiceRepository,
         userRepository: UserRepository
-    ): VerifyVerificationUseCase {
-        return VerifyVerificationUseCase(verifyService, verifyServiceRepository, userRepository)
+    ): ValidateUpdatePasswordUseCase {
+        return ValidateUpdatePasswordUseCase(verifyService, verifyServiceRepository, userRepository)
+    }
+
+    @Bean
+    fun validateUserUseCase(
+        verifyService: VerifyService,
+        verifyServiceRepository: VerifyServiceRepository,
+        userRepository: UserRepository
+    ): ValidateUserUseCase {
+        return ValidateUserUseCase(verifyService, verifyServiceRepository, userRepository)
     }
 
     @Bean

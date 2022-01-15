@@ -1,7 +1,7 @@
-package com.oriolsoler.security.infrastucutre.controller.verifyVerification
+package com.oriolsoler.security.infrastucutre.controller.validateupdatepassword
 
-import com.oriolsoler.security.application.validateverification.VerifyException
-import com.oriolsoler.security.application.validateverification.VerifyVerificationUseCase
+import com.oriolsoler.security.application.validateupdatepassword.ValidateUpdatePasswordException
+import com.oriolsoler.security.application.validateupdatepassword.ValidateUpdatePasswordUseCase
 import com.oriolsoler.security.domain.verification.VerificationExpiredException
 import com.oriolsoler.security.domain.verification.VerificationUsedException
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
@@ -18,18 +18,18 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class VerifyVerificationController(
-    private val verifyVerificationUseCase: VerifyVerificationUseCase
+class ValidateUpdatePasswordController(
+    private val validateUpdatePasswordUseCase: ValidateUpdatePasswordUseCase
 ) {
-    @PostMapping("/api/auth/verify")
-    fun verify(@RequestBody verificationCommand: VerifyVerificationCommand): ResponseEntity<Unit> {
+    @PostMapping("/api/auth/validate/update-password")
+    fun verify(@RequestBody verificationCommand: ValidateUpdatedPasswordCommand): ResponseEntity<Unit> {
         return ResponseEntity
             .status(ACCEPTED)
-            .body(verifyVerificationUseCase.execute(verificationCommand))
+            .body(validateUpdatePasswordUseCase.execute(verificationCommand))
     }
 
-    @ExceptionHandler(VerifyException::class)
-    fun handleVerificationError(error: VerifyException): ResponseEntity<String> {
+    @ExceptionHandler(ValidateUpdatePasswordException::class)
+    fun handleVerificationError(error: ValidateUpdatePasswordException): ResponseEntity<String> {
         if (error.cause is VerificationExpiredException) return ResponseEntity
             .status(GONE)
             .body(error.message)

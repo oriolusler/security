@@ -48,6 +48,7 @@ abstract class SignUpWithEmailPasswordTestCase {
             .post("/api/auth/register")
             .then()
             .status(CREATED)
+            .body(equalTo("User with email email@online.com created successfully"))
     }
 
     @Test

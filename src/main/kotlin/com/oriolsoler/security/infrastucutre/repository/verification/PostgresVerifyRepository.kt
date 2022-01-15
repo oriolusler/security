@@ -1,7 +1,7 @@
 package com.oriolsoler.security.infrastucutre.repository.verification
 
 import com.oriolsoler.security.application.UserRepository
-import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
+import com.oriolsoler.security.application.VerifyServiceRepository
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.UserVerification
 import com.oriolsoler.security.domain.verification.Verification

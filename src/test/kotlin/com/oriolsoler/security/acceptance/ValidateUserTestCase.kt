@@ -2,12 +2,12 @@ package com.oriolsoler.security.acceptance
 
 import com.oriolsoler.security.SecurityApplication
 import com.oriolsoler.security.application.UserRepository
-import com.oriolsoler.security.application.validateverification.VerifyService
-import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
+import com.oriolsoler.security.application.VerifyService
+import com.oriolsoler.security.application.VerifyServiceRepository
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.UserVerification
 import com.oriolsoler.security.domain.verification.Verification
-import com.oriolsoler.security.infrastucutre.controller.verifyVerification.VerifyVerificationCommand
+import com.oriolsoler.security.infrastucutre.controller.validateuser.ValidateUserCommand
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
 import com.oriolsoler.security.infrastucutre.repository.test.VerificationRepositoryForTest
 import io.restassured.module.mockmvc.RestAssuredMockMvc
@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus.*
 import org.springframework.test.web.servlet.MockMvc
 import java.time.LocalDateTime
+import kotlin.test.Ignore
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -29,7 +30,7 @@ import kotlin.test.assertTrue
     properties = ["spring.profiles.active=test"]
 )
 @AutoConfigureMockMvc
-abstract class VerifyVerificationTestCase {
+abstract class ValidateUserTestCase {
 
     @Autowired
     private lateinit var mvc: MockMvc
@@ -66,11 +67,11 @@ abstract class VerifyVerificationTestCase {
         verifyServiceRepository.save(userVerification)
         assertFalse { userVerification.verification.used }
 
-        val verifyVerificationCommand = VerifyVerificationCommand(user.email, verification.verification)
+        val validateUserCommand = ValidateUserCommand(user.email, verification.verification)
         given()
             .contentType("application/json")
-            .body(verifyVerificationCommand)
-            .post("/api/auth/verify")
+            .body(validateUserCommand)
+            .post("/api/auth/validate/user")
             .then()
             .status(ACCEPTED)
 
@@ -79,6 +80,7 @@ abstract class VerifyVerificationTestCase {
 
         val verificationPost = verificationRepositoryForTest.getBy(userVerification)
         assertTrue { verificationPost.verification.used }
+        assertTrue { verificationPost.verification.deleted }
     }
 
     @Test
@@ -87,56 +89,18 @@ abstract class VerifyVerificationTestCase {
         userRepository.save(user)
 
         val now = LocalDateTime.now()
-        val verification = Verification("687123", now, now.minusHours(1))
+        val verification = Verification("865142", now, now.minusHours(1))
         val userVerification = UserVerification(user, verification)
         verifyServiceRepository.save(userVerification)
 
-        val verifyVerificationCommand = VerifyVerificationCommand(user.email, verification.verification)
+        val validateUserCommand = ValidateUserCommand(user.email, verification.verification)
 
         given()
             .contentType("application/json")
-            .body(verifyVerificationCommand)
-            .post("/api/auth/verify")
+            .body(validateUserCommand)
+            .post("/api/auth/validate/user")
             .then()
             .status(GONE)
-            .body(equalTo("Verify error: Verification expired"))
-    }
-
-    @Test
-    internal fun `should handle used errors`() {
-        val user = User(email = "email@online.com", password = "extremely_safe_password", locked = true)
-        userRepository.save(user)
-
-        val verification = Verification("687123", used = true)
-        val userVerification = UserVerification(user, verification)
-        verifyServiceRepository.save(userVerification)
-
-        val verifyVerificationCommand = VerifyVerificationCommand(user.email, verification.verification)
-
-        given()
-            .contentType("application/json")
-            .body(verifyVerificationCommand)
-            .post("/api/auth/verify")
-            .then()
-            .status(CONFLICT)
-            .body(equalTo("Verify error: Verification already used"))
-    }
-
-    @Test
-    internal fun `should handle error if verification not found`() {
-        val user = User(email = "email@online.com", password = "extremely_safe_password", locked = true)
-        userRepository.save(user)
-
-        val verification = Verification("000000", used = true)
-
-        val verifyVerificationCommand = VerifyVerificationCommand(user.email, verification.verification)
-
-        given()
-            .contentType("application/json")
-            .body(verifyVerificationCommand)
-            .post("/api/auth/verify")
-            .then()
-            .status(NOT_FOUND)
-            .body(equalTo("Verify error: No verification found"))
+            .body(equalTo("Validate user error: Verification expired"))
     }
 }

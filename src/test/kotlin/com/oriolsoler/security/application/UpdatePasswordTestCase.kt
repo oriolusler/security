@@ -3,8 +3,6 @@ package com.oriolsoler.security.application
 import com.nhaarman.mockito_kotlin.*
 import com.oriolsoler.security.application.forgotpassword.UpdatePasswordException
 import com.oriolsoler.security.application.forgotpassword.UpdatePasswordUseCase
-import com.oriolsoler.security.application.validateverification.VerifyService
-import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.Verification
 import com.oriolsoler.security.domain.verification.UserVerification

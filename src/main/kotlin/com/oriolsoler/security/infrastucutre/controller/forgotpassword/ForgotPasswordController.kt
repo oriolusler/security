@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class ForgotPasswordController(private val forgotPasswordUseCase: ForgotPasswordUseCase) {
     @PostMapping("/api/auth/password/forgot")
-    fun forgot(@RequestBody forgotPasswordCommand: ForgotPasswordRequestCommand): ResponseEntity<String> {
+    fun forgot(@RequestBody forgotPasswordCommand: ForgotPasswordRequestCommand): ResponseEntity<Void> {
         forgotPasswordUseCase.execute(forgotPasswordCommand)
         return ResponseEntity
             .status(ACCEPTED)

@@ -37,11 +37,7 @@ class VerificationRepositoryForTest(
         namedParameter.addValue("user", userVerification.user.id.value)
         namedParameter.addValue("verification", userVerification.verification.verification)
 
-        return try {
-            jdbcTemplate.queryForObject(query, namedParameter, mapperVerification())!!
-        } catch (exception: EmptyResultDataAccessException) {
-            throw Exception("No verification found")
-        }
+        return queryForVerification(query, namedParameter)
     }
 
     fun getUnusedBy(user: User): UserVerification {

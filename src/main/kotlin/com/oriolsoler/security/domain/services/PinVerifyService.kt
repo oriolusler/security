@@ -1,6 +1,6 @@
 package com.oriolsoler.security.domain.services
 
-import com.oriolsoler.security.application.validateverification.VerifyService
+import com.oriolsoler.security.application.VerifyService
 import com.oriolsoler.security.domain.verification.Verification
 import java.util.concurrent.ThreadLocalRandom
 

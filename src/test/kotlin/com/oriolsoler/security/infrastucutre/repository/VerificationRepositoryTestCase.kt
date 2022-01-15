@@ -2,13 +2,14 @@ package com.oriolsoler.security.infrastucutre.repository
 
 import com.oriolsoler.security.SecurityApplication
 import com.oriolsoler.security.application.UserRepository
-import com.oriolsoler.security.application.validateverification.VerifyService
-import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
+import com.oriolsoler.security.application.VerifyService
+import com.oriolsoler.security.application.VerifyServiceRepository
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.UserVerification
 import com.oriolsoler.security.domain.verification.Verification
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
 import com.oriolsoler.security.infrastucutre.repository.test.VerificationRepositoryForTest
+import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -77,7 +78,7 @@ abstract class VerificationRepositoryTestCase {
 
     @Test
     fun `expect error if no validation found`() {
-        assertFailsWith<Exception> { verificationRepositoryForTest.getUnusedBy(user) }
+        assertFailsWith<VerificationNotFoundException> { verifyServiceRepository.getBy(user, "any") }
     }
 
     @Test

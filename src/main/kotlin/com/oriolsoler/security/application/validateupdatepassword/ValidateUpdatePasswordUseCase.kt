@@ -1,49 +1,48 @@
-package com.oriolsoler.security.application.validateverification
+package com.oriolsoler.security.application.validateupdatepassword
 
 import com.oriolsoler.security.application.UserRepository
+import com.oriolsoler.security.application.VerifyService
+import com.oriolsoler.security.application.VerifyServiceRepository
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.*
-import com.oriolsoler.security.infrastucutre.controller.verifyVerification.VerifyVerificationCommand
+import com.oriolsoler.security.infrastucutre.controller.validateupdatepassword.ValidateUpdatedPasswordCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
 import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException
 
-class VerifyVerificationUseCase(
+class ValidateUpdatePasswordUseCase(
     val verifyService: VerifyService,
     val verifyServiceRepository: VerifyServiceRepository,
     val userRepository: UserRepository
 ) {
-    fun execute(verifyVerificationCommand: VerifyVerificationCommand) {
-        val user = getUserByEmail(verifyVerificationCommand.email)
-        val userVerification = getUserVerification(user, verifyVerificationCommand.verification)
+    fun execute(validateUserCommand: ValidateUpdatedPasswordCommand) {
+        val user = getUserByEmail(validateUserCommand.email)
+        val userVerification = getUserVerification(user, validateUserCommand.verification)
         checkIfTokenIsValid(userVerification)
         updateVerificationStatus(userVerification)
-        userRepository.setUnlocked(user)
     }
 
     private fun updateVerificationStatus(userVerification: UserVerification) {
         verifyServiceRepository.setToUsed(userVerification)
     }
 
-    private fun getUserByEmail(email: String): User {
-        return try {
-            userRepository.getBy(email)
-        } catch (e: UserNotFoundException) {
-            throw VerifyException(e.message, e)
-        }
+    private fun getUserByEmail(email: String): User = try {
+        userRepository.getBy(email)
+    } catch (e: UserNotFoundException) {
+        throw ValidateUpdatePasswordException(e.message, e)
     }
 
     private fun getUserVerification(user: User, verification: String) = try {
         verifyServiceRepository.getBy(user, verification)
     } catch (e: VerificationNotFoundException) {
-        throw VerifyException(e.message, e)
+        throw ValidateUpdatePasswordException(e.message, e)
     }
 
     private fun checkIfTokenIsValid(userVerification: UserVerification) = try {
         verifyService.validateIfUsed(userVerification.verification)
         verifyService.validateIfExpired(userVerification.verification)
     } catch (e: VerificationExpiredException) {
-        throw VerifyException(e.message, e)
+        throw ValidateUpdatePasswordException(e.message, e)
     } catch (e: VerificationUsedException) {
-        throw VerifyException(e.message, e)
+        throw ValidateUpdatePasswordException(e.message, e)
     }
 }

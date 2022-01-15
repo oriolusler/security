@@ -2,8 +2,8 @@ package com.oriolsoler.security.application.signup
 
 import com.oriolsoler.security.application.PasswordService
 import com.oriolsoler.security.application.UserRepository
-import com.oriolsoler.security.application.validateverification.VerifyService
-import com.oriolsoler.security.application.validateverification.VerifyServiceRepository
+import com.oriolsoler.security.application.VerifyService
+import com.oriolsoler.security.application.VerifyServiceRepository
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.UserVerification
 import com.oriolsoler.security.domain.email.ValidateEmailMailInformation

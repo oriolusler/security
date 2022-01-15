@@ -1,4 +1,4 @@
-package com.oriolsoler.security.application.validateverification
+package com.oriolsoler.security.application
 
 import com.oriolsoler.security.domain.verification.Verification
 
