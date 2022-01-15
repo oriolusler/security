@@ -23,12 +23,7 @@ class SignUpEmailPasswordUseCase(
         val userVerification = UserVerification(userCreated, verifyService.generate())
         verifyServiceRepository.save(userVerification)
         sendMail(userVerification)
-        updateVerificationStatus(userVerification)
         return userCreated
-    }
-
-    private fun updateVerificationStatus(userVerification: UserVerification) {
-        verifyServiceRepository.setToDeleted(userVerification)
     }
 
     private fun sendMail(userVerification: UserVerification) {

@@ -22,7 +22,7 @@ class ValidateUpdatePasswordUseCase(
     }
 
     private fun updateVerificationStatus(userVerification: UserVerification) {
-        verifyServiceRepository.setToUsed(userVerification)
+        verifyServiceRepository.setToValidated(userVerification)
     }
 
     private fun getUserByEmail(email: String): User = try {
@@ -38,11 +38,11 @@ class ValidateUpdatePasswordUseCase(
     }
 
     private fun checkIfTokenIsValid(userVerification: UserVerification) = try {
-        verifyService.validateIfUsed(userVerification.verification)
-        verifyService.validateIfExpired(userVerification.verification)
+        verifyService.checkIfAlreadyValidated(userVerification.verification)
+        verifyService.checkIfExpired(userVerification.verification)
     } catch (e: VerificationExpiredException) {
         throw ValidateUpdatePasswordException(e.message, e)
-    } catch (e: VerificationUsedException) {
+    } catch (e: VerificationAlreadyVerifiedException) {
         throw ValidateUpdatePasswordException(e.message, e)
     }
 }

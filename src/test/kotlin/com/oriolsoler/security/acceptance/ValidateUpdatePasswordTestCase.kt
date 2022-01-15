@@ -65,7 +65,7 @@ abstract class ValidateUpdatePasswordTestCase {
         val verification = verifyService.generate()
         val userVerification = UserVerification(user, verification)
         verifyServiceRepository.save(userVerification)
-        assertFalse { userVerification.verification.used }
+        assertFalse { userVerification.verification.validated }
 
         val validateUserCommand = ValidateUpdatedPasswordCommand(user.email, verification.verification)
         given()
@@ -76,8 +76,8 @@ abstract class ValidateUpdatePasswordTestCase {
             .status(ACCEPTED)
 
         val verificationPost = verificationRepositoryForTest.getBy(userVerification)
-        assertTrue { verificationPost.verification.used }
-        assertFalse { verificationPost.verification.deleted }
+        assertTrue { verificationPost.verification.validated }
+        assertTrue { verificationPost.verification.usable }
     }
 
     @Test

@@ -9,7 +9,7 @@ import com.oriolsoler.security.application.validateuser.ValidateUserUseCase
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.VerificationException
 import com.oriolsoler.security.domain.verification.VerificationExpiredException
-import com.oriolsoler.security.domain.verification.VerificationUsedException
+import com.oriolsoler.security.domain.verification.VerificationAlreadyVerifiedException
 import com.oriolsoler.security.infrastucutre.controller.validateuser.ValidateUserCommand
 import com.oriolsoler.security.infrastucutre.controller.validateuser.ValidateUserController
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
@@ -65,7 +65,7 @@ class ValidateUserControllerTest {
 
     @Test
     fun `should handle verification used error`() {
-        val error = VerificationUsedException()
+        val error = VerificationAlreadyVerifiedException()
         val errorVerify = ValidateUserException(error.message, error)
         val response = validateUserController.handleVerificationError(errorVerify)
 

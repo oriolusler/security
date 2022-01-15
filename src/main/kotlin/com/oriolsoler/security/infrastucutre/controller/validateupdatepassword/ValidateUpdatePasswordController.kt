@@ -3,7 +3,7 @@ package com.oriolsoler.security.infrastucutre.controller.validateupdatepassword
 import com.oriolsoler.security.application.validateupdatepassword.ValidateUpdatePasswordException
 import com.oriolsoler.security.application.validateupdatepassword.ValidateUpdatePasswordUseCase
 import com.oriolsoler.security.domain.verification.VerificationExpiredException
-import com.oriolsoler.security.domain.verification.VerificationUsedException
+import com.oriolsoler.security.domain.verification.VerificationAlreadyVerifiedException
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
 import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException
 import org.springframework.http.HttpStatus.ACCEPTED
@@ -34,7 +34,7 @@ class ValidateUpdatePasswordController(
             .status(GONE)
             .body(error.message)
 
-        if (error.cause is VerificationUsedException) return ResponseEntity
+        if (error.cause is VerificationAlreadyVerifiedException) return ResponseEntity
             .status(CONFLICT)
             .body(error.message)
 

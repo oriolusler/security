@@ -4,8 +4,8 @@ import com.oriolsoler.security.domain.verification.Verification
 
 interface VerifyService {
     fun generate(): Verification
-    fun validateIfExpired(verification: Verification)
-    fun validateIfNotUsed(verification: Verification)
-    fun validateIfNotDeleted(verification: Verification)
-    fun validateIfUsed(verification: Verification)
+    fun checkIfExpired(verification: Verification)
+    fun checkIfNotValidated(verification: Verification)
+    fun checkIfUsable(verification: Verification)
+    fun checkIfAlreadyValidated(verification: Verification)
 }

@@ -65,7 +65,7 @@ abstract class ValidateRefreshTokenTestCase {
         signupController.register(signUpRequestCommand)
 
         val user = userRepository.getBy(email)
-        val verification = verificationRepositoryForTest.getUnusedBy(user)
+        val verification = verificationRepositoryForTest.getNotValidatedBy(user)
         val verifyCommand = ValidateUserCommand(email, verification.verification.verification)
         validateUserController.verify(verifyCommand)
 
@@ -92,7 +92,7 @@ abstract class ValidateRefreshTokenTestCase {
         signupController.register(signUpRequestCommand)
 
         val user = userRepository.getBy(email)
-        val verification = verificationRepositoryForTest.getUnusedBy(user)
+        val verification = verificationRepositoryForTest.getNotValidatedBy(user)
         val verifyCommand = ValidateUserCommand(email, verification.verification.verification)
         validateUserController.verify(verifyCommand)
 

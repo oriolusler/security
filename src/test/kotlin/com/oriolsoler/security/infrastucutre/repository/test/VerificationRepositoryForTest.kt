@@ -27,7 +27,7 @@ class VerificationRepositoryForTest(
 
     fun getBy(userVerification: UserVerification): UserVerification {
         val query = """
-            SELECT USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, USED, DELETED
+            SELECT USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, VALIDATED, USABLE
              FROM VERIFY
              WHERE USER_ID=:user
              AND VERIFICATION=:verification
@@ -40,12 +40,12 @@ class VerificationRepositoryForTest(
         return queryForVerification(query, namedParameter)
     }
 
-    fun getUnusedBy(user: User): UserVerification {
+    fun getNotValidatedBy(user: User): UserVerification {
         val query = """
-            SELECT USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, USED, DELETED
+            SELECT USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, VALIDATED, USABLE
              FROM VERIFY
              WHERE USER_ID=:user
-             AND used=FALSE
+             AND validated=FALSE
         """.trimIndent()
 
         val namedParameter = MapSqlParameterSource()
@@ -71,16 +71,16 @@ class VerificationRepositoryForTest(
             val verification = rs.getString("verification")
             val creationDate = rs.getTimestamp("creation_date").toLocalDateTime()
             val expirationDate = rs.getTimestamp("expiration_date").toLocalDateTime()
-            val used = rs.getBoolean("used")
-            val deleted = rs.getBoolean("deleted")
+            val validated = rs.getBoolean("validated")
+            val usable = rs.getBoolean("usable")
             UserVerification(
                 user = user,
                 Verification(
                     verification = verification,
                     creationDate = creationDate,
                     expirationDate = expirationDate,
-                    used = used,
-                    deleted = deleted
+                    validated = validated,
+                    usable = usable
                 )
             )
         }

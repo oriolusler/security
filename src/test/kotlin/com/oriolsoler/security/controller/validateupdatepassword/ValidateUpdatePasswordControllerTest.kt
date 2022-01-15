@@ -9,7 +9,7 @@ import com.oriolsoler.security.application.validateupdatepassword.ValidateUpdate
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.VerificationException
 import com.oriolsoler.security.domain.verification.VerificationExpiredException
-import com.oriolsoler.security.domain.verification.VerificationUsedException
+import com.oriolsoler.security.domain.verification.VerificationAlreadyVerifiedException
 import com.oriolsoler.security.infrastucutre.controller.validateupdatepassword.ValidateUpdatePasswordController
 import com.oriolsoler.security.infrastucutre.controller.validateupdatepassword.ValidateUpdatedPasswordCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
@@ -65,7 +65,7 @@ class ValidateUpdatePasswordControllerTest {
 
     @Test
     fun `should handle used error`() {
-        val error = VerificationUsedException()
+        val error = VerificationAlreadyVerifiedException()
         val errorVerify = ValidateUpdatePasswordException(error.message, error)
         val response = validateUpdatePasswordController.handleVerificationError(errorVerify)
 

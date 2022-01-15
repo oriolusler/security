@@ -1,7 +1,6 @@
 package com.oriolsoler.security.application
 
 import com.nhaarman.mockito_kotlin.*
-import com.oriolsoler.security.application.validateupdatepassword.ValidateUpdatePasswordException
 import com.oriolsoler.security.application.validateuser.ValidateUserException
 import com.oriolsoler.security.application.validateuser.ValidateUserUseCase
 import com.oriolsoler.security.domain.user.User
@@ -24,8 +23,8 @@ class ValidateUserTestCase {
         val userVerification = UserVerification(user, verificationObject)
 
         val verifyService = mock<VerifyService> {}
-        doNothing().`when`(verifyService).validateIfExpired(verificationObject)
-        doNothing().`when`(verifyService).validateIfNotDeleted(verificationObject)
+        doNothing().`when`(verifyService).checkIfExpired(verificationObject)
+        doNothing().`when`(verifyService).checkIfUsable(verificationObject)
 
         val userRepository = mock<UserRepository> {
             on { getBy(user.email) } doReturn user
@@ -44,8 +43,8 @@ class ValidateUserTestCase {
 
         verify(userRepository, times(1)).getBy(user.email)
         verify(verifyServiceRepository, times(1)).getBy(user, verification)
-        verify(verifyService, times(1)).validateIfExpired(verificationObject)
-        verify(verifyServiceRepository, times(1)).setToUsed(userVerification)
+        verify(verifyService, times(1)).checkIfExpired(verificationObject)
+        verify(verifyServiceRepository, times(1)).setToValidated(userVerification)
         verify(userRepository, times(1)).setUnlocked(user)
     }
 
@@ -59,7 +58,7 @@ class ValidateUserTestCase {
 
         val verifyService = mock<VerifyService> { }
         given {
-            verifyService.validateIfExpired(verificationObject)
+            verifyService.checkIfExpired(verificationObject)
         } willAnswer { throw VerificationExpiredException() }
 
         val userRepository = mock<UserRepository> {
@@ -91,8 +90,8 @@ class ValidateUserTestCase {
 
         val verifyService = mock<VerifyService> { }
         given {
-            verifyService.validateIfUsed(verificationObject)
-        } willAnswer { throw VerificationUsedException() }
+            verifyService.checkIfAlreadyValidated(verificationObject)
+        } willAnswer { throw VerificationAlreadyVerifiedException() }
 
         val userRepository = mock<UserRepository> {
             on { getBy(user.email) } doReturn user
@@ -161,5 +160,36 @@ class ValidateUserTestCase {
             validateUserUseCase.execute(validateUserCommand)
         }
         assertEquals("Validate user error: User not found", exception.message)
+    }
+    @Test
+    fun `should return an exception if validation is not usable`() {
+        val user = User(email = "email@online.com")
+        val verification = "516797"
+        val verificationObject = Verification("516797")
+        val validateUserCommand = ValidateUserCommand(user.email, verification)
+        val userVerification = UserVerification(user, verificationObject)
+
+        val verifyService = mock<VerifyService> { }
+        given {
+            verifyService.checkIfUsable(verificationObject)
+        } willAnswer { throw VerificationNotUsableException() }
+
+        val userRepository = mock<UserRepository> {
+            on { getBy(user.email) } doReturn user
+        }
+        val verifyServiceRepository = mock<VerifyServiceRepository> {
+            on { getBy(user, verification) } doReturn userVerification
+        }
+
+        val validateUserUseCase = ValidateUserUseCase(
+            verifyService,
+            verifyServiceRepository,
+            userRepository
+        )
+
+        val exception = assertThrows<ValidateUserException> {
+            validateUserUseCase.execute(validateUserCommand)
+        }
+        assertEquals("Validate user error: Verification not usable", exception.message)
     }
 }

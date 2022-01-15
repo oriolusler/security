@@ -21,7 +21,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus.*
 import org.springframework.test.web.servlet.MockMvc
 import java.time.LocalDateTime
-import kotlin.test.Ignore
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -65,7 +64,7 @@ abstract class ValidateUserTestCase {
         val verification = verifyService.generate()
         val userVerification = UserVerification(user, verification)
         verifyServiceRepository.save(userVerification)
-        assertFalse { userVerification.verification.used }
+        assertFalse { userVerification.verification.validated }
 
         val validateUserCommand = ValidateUserCommand(user.email, verification.verification)
         given()
@@ -79,8 +78,8 @@ abstract class ValidateUserTestCase {
         assertFalse { userPost.locked }
 
         val verificationPost = verificationRepositoryForTest.getBy(userVerification)
-        assertTrue { verificationPost.verification.used }
-        assertTrue { verificationPost.verification.deleted }
+        assertTrue { verificationPost.verification.validated }
+        assertFalse { verificationPost.verification.usable }
     }
 
     @Test

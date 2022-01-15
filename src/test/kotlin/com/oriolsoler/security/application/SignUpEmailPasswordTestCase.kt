@@ -75,7 +75,6 @@ class SignUpEmailPasswordTestCase {
         verify(signUpUserRepository, times(1)).save(any())
         verify(verifyService, times(1)).generate()
         verify(emailService, times(1)).send(emailInformation)
-        verify(verifyServiceRepository, times(1)).setToDeleted(userValidation)
         verify(verifyServiceRepository, times(1)).save(userValidation)
     }
 

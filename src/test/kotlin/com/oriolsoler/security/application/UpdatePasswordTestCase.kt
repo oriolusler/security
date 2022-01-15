@@ -1,14 +1,14 @@
 package com.oriolsoler.security.application
 
 import com.nhaarman.mockito_kotlin.*
-import com.oriolsoler.security.application.forgotpassword.UpdatePasswordException
-import com.oriolsoler.security.application.forgotpassword.UpdatePasswordUseCase
+import com.oriolsoler.security.application.updatepassword.UpdatePasswordException
+import com.oriolsoler.security.application.updatepassword.UpdatePasswordUseCase
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.Verification
 import com.oriolsoler.security.domain.verification.UserVerification
-import com.oriolsoler.security.domain.verification.VerificationDeletedException
+import com.oriolsoler.security.domain.verification.VerificationNotUsableException
 import com.oriolsoler.security.domain.verification.VerificationNotVerifiedException
-import com.oriolsoler.security.infrastucutre.controller.forgotpassword.UpdatePasswordRequestCommand
+import com.oriolsoler.security.infrastucutre.controller.updatepassword.UpdatePasswordRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
 import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException
 import org.junit.jupiter.api.Test
@@ -41,7 +41,7 @@ class UpdatePasswordTestCase {
         }
 
         val verifyService = mock<VerifyService> {}
-        doNothing().`when`(verifyService).validateIfNotUsed(verificationObject)
+        doNothing().`when`(verifyService).checkIfNotValidated(verificationObject)
 
         val updatePasswordUseCase = UpdatePasswordUseCase(
             userRepository,
@@ -55,9 +55,9 @@ class UpdatePasswordTestCase {
 
         verify(passwordService, times(1)).encode(newPassword)
         verify(verifyServiceRepository, times(1)).getBy(user, verification)
-        verify(verifyService, times(1)).validateIfNotUsed(verificationObject)
-        verify(verifyService, times(1)).validateIfNotDeleted(verificationObject)
-        verify(verifyServiceRepository, times(1)).setToDeleted(userVerification)
+        verify(verifyService, times(1)).checkIfNotValidated(verificationObject)
+        verify(verifyService, times(1)).checkIfUsable(verificationObject)
+        verify(verifyServiceRepository, times(1)).setToUnusable(userVerification)
         verify(userRepository, times(1)).updatePassword(user, encryptedNewPassword)
         verify(userRepository, times(1)).getBy(mail)
         assertTrue { true }
@@ -90,8 +90,8 @@ class UpdatePasswordTestCase {
         assertEquals("Update password error: User not found", exception.message)
         verify(userRepository, times(1)).getBy(mail)
         verify(verifyServiceRepository, times(0)).getBy(any(), any())
-        verify(verifyService, times(0)).validateIfNotUsed(any())
-        verify(verifyService, times(0)).validateIfNotDeleted(any())
+        verify(verifyService, times(0)).checkIfNotValidated(any())
+        verify(verifyService, times(0)).checkIfUsable(any())
         verify(passwordService, times(0)).encode(any())
         verify(userRepository, times(0)).updatePassword(any(), any())
     }
@@ -128,8 +128,8 @@ class UpdatePasswordTestCase {
         assertEquals("Update password error: No verification found", exception.message)
         verify(userRepository, times(1)).getBy(mail)
         verify(verifyServiceRepository, times(1)).getBy(user, verification)
-        verify(verifyService, times(0)).validateIfNotUsed(any())
-        verify(verifyService, times(0)).validateIfNotDeleted(any())
+        verify(verifyService, times(0)).checkIfNotValidated(any())
+        verify(verifyService, times(0)).checkIfUsable(any())
         verify(passwordService, times(0)).encode(any())
         verify(userRepository, times(0)).updatePassword(any(), any())
     }
@@ -151,7 +151,7 @@ class UpdatePasswordTestCase {
             on { getBy(user, verification) } doReturn userVerification
         }
         val verifyService = mock<VerifyService> {}
-        given { verifyService.validateIfNotUsed(verificationObject) } willAnswer {
+        given { verifyService.checkIfNotValidated(verificationObject) } willAnswer {
             throw VerificationNotVerifiedException()
         }
 
@@ -170,8 +170,8 @@ class UpdatePasswordTestCase {
         assertEquals("Update password error: Verification has not been verified", exception.message)
         verify(userRepository, times(1)).getBy(mail)
         verify(verifyServiceRepository, times(1)).getBy(user, verification)
-        verify(verifyService, times(1)).validateIfNotUsed(verificationObject)
-        verify(verifyService, times(0)).validateIfNotDeleted(verificationObject)
+        verify(verifyService, times(1)).checkIfNotValidated(verificationObject)
+        verify(verifyService, times(0)).checkIfUsable(verificationObject)
         verify(passwordService, times(0)).encode(any())
         verify(userRepository, times(0)).updatePassword(any(), any())
     }
@@ -193,9 +193,9 @@ class UpdatePasswordTestCase {
             on { getBy(user, verification) } doReturn userVerification
         }
         val verifyService = mock<VerifyService> {}
-        doNothing().`when`(verifyService).validateIfNotUsed(verificationObject)
-        given { verifyService.validateIfNotDeleted(verificationObject) } willAnswer {
-            throw VerificationDeletedException()
+        doNothing().`when`(verifyService).checkIfNotValidated(verificationObject)
+        given { verifyService.checkIfUsable(verificationObject) } willAnswer {
+            throw VerificationNotUsableException()
         }
 
         val updatePasswordUseCase = UpdatePasswordUseCase(
@@ -210,11 +210,11 @@ class UpdatePasswordTestCase {
         val exception = assertThrows<UpdatePasswordException> {
             updatePasswordUseCase.execute(updatePasswordCommand)
         }
-        assertEquals("Update password error: Verification deleted", exception.message)
+        assertEquals("Update password error: Verification not usable", exception.message)
         verify(userRepository, times(1)).getBy(mail)
         verify(verifyServiceRepository, times(1)).getBy(user, verification)
-        verify(verifyService, times(1)).validateIfNotUsed(verificationObject)
-        verify(verifyService, times(1)).validateIfNotDeleted(verificationObject)
+        verify(verifyService, times(1)).checkIfNotValidated(verificationObject)
+        verify(verifyService, times(1)).checkIfUsable(verificationObject)
         verify(passwordService, times(0)).encode(any())
         verify(userRepository, times(0)).updatePassword(any(), any())
     }

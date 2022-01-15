@@ -1,7 +1,7 @@
-package com.oriolsoler.security.infrastucutre.controller.forgotpassword
+package com.oriolsoler.security.infrastucutre.controller.updatepassword
 
-import com.oriolsoler.security.application.forgotpassword.UpdatePasswordException
-import com.oriolsoler.security.application.forgotpassword.UpdatePasswordUseCase
+import com.oriolsoler.security.application.updatepassword.UpdatePasswordException
+import com.oriolsoler.security.application.updatepassword.UpdatePasswordUseCase
 import com.oriolsoler.security.domain.verification.VerificationNotVerifiedException
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
 import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException

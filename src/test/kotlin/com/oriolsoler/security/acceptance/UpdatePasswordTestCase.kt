@@ -7,7 +7,7 @@ import com.oriolsoler.security.application.VerifyServiceRepository
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.UserVerification
 import com.oriolsoler.security.domain.verification.Verification
-import com.oriolsoler.security.infrastucutre.controller.forgotpassword.UpdatePasswordRequestCommand
+import com.oriolsoler.security.infrastucutre.controller.updatepassword.UpdatePasswordRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
 import com.oriolsoler.security.infrastucutre.repository.test.VerificationRepositoryForTest
 import io.restassured.module.mockmvc.RestAssuredMockMvc
@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus.OK
 import org.springframework.test.web.servlet.MockMvc
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @SpringBootTest(
@@ -62,7 +63,7 @@ abstract class UpdatePasswordTestCase {
         assertEquals("extremely_safe_password", userSaved.password)
 
         val verification = "583152"
-        val verificationObject = Verification(verification, used = true)
+        val verificationObject = Verification(verification, validated = true)
         val userVerification = UserVerification(user, verificationObject)
         verifyRepository.save(userVerification)
 
@@ -79,7 +80,7 @@ abstract class UpdatePasswordTestCase {
         assertDoesNotThrow { passwordService.matches(newPassword, userAfter.password) }
 
         val verificationPost = verificationRepositoryForTest.getBy(userVerification)
-        assertTrue { verificationPost.verification.used }
-        assertTrue { verificationPost.verification.deleted }
+        assertTrue { verificationPost.verification.validated }
+        assertFalse { verificationPost.verification.usable }
     }
 }

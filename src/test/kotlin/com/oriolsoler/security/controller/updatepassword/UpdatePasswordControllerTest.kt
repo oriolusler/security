@@ -1,11 +1,11 @@
-package com.oriolsoler.security.controller.accessverification
+package com.oriolsoler.security.controller.updatepassword
 
 import com.nhaarman.mockito_kotlin.*
-import com.oriolsoler.security.application.forgotpassword.UpdatePasswordException
-import com.oriolsoler.security.application.forgotpassword.UpdatePasswordUseCase
+import com.oriolsoler.security.application.updatepassword.UpdatePasswordException
+import com.oriolsoler.security.application.updatepassword.UpdatePasswordUseCase
 import com.oriolsoler.security.domain.verification.VerificationNotVerifiedException
-import com.oriolsoler.security.infrastucutre.controller.forgotpassword.UpdatePasswordController
-import com.oriolsoler.security.infrastucutre.controller.forgotpassword.UpdatePasswordRequestCommand
+import com.oriolsoler.security.infrastucutre.controller.updatepassword.UpdatePasswordController
+import com.oriolsoler.security.infrastucutre.controller.updatepassword.UpdatePasswordRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
 import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException
 import org.junit.jupiter.api.BeforeEach

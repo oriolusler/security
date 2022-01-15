@@ -54,7 +54,7 @@ class PinVerifyServiceTest {
         val verification = Verification(verification = "856423")
         val userVerification = UserVerification(user, verification)
 
-        pinVerifyService.validateIfExpired(userVerification.verification)
+        pinVerifyService.checkIfExpired(userVerification.verification)
 
         assertTrue { true }
         verify(clock, times(1)).now()
@@ -72,7 +72,7 @@ class PinVerifyServiceTest {
         pinVerifyService = PinVerifyService(clock, minutesValid)
 
         val throws = assertThrows<VerificationExpiredException> {
-            pinVerifyService.validateIfExpired(userVerification.verification)
+            pinVerifyService.checkIfExpired(userVerification.verification)
         }
         assertEquals("Verification expired", throws.message)
         verify(clock, times(1)).now()
@@ -81,11 +81,11 @@ class PinVerifyServiceTest {
     @Test
     fun `should return exception if pin is already used`() {
         val user = User()
-        val verification = Verification(verification = "923876", used = true)
+        val verification = Verification(verification = "923876", validated = true)
         val userVerification = UserVerification(user, verification)
 
-        val throws = assertThrows<VerificationUsedException> {
-            pinVerifyService.validateIfUsed(userVerification.verification)
+        val throws = assertThrows<VerificationAlreadyVerifiedException> {
+            pinVerifyService.checkIfAlreadyValidated(userVerification.verification)
         }
         assertEquals("Verification already used", throws.message)
     }
@@ -93,24 +93,24 @@ class PinVerifyServiceTest {
     @Test
     fun `should return exception if pin is not used`() {
         val user = User()
-        val verification = Verification(verification = "923876", used = false)
+        val verification = Verification(verification = "923876", validated = false)
         val userVerification = UserVerification(user, verification)
 
         val throws = assertThrows<VerificationNotVerifiedException> {
-            pinVerifyService.validateIfNotUsed(userVerification.verification)
+            pinVerifyService.checkIfNotValidated(userVerification.verification)
         }
         assertEquals("Verification has not been verified", throws.message)
     }
 
     @Test
-    fun `should return exception if pin is deleted`() {
+    fun `should return exception if pin is not usable`() {
         val user = User()
-        val verification = Verification(verification = "923876", used = false, deleted = true)
+        val verification = Verification(verification = "923876", validated = false, usable = false)
         val userVerification = UserVerification(user, verification)
 
-        val throws = assertThrows<VerificationDeletedException> {
-            pinVerifyService.validateIfNotDeleted(userVerification.verification)
+        val throws = assertThrows<VerificationNotUsableException> {
+            pinVerifyService.checkIfUsable(userVerification.verification)
         }
-        assertEquals("Verification deleted", throws.message)
+        assertEquals("Verification not usable", throws.message)
     }
 }

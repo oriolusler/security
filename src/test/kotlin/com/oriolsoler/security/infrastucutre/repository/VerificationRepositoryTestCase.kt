@@ -15,10 +15,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 @SpringBootTest(
     classes = [SecurityApplication::class],
@@ -70,7 +67,7 @@ abstract class VerificationRepositoryTestCase {
 
         verifyServiceRepository.save(userVerification)
 
-        val result = verificationRepositoryForTest.getUnusedBy(user)
+        val result = verificationRepositoryForTest.getNotValidatedBy(user)
 
         assertNotNull(result)
         assertEquals(user, result.user)
@@ -83,25 +80,25 @@ abstract class VerificationRepositoryTestCase {
 
     @Test
     fun `should update verification if used`() {
-        val verification = Verification(verification = "455123", used = false)
+        val verification = Verification(verification = "455123", validated = false)
         val userVerification = UserVerification(user, verification)
         verifyServiceRepository.save(userVerification)
 
-        verifyServiceRepository.setToUsed(userVerification)
+        verifyServiceRepository.setToValidated(userVerification)
 
         val verificationPost = verificationRepositoryForTest.getBy(userVerification)
-        assertTrue { verificationPost.verification.used }
+        assertTrue { verificationPost.verification.validated }
     }
 
     @Test
-    fun `should update verification if deleted`() {
-        val verification = Verification(verification = "455123", used = false, deleted = false)
+    fun `should update usable verification to unusable`() {
+        val verification = Verification(verification = "455123", validated = false, usable = true)
         val userVerification = UserVerification(user, verification)
         verifyServiceRepository.save(userVerification)
 
-        verifyServiceRepository.setToDeleted(userVerification)
+        verifyServiceRepository.setToUnusable(userVerification)
 
         val verificationPost = verificationRepositoryForTest.getBy(userVerification)
-        assertTrue { verificationPost.verification.deleted }
+        assertFalse { verificationPost.verification.usable }
     }
 }

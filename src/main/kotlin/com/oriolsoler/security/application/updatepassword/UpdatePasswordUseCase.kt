@@ -1,4 +1,4 @@
-package com.oriolsoler.security.application.forgotpassword
+package com.oriolsoler.security.application.updatepassword
 
 import com.oriolsoler.security.application.PasswordService
 import com.oriolsoler.security.application.UserRepository
@@ -6,9 +6,9 @@ import com.oriolsoler.security.application.VerifyService
 import com.oriolsoler.security.application.VerifyServiceRepository
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.UserVerification
-import com.oriolsoler.security.domain.verification.VerificationDeletedException
+import com.oriolsoler.security.domain.verification.VerificationNotUsableException
 import com.oriolsoler.security.domain.verification.VerificationNotVerifiedException
-import com.oriolsoler.security.infrastucutre.controller.forgotpassword.UpdatePasswordRequestCommand
+import com.oriolsoler.security.infrastucutre.controller.updatepassword.UpdatePasswordRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
 import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException
 
@@ -27,16 +27,16 @@ class UpdatePasswordUseCase(
     }
 
     private fun updateVerificationStatus(userVerification: UserVerification) {
-        verifyServiceRepository.setToDeleted(userVerification)
+        verifyServiceRepository.setToUnusable(userVerification)
     }
 
     private fun checkIfValidVerification(userVerification: UserVerification) {
         try {
-            verifyService.validateIfNotUsed(userVerification.verification)
-            verifyService.validateIfNotDeleted(userVerification.verification)
+            verifyService.checkIfNotValidated(userVerification.verification)
+            verifyService.checkIfUsable(userVerification.verification)
         } catch (e: VerificationNotVerifiedException) {
             throw UpdatePasswordException(e.message, e)
-        } catch (e: VerificationDeletedException) {
+        } catch (e: VerificationNotUsableException) {
             throw UpdatePasswordException(e.message, e)
         }
     }

@@ -23,8 +23,8 @@ class ValidateUpdatePasswordTestCase {
         val userVerification = UserVerification(user, verificationObject)
 
         val verifyService = mock<VerifyService> {}
-        doNothing().`when`(verifyService).validateIfExpired(verificationObject)
-        doNothing().`when`(verifyService).validateIfNotDeleted(verificationObject)
+        doNothing().`when`(verifyService).checkIfExpired(verificationObject)
+        doNothing().`when`(verifyService).checkIfUsable(verificationObject)
 
         val userRepository = mock<UserRepository> {
             on { getBy(user.email) } doReturn user
@@ -43,8 +43,8 @@ class ValidateUpdatePasswordTestCase {
 
         verify(userRepository, times(1)).getBy(user.email)
         verify(verifyServiceRepository, times(1)).getBy(user, verification)
-        verify(verifyService, times(1)).validateIfExpired(verificationObject)
-        verify(verifyServiceRepository, times(1)).setToUsed(userVerification)
+        verify(verifyService, times(1)).checkIfExpired(verificationObject)
+        verify(verifyServiceRepository, times(1)).setToValidated(userVerification)
     }
 
     @Test
@@ -57,7 +57,7 @@ class ValidateUpdatePasswordTestCase {
 
         val verifyService = mock<VerifyService> { }
         given {
-            verifyService.validateIfExpired(verificationObject)
+            verifyService.checkIfExpired(verificationObject)
         } willAnswer { throw VerificationExpiredException() }
 
         val userRepository = mock<UserRepository> {
@@ -89,8 +89,8 @@ class ValidateUpdatePasswordTestCase {
 
         val verifyService = mock<VerifyService> { }
         given {
-            verifyService.validateIfUsed(verificationObject)
-        } willAnswer { throw VerificationUsedException() }
+            verifyService.checkIfAlreadyValidated(verificationObject)
+        } willAnswer { throw VerificationAlreadyVerifiedException() }
 
         val userRepository = mock<UserRepository> {
             on { getBy(user.email) } doReturn user

@@ -5,7 +5,7 @@ import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.application.accessverification.AccessVerificationUseCase
 import com.oriolsoler.security.application.accessverification.TokenVerification
 import com.oriolsoler.security.application.forgotpassword.ForgotPasswordUseCase
-import com.oriolsoler.security.application.forgotpassword.UpdatePasswordUseCase
+import com.oriolsoler.security.application.updatepassword.UpdatePasswordUseCase
 import com.oriolsoler.security.application.login.LoginEmailPasswordUseCase
 import com.oriolsoler.security.application.login.TokenGenerator
 import com.oriolsoler.security.application.signup.MailService
