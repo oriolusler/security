@@ -5,6 +5,7 @@ import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.UserVerification
 import com.oriolsoler.security.domain.verification.Verification
 import com.oriolsoler.security.domain.user.UserId
+import com.oriolsoler.security.domain.verification.VerificationType
 import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.RowMapper
@@ -27,7 +28,7 @@ class VerificationRepositoryForTest(
 
     fun getBy(userVerification: UserVerification): UserVerification {
         val query = """
-            SELECT USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, VALIDATED, USABLE
+            SELECT USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, VALIDATED, USABLE, TYPE
              FROM VERIFY
              WHERE USER_ID=:user
              AND VERIFICATION=:verification
@@ -42,7 +43,7 @@ class VerificationRepositoryForTest(
 
     fun getNotValidatedBy(user: User): UserVerification {
         val query = """
-            SELECT USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, VALIDATED, USABLE
+            SELECT USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, VALIDATED, USABLE, TYPE
              FROM VERIFY
              WHERE USER_ID=:user
              AND validated=FALSE
@@ -73,6 +74,7 @@ class VerificationRepositoryForTest(
             val expirationDate = rs.getTimestamp("expiration_date").toLocalDateTime()
             val validated = rs.getBoolean("validated")
             val usable = rs.getBoolean("usable")
+            val type = rs.getString("type")
             UserVerification(
                 user = user,
                 Verification(
@@ -80,9 +82,23 @@ class VerificationRepositoryForTest(
                     creationDate = creationDate,
                     expirationDate = expirationDate,
                     validated = validated,
-                    usable = usable
+                    usable = usable,
+                    type = VerificationType.valueOf(type)
                 )
             )
         }
+    }
+
+    fun getBy(user: User): UserVerification {
+        val query = """
+            SELECT USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, VALIDATED, USABLE, TYPE
+             FROM VERIFY
+             WHERE USER_ID=:user
+        """.trimIndent()
+
+        val namedParameter = MapSqlParameterSource()
+        namedParameter.addValue("user", user.id.value)
+
+        return queryForVerification(query, namedParameter)
     }
 }

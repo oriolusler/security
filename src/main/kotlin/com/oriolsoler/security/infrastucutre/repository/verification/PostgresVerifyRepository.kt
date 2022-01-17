@@ -6,6 +6,7 @@ import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.UserVerification
 import com.oriolsoler.security.domain.verification.Verification
 import com.oriolsoler.security.domain.user.UserId
+import com.oriolsoler.security.domain.verification.VerificationType
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
@@ -18,8 +19,8 @@ class PostgresVerifyRepository(
 ) : VerifyServiceRepository {
     override fun save(userVerification: UserVerification) {
         val sql = """
-           INSERT INTO VERIFY(USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, VALIDATED, USABLE)
-           VALUES (:user, :verification, :creation_date, :expiration_date, :validated, :usable)
+           INSERT INTO VERIFY(USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, VALIDATED, USABLE, TYPE)
+           VALUES (:user, :verification, :creation_date, :expiration_date, :validated, :usable, :type)
        """.trimIndent()
 
         val namedParameters = MapSqlParameterSource()
@@ -29,12 +30,13 @@ class PostgresVerifyRepository(
         namedParameters.addValue("expiration_date", userVerification.verification.expirationDate)
         namedParameters.addValue("validated", userVerification.verification.validated)
         namedParameters.addValue("usable", userVerification.verification.usable)
+        namedParameters.addValue("type", userVerification.verification.type.name)
         jdbcTemplate.update(sql, namedParameters)
     }
 
     override fun getBy(user: User, verification: String): UserVerification {
         val query = """
-                SELECT USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, VALIDATED, USABLE
+                SELECT USER_ID, VERIFICATION, CREATION_DATE, EXPIRATION_DATE, VALIDATED, USABLE, TYPE
                  FROM VERIFY
                  WHERE USER_ID=:user
                  AND VERIFICATION=:verification
@@ -89,6 +91,7 @@ class PostgresVerifyRepository(
             val expirationDate = rs.getTimestamp("expiration_date").toLocalDateTime()
             val validated = rs.getBoolean("validated")
             val usable = rs.getBoolean("usable")
+            val type = rs.getString("type")
             UserVerification(
                 user = user,
                 Verification(
@@ -96,7 +99,8 @@ class PostgresVerifyRepository(
                     creationDate = creationDate,
                     expirationDate = expirationDate,
                     validated = validated,
-                    usable = usable
+                    usable = usable,
+                    type = VerificationType.valueOf(type)
                 )
             )
         }

@@ -7,6 +7,8 @@ import com.oriolsoler.security.application.VerifyServiceRepository
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.UserVerification
 import com.oriolsoler.security.domain.verification.Verification
+import com.oriolsoler.security.domain.verification.VerificationType
+import com.oriolsoler.security.domain.verification.VerificationType.*
 import com.oriolsoler.security.infrastucutre.controller.updatepassword.UpdatePasswordRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
 import com.oriolsoler.security.infrastucutre.repository.test.VerificationRepositoryForTest
@@ -63,7 +65,7 @@ abstract class UpdatePasswordTestCase {
         assertEquals("extremely_safe_password", userSaved.password)
 
         val verification = "583152"
-        val verificationObject = Verification(verification, validated = true)
+        val verificationObject = Verification(verification, validated = true, type = FORGOT_PASSWORD)
         val userVerification = UserVerification(user, verificationObject)
         verifyRepository.save(userVerification)
 

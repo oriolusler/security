@@ -5,6 +5,7 @@ import com.oriolsoler.security.application.validateupdatepassword.ValidateUpdate
 import com.oriolsoler.security.application.validateupdatepassword.ValidateUpdatePasswordUseCase
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.*
+import com.oriolsoler.security.domain.verification.VerificationType.*
 import com.oriolsoler.security.infrastucutre.controller.validateupdatepassword.ValidateUpdatedPasswordCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
 import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException
@@ -18,7 +19,7 @@ class ValidateUpdatePasswordTestCase {
     fun `should validate update password verification`() {
         val user = User(email = "email@online.com")
         val verification = "516797"
-        val verificationObject = Verification("516797")
+        val verificationObject = Verification(verification = "516797", type = FORGOT_PASSWORD)
         val validateUpdatedPasswordCommand = ValidateUpdatedPasswordCommand(user.email, verification)
         val userVerification = UserVerification(user, verificationObject)
 
@@ -51,7 +52,7 @@ class ValidateUpdatePasswordTestCase {
     fun `should return an exception if token is expired`() {
         val user = User(email = "email@online.com")
         val verification = "516797"
-        val verificationObject = Verification("516797")
+        val verificationObject = Verification(verification = "516797", type = FORGOT_PASSWORD)
         val validateUpdatedPasswordCommand = ValidateUpdatedPasswordCommand(user.email, verification)
         val userVerification = UserVerification(user, verificationObject)
 
@@ -83,7 +84,7 @@ class ValidateUpdatePasswordTestCase {
     fun `should return an exception if token is already validated`() {
         val user = User(email = "email@online.com")
         val verification = "516797"
-        val verificationObject = Verification("516797")
+        val verificationObject = Verification(verification = "516797", type = FORGOT_PASSWORD)
         val validateUpdatedPasswordCommand = ValidateUpdatedPasswordCommand(user.email, verification)
         val userVerification = UserVerification(user, verificationObject)
 
@@ -159,5 +160,34 @@ class ValidateUpdatePasswordTestCase {
             validateUpdatePasswordUseCase.execute(validateUpdatedPasswordCommand)
         }
         assertEquals("Validate update password error: User not found", exception.message)
+    }
+
+    @Test
+    fun `should return an exception if validation type is not valid`() {
+        val user = User(email = "email@online.com")
+        val verification = "516797"
+        val verificationObject = Verification(verification = "516797", type = VALIDATE_USER)
+        val validateUpdatedPasswordCommand = ValidateUpdatedPasswordCommand(user.email, verification)
+        val userVerification = UserVerification(user, verificationObject)
+
+        val verifyService = mock<VerifyService> { }
+
+        val userRepository = mock<UserRepository> {
+            on { getBy(user.email) } doReturn user
+        }
+        val verifyServiceRepository = mock<VerifyServiceRepository> {
+            on { getBy(user, verification) } doReturn userVerification
+        }
+
+        val validateUpdatePasswordUseCase = ValidateUpdatePasswordUseCase(
+            verifyService,
+            verifyServiceRepository,
+            userRepository
+        )
+
+        val exception = assertThrows<ValidateUpdatePasswordException> {
+            validateUpdatePasswordUseCase.execute(validateUpdatedPasswordCommand)
+        }
+        assertEquals("Validate update password error: Invalid verification type", exception.message)
     }
 }

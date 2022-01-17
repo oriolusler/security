@@ -7,6 +7,8 @@ import com.oriolsoler.security.application.VerifyServiceRepository
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.UserVerification
 import com.oriolsoler.security.domain.verification.Verification
+import com.oriolsoler.security.domain.verification.VerificationType
+import com.oriolsoler.security.domain.verification.VerificationType.*
 import com.oriolsoler.security.infrastucutre.controller.validateuser.ValidateUserCommand
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
 import com.oriolsoler.security.infrastucutre.repository.test.VerificationRepositoryForTest
@@ -61,7 +63,7 @@ abstract class ValidateUserTestCase {
         userRepository.save(user)
         assertTrue { user.locked }
 
-        val verification = verifyService.generate()
+        val verification = verifyService.generate(VALIDATE_USER)
         val userVerification = UserVerification(user, verification)
         verifyServiceRepository.save(userVerification)
         assertFalse { userVerification.verification.validated }
@@ -88,7 +90,7 @@ abstract class ValidateUserTestCase {
         userRepository.save(user)
 
         val now = LocalDateTime.now()
-        val verification = Verification("865142", now, now.minusHours(1))
+        val verification = Verification("865142", now, now.minusHours(1), type = VALIDATE_USER)
         val userVerification = UserVerification(user, verification)
         verifyServiceRepository.save(userVerification)
 

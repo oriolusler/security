@@ -5,6 +5,7 @@ import com.oriolsoler.security.application.VerifyService
 import com.oriolsoler.security.application.VerifyServiceRepository
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.*
+import com.oriolsoler.security.domain.verification.VerificationType.VALIDATE_USER
 import com.oriolsoler.security.infrastucutre.controller.validateuser.ValidateUserCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
 import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException
@@ -42,6 +43,10 @@ class ValidateUserUseCase(
     }
 
     private fun checkIfValidationIsValid(userVerification: UserVerification) = try {
+        if (userVerification.verification.type != VALIDATE_USER) {
+            throw ValidateUserException("Invalid verification type")
+        }
+
         verifyService.checkIfAlreadyValidated(userVerification.verification)
         verifyService.checkIfExpired(userVerification.verification)
         verifyService.checkIfUsable(userVerification.verification)

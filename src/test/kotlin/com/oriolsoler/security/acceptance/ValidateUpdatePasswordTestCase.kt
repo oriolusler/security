@@ -7,6 +7,8 @@ import com.oriolsoler.security.application.VerifyServiceRepository
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.UserVerification
 import com.oriolsoler.security.domain.verification.Verification
+import com.oriolsoler.security.domain.verification.VerificationType
+import com.oriolsoler.security.domain.verification.VerificationType.*
 import com.oriolsoler.security.infrastucutre.controller.validateupdatepassword.ValidateUpdatedPasswordCommand
 import com.oriolsoler.security.infrastucutre.controller.validateuser.ValidateUserCommand
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
@@ -62,7 +64,7 @@ abstract class ValidateUpdatePasswordTestCase {
         userRepository.save(user)
         assertTrue { user.locked }
 
-        val verification = verifyService.generate()
+        val verification = verifyService.generate(FORGOT_PASSWORD)
         val userVerification = UserVerification(user, verification)
         verifyServiceRepository.save(userVerification)
         assertFalse { userVerification.verification.validated }
@@ -86,7 +88,7 @@ abstract class ValidateUpdatePasswordTestCase {
         userRepository.save(user)
 
         val now = LocalDateTime.now()
-        val verification = Verification("687123", now, now.minusHours(1))
+        val verification = Verification("687123", now, now.minusHours(1), type = FORGOT_PASSWORD)
         val userVerification = UserVerification(user, verification)
         verifyServiceRepository.save(userVerification)
 

@@ -7,6 +7,8 @@ import com.oriolsoler.security.application.VerifyServiceRepository
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.UserVerification
 import com.oriolsoler.security.domain.verification.Verification
+import com.oriolsoler.security.domain.verification.VerificationType
+import com.oriolsoler.security.domain.verification.VerificationType.*
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
 import com.oriolsoler.security.infrastucutre.repository.test.VerificationRepositoryForTest
 import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException
@@ -52,7 +54,7 @@ abstract class VerificationRepositoryTestCase {
 
     @Test
     fun `save verification`() {
-        val verification = verifyService.generate()
+        val verification = verifyService.generate(VALIDATE_USER)
         val userVerification = UserVerification(user, verification)
 
         val result = verifyServiceRepository.save(userVerification)
@@ -62,7 +64,7 @@ abstract class VerificationRepositoryTestCase {
 
     @Test
     fun `get verification by user`() {
-        val verification = verifyService.generate()
+        val verification = verifyService.generate(VALIDATE_USER)
         val userVerification = UserVerification(user, verification)
 
         verifyServiceRepository.save(userVerification)
@@ -80,7 +82,7 @@ abstract class VerificationRepositoryTestCase {
 
     @Test
     fun `should update verification if used`() {
-        val verification = Verification(verification = "455123", validated = false)
+        val verification = Verification(verification = "455123", validated = false, type = VALIDATE_USER)
         val userVerification = UserVerification(user, verification)
         verifyServiceRepository.save(userVerification)
 
@@ -92,7 +94,7 @@ abstract class VerificationRepositoryTestCase {
 
     @Test
     fun `should update usable verification to unusable`() {
-        val verification = Verification(verification = "455123", validated = false, usable = true)
+        val verification = Verification(verification = "455123", validated = false, usable = true, type = VALIDATE_USER)
         val userVerification = UserVerification(user, verification)
         verifyServiceRepository.save(userVerification)
 

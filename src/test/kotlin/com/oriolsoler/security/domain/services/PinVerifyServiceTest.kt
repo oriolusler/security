@@ -6,6 +6,7 @@ import com.nhaarman.mockito_kotlin.times
 import com.nhaarman.mockito_kotlin.verify
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.*
+import com.oriolsoler.security.domain.verification.VerificationType.*
 import org.apache.commons.lang3.StringUtils
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -32,7 +33,7 @@ class PinVerifyServiceTest {
 
     @Test
     fun `should generate active pin given user`() {
-        val result = pinVerifyService.generate()
+        val result = pinVerifyService.generate(VALIDATE_USER)
 
         assertNotNull(result)
         assertEquals(6, result.verification.length)
@@ -41,7 +42,7 @@ class PinVerifyServiceTest {
 
     @Test
     fun `should create validation valid for x minutes`() {
-        val result = pinVerifyService.generate()
+        val result = pinVerifyService.generate(VALIDATE_USER)
 
         assertNotNull(result)
         assertEquals(now, result.creationDate)
@@ -51,7 +52,7 @@ class PinVerifyServiceTest {
     @Test
     fun `should return true if pin is valid`() {
         val user = User()
-        val verification = Verification(verification = "856423")
+        val verification = Verification(verification = "856423", type = VALIDATE_USER)
         val userVerification = UserVerification(user, verification)
 
         pinVerifyService.checkIfExpired(userVerification.verification)
@@ -63,7 +64,7 @@ class PinVerifyServiceTest {
     @Test
     fun `should return exception if pin is not valid`() {
         val user = User()
-        val verification = Verification(verification = "543534")
+        val verification = Verification(verification = "543534", type = VALIDATE_USER)
         val userVerification = UserVerification(user, verification)
 
         val clock = mock<ClockService> {
@@ -81,7 +82,7 @@ class PinVerifyServiceTest {
     @Test
     fun `should return exception if pin is already used`() {
         val user = User()
-        val verification = Verification(verification = "923876", validated = true)
+        val verification = Verification(verification = "923876", validated = true, type = VALIDATE_USER)
         val userVerification = UserVerification(user, verification)
 
         val throws = assertThrows<VerificationAlreadyVerifiedException> {
@@ -93,7 +94,7 @@ class PinVerifyServiceTest {
     @Test
     fun `should return exception if pin is not used`() {
         val user = User()
-        val verification = Verification(verification = "923876", validated = false)
+        val verification = Verification(verification = "923876", validated = false, type = VALIDATE_USER)
         val userVerification = UserVerification(user, verification)
 
         val throws = assertThrows<VerificationNotVerifiedException> {
@@ -105,7 +106,7 @@ class PinVerifyServiceTest {
     @Test
     fun `should return exception if pin is not usable`() {
         val user = User()
-        val verification = Verification(verification = "923876", validated = false, usable = false)
+        val verification = Verification(verification = "923876", validated = false, usable = false, type = VALIDATE_USER)
         val userVerification = UserVerification(user, verification)
 
         val throws = assertThrows<VerificationNotUsableException> {

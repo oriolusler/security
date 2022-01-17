@@ -8,8 +8,10 @@ class Verification(
     val creationDate: LocalDateTime = LocalDateTime.now(),
     val expirationDate: LocalDateTime = LocalDateTime.now().plusMinutes(5),
     val validated: Boolean = false,
-    val usable: Boolean = true
+    val usable: Boolean = true,
+    val type: VerificationType
 ) {
+
     fun checkIfExpired(now: LocalDateTime) {
         if (now.isAfter(expirationDate)) {
             throw VerificationExpiredException()

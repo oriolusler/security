@@ -7,6 +7,8 @@ import com.oriolsoler.security.application.VerifyServiceRepository
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.UserVerification
 import com.oriolsoler.security.domain.email.ValidateEmailMailInformation
+import com.oriolsoler.security.domain.verification.VerificationType
+import com.oriolsoler.security.domain.verification.VerificationType.*
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserAlreadyExistsException
 
@@ -20,7 +22,7 @@ class SignUpEmailPasswordUseCase(
 ) {
     fun execute(signupRequestCommand: SignUpRequestCommand): User {
         val userCreated = saveNewUser(signupRequestCommand)
-        val userVerification = UserVerification(userCreated, verifyService.generate())
+        val userVerification = UserVerification(userCreated, verifyService.generate(VALIDATE_USER))
         verifyServiceRepository.save(userVerification)
         sendMail(userVerification)
         return userCreated

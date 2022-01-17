@@ -4,7 +4,10 @@ import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.application.VerifyService
 import com.oriolsoler.security.application.VerifyServiceRepository
 import com.oriolsoler.security.domain.user.User
-import com.oriolsoler.security.domain.verification.*
+import com.oriolsoler.security.domain.verification.UserVerification
+import com.oriolsoler.security.domain.verification.VerificationAlreadyVerifiedException
+import com.oriolsoler.security.domain.verification.VerificationExpiredException
+import com.oriolsoler.security.domain.verification.VerificationType.FORGOT_PASSWORD
 import com.oriolsoler.security.infrastucutre.controller.validateupdatepassword.ValidateUpdatedPasswordCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
 import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException
@@ -38,6 +41,10 @@ class ValidateUpdatePasswordUseCase(
     }
 
     private fun checkIfTokenIsValid(userVerification: UserVerification) = try {
+        if (userVerification.verification.type != FORGOT_PASSWORD) {
+            throw ValidateUpdatePasswordException("Invalid verification type")
+        }
+
         verifyService.checkIfAlreadyValidated(userVerification.verification)
         verifyService.checkIfExpired(userVerification.verification)
     } catch (e: VerificationExpiredException) {

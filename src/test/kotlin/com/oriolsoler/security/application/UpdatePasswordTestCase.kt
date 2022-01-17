@@ -4,10 +4,8 @@ import com.nhaarman.mockito_kotlin.*
 import com.oriolsoler.security.application.updatepassword.UpdatePasswordException
 import com.oriolsoler.security.application.updatepassword.UpdatePasswordUseCase
 import com.oriolsoler.security.domain.user.User
-import com.oriolsoler.security.domain.verification.Verification
-import com.oriolsoler.security.domain.verification.UserVerification
-import com.oriolsoler.security.domain.verification.VerificationNotUsableException
-import com.oriolsoler.security.domain.verification.VerificationNotVerifiedException
+import com.oriolsoler.security.domain.verification.*
+import com.oriolsoler.security.domain.verification.VerificationType.*
 import com.oriolsoler.security.infrastucutre.controller.updatepassword.UpdatePasswordRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
 import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException
@@ -20,7 +18,7 @@ class UpdatePasswordTestCase {
     @Test
     fun `should change password`() {
         val verification = "527832"
-        val verificationObject = Verification(verification = verification)
+        val verificationObject = Verification(verification = verification, type = FORGOT_PASSWORD)
         val mail = "user@email.com"
         val user = User(email = mail)
         val newPassword = "NEW_PASSWORD"
@@ -137,7 +135,7 @@ class UpdatePasswordTestCase {
     @Test
     fun `should throw exception if verification is not verified`() {
         val verification = "527832"
-        val verificationObject = Verification(verification)
+        val verificationObject = Verification(verification = verification, type = FORGOT_PASSWORD)
         val mail = "user@email.com"
         val user = User(email = mail)
         val newPassword = "NEW_PASSWORD"
@@ -179,7 +177,7 @@ class UpdatePasswordTestCase {
     @Test
     fun `should throw exception if verification is deleted`() {
         val verification = "527832"
-        val verificationObject = Verification(verification)
+        val verificationObject = Verification(verification = verification, type = FORGOT_PASSWORD)
         val mail = "user@email.com"
         val user = User(email = mail)
         val newPassword = "NEW_PASSWORD"

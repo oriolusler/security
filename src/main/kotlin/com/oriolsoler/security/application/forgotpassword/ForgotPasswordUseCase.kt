@@ -7,6 +7,8 @@ import com.oriolsoler.security.application.VerifyServiceRepository
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.UserVerification
 import com.oriolsoler.security.domain.email.ForgotPasswordMailInformation
+import com.oriolsoler.security.domain.verification.VerificationType
+import com.oriolsoler.security.domain.verification.VerificationType.*
 import com.oriolsoler.security.infrastucutre.controller.forgotpassword.ForgotPasswordRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
 
@@ -19,7 +21,7 @@ class ForgotPasswordUseCase(
 ) {
     fun execute(forgotPasswordRequestCommand: ForgotPasswordRequestCommand) {
         val currentUser = getUserByEmail(forgotPasswordRequestCommand.email)
-        val userVerification = UserVerification(currentUser, verifyService.generate())
+        val userVerification = UserVerification(currentUser, verifyService.generate(FORGOT_PASSWORD))
         verifyServiceRepository.save(userVerification)
         sendMail(userVerification)
     }

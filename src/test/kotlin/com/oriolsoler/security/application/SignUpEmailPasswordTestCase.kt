@@ -9,6 +9,8 @@ import com.oriolsoler.security.domain.verification.Verification
 import com.oriolsoler.security.domain.email.ValidateEmailMailInformation
 import com.oriolsoler.security.domain.user.UserRole.ROLE_USER
 import com.oriolsoler.security.domain.verification.UserVerification
+import com.oriolsoler.security.domain.verification.VerificationType
+import com.oriolsoler.security.domain.verification.VerificationType.*
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserAlreadyExistsException
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
@@ -40,10 +42,10 @@ class SignUpEmailPasswordTestCase {
         }
 
         val pin = "527832"
-        val verification = Verification(verification = pin)
+        val verification = Verification(verification = pin, type = VALIDATE_USER)
         val userValidation = UserVerification(user, verification)
         val verifyService = mock<VerifyService> {
-            on { generate() } doReturn verification
+            on { generate(VALIDATE_USER) } doReturn verification
         }
 
         val mailSender = mock<MailSender> { }
@@ -73,7 +75,7 @@ class SignUpEmailPasswordTestCase {
         assertEquals(user.password, userCreated.password)
         verify(passwordService, times(1)).encode(password)
         verify(signUpUserRepository, times(1)).save(any())
-        verify(verifyService, times(1)).generate()
+        verify(verifyService, times(1)).generate(VALIDATE_USER)
         verify(emailService, times(1)).send(emailInformation)
         verify(verifyServiceRepository, times(1)).save(userValidation)
     }

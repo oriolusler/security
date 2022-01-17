@@ -5,6 +5,7 @@ import com.oriolsoler.security.application.validateuser.ValidateUserException
 import com.oriolsoler.security.application.validateuser.ValidateUserUseCase
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.*
+import com.oriolsoler.security.domain.verification.VerificationType.*
 import com.oriolsoler.security.infrastucutre.controller.validateuser.ValidateUserCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
 import com.oriolsoler.security.infrastucutre.repository.verification.VerificationNotFoundException
@@ -18,7 +19,7 @@ class ValidateUserTestCase {
     fun `should validate user signup verification`() {
         val user = User(email = "email@online.com")
         val verification = "516797"
-        val verificationObject = Verification("516797")
+        val verificationObject = Verification(verification = "516797", type = VALIDATE_USER)
         val validateUserCommand = ValidateUserCommand(user.email, verification)
         val userVerification = UserVerification(user, verificationObject)
 
@@ -52,7 +53,7 @@ class ValidateUserTestCase {
     fun `should return an exception if validation is expired`() {
         val user = User(email = "email@online.com")
         val verification = "516797"
-        val verificationObject = Verification("516797")
+        val verificationObject = Verification(verification = "516797", type = VALIDATE_USER)
         val validateUserCommand = ValidateUserCommand(user.email, verification)
         val userVerification = UserVerification(user, verificationObject)
 
@@ -84,7 +85,7 @@ class ValidateUserTestCase {
     fun `should return an exception if validation is already validated`() {
         val user = User(email = "email@online.com")
         val verification = "516797"
-        val verificationObject = Verification("516797")
+        val verificationObject = Verification(verification = "516797", type = VALIDATE_USER)
         val validateUserCommand = ValidateUserCommand(user.email, verification)
         val userVerification = UserVerification(user, verificationObject)
 
@@ -161,11 +162,12 @@ class ValidateUserTestCase {
         }
         assertEquals("Validate user error: User not found", exception.message)
     }
+
     @Test
     fun `should return an exception if validation is not usable`() {
         val user = User(email = "email@online.com")
         val verification = "516797"
-        val verificationObject = Verification("516797")
+        val verificationObject = Verification(verification = "516797", type = VALIDATE_USER)
         val validateUserCommand = ValidateUserCommand(user.email, verification)
         val userVerification = UserVerification(user, verificationObject)
 
@@ -191,5 +193,34 @@ class ValidateUserTestCase {
             validateUserUseCase.execute(validateUserCommand)
         }
         assertEquals("Validate user error: Verification not usable", exception.message)
+    }
+
+    @Test
+    fun `should return an exception if validation type is not valid`() {
+        val user = User(email = "email@online.com")
+        val verification = "516797"
+        val verificationObject = Verification(verification = "516797", type = FORGOT_PASSWORD)
+        val validateUserCommand = ValidateUserCommand(user.email, verification)
+        val userVerification = UserVerification(user, verificationObject)
+
+        val verifyService = mock<VerifyService> { }
+
+        val userRepository = mock<UserRepository> {
+            on { getBy(user.email) } doReturn user
+        }
+        val verifyServiceRepository = mock<VerifyServiceRepository> {
+            on { getBy(user, verification) } doReturn userVerification
+        }
+
+        val validateUserUseCase = ValidateUserUseCase(
+            verifyService,
+            verifyServiceRepository,
+            userRepository
+        )
+
+        val exception = assertThrows<ValidateUserException> {
+            validateUserUseCase.execute(validateUserCommand)
+        }
+        assertEquals("Validate user error: Invalid verification type", exception.message)
     }
 }

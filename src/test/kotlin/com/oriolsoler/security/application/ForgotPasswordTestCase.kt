@@ -7,6 +7,8 @@ import com.oriolsoler.security.application.signup.MailService
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.Verification
 import com.oriolsoler.security.domain.email.ForgotPasswordMailInformation
+import com.oriolsoler.security.domain.verification.VerificationType
+import com.oriolsoler.security.domain.verification.VerificationType.*
 import com.oriolsoler.security.infrastucutre.controller.forgotpassword.ForgotPasswordRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
 import org.junit.jupiter.api.Test
@@ -21,9 +23,9 @@ class ForgotPasswordTestCase {
         val userMail = "user@email.com"
 
         val pin = "527832"
-        val verification = Verification(verification = pin)
+        val verification = Verification(verification = pin, type = FORGOT_PASSWORD)
         val verifyService = mock<VerifyService> {
-            on { generate() } doReturn verification
+            on { generate(FORGOT_PASSWORD) } doReturn verification
         }
 
         val emailInformation = ForgotPasswordMailInformation(
@@ -61,7 +63,7 @@ class ForgotPasswordTestCase {
                     "introduce este código para seguir con el proceso: $pin", emailInformation.body
         )
         verify(userRepository, times(1)).getBy(userMail)
-        verify(verifyService, times(1)).generate()
+        verify(verifyService, times(1)).generate(FORGOT_PASSWORD)
         verify(emailService, times(1)).send(emailInformation)
         verify(verifyServiceRepository, times(1)).save(any())
     }
