@@ -45,9 +45,9 @@ class ValidateRefreshTokenTestCase {
 
         assertNotNull(response.accessToken)
         assertNotNull(response.refreshToken)
-        verify(tokenVerification, times(1)).validateRefreshToken(refreshToken)
-        verify(userRepository, times(1)).getBy(user.id)
-        verify(tokenGenerator, times(1)).generate(user.id)
+        verify(tokenVerification).validateRefreshToken(refreshToken)
+        verify(userRepository).getBy(user.id)
+        verify(tokenGenerator).generate(user.id)
     }
 
     @Test

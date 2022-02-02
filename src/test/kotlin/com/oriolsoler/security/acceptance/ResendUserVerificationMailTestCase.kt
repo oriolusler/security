@@ -56,7 +56,7 @@ abstract class ResendUserVerificationMailTestCase {
         given()
             .contentType("application/json")
             .body(resendUserValidationCommand)
-            .post("/api/auth/validate/validate/user/resend")
+            .post("/api/auth/validate/user/resend")
             .then()
             .status(ACCEPTED)
 

@@ -58,7 +58,7 @@ class PinVerifyServiceTest {
         pinVerifyService.checkIfExpired(userVerification.verification)
 
         assertTrue { true }
-        verify(clock, times(1)).now()
+        verify(clock).now()
     }
 
     @Test
@@ -76,7 +76,7 @@ class PinVerifyServiceTest {
             pinVerifyService.checkIfExpired(userVerification.verification)
         }
         assertEquals("Verification expired", throws.message)
-        verify(clock, times(1)).now()
+        verify(clock).now()
     }
 
     @Test

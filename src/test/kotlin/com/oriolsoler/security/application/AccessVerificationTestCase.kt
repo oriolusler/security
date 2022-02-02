@@ -35,8 +35,8 @@ class AccessVerificationTestCase {
         val accessResult = accessVerificationUseCase.execute(accessVerificationCommand)
 
         assertTrue(accessResult)
-        verify(tokenVerification, times(1)).validateAccessToken(token)
-        verify(userRepository, times(1)).getBy(user.id)
+        verify(tokenVerification).validateAccessToken(token)
+        verify(userRepository).getBy(user.id)
     }
 
     @Test

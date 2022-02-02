@@ -42,10 +42,10 @@ class ValidateUpdatePasswordTestCase {
 
         validateUpdatePasswordUseCase.execute(validateUpdatedPasswordCommand)
 
-        verify(userRepository, times(1)).getBy(user.email)
-        verify(verifyServiceRepository, times(1)).getBy(user, verification)
-        verify(verifyService, times(1)).checkIfExpired(verificationObject)
-        verify(verifyServiceRepository, times(1)).setToValidated(userVerification)
+        verify(userRepository).getBy(user.email)
+        verify(verifyServiceRepository).getBy(user, verification)
+        verify(verifyService).checkIfExpired(verificationObject)
+        verify(verifyServiceRepository).setToValidated(userVerification)
     }
 
     @Test

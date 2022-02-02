@@ -73,11 +73,11 @@ class SignUpEmailPasswordTestCase {
 
         assertEquals(user.id, userCreated.id)
         assertEquals(user.password, userCreated.password)
-        verify(passwordService, times(1)).encode(password)
-        verify(signUpUserRepository, times(1)).save(any())
-        verify(verifyService, times(1)).generate(VALIDATE_USER)
-        verify(emailService, times(1)).send(emailInformation)
-        verify(verifyServiceRepository, times(1)).save(userValidation)
+        verify(passwordService).encode(password)
+        verify(signUpUserRepository).save(any())
+        verify(verifyService).generate(VALIDATE_USER)
+        verify(emailService).send(emailInformation)
+        verify(verifyServiceRepository).save(userValidation)
     }
 
     @Test

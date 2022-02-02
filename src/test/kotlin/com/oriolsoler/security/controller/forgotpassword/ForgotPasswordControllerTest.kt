@@ -42,7 +42,7 @@ class ForgotPasswordControllerTest {
         val response = forgotPasswordController.forgot(forgotPasswordCommand)
 
         assertEquals(ACCEPTED, response.statusCode)
-        verify(forgotPasswordUserCase, times(1)).execute(forgotPasswordCommand)
+        verify(forgotPasswordUserCase).execute(forgotPasswordCommand)
     }
 
     @Test

@@ -45,7 +45,7 @@ class UpdatePasswordControllerTest {
         val response = updatePasswordController.update(forgotPasswordCommand)
 
         assertEquals(OK, response.statusCode)
-        verify(updatePasswordUseCase, times(1)).execute(forgotPasswordCommand)
+        verify(updatePasswordUseCase).execute(forgotPasswordCommand)
     }
 
     @Test

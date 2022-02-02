@@ -46,7 +46,7 @@ class SignUpEmailPasswordControllerTest {
 
         assertEquals(CREATED, response.statusCode)
         assertEquals("User with email $email created successfully", response.body)
-        verify(signUpEmailPasswordUseCase, times(1)).execute(signupRequestCommand)
+        verify(signUpEmailPasswordUseCase).execute(signupRequestCommand)
     }
 
     @Test

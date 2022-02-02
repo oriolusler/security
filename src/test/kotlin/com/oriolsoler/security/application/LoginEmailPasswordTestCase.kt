@@ -53,9 +53,9 @@ class LoginEmailPasswordTestCase {
         assertEquals(user.id.value.toString(), loginResponse.user.id)
         assertEquals(email, loginResponse.user.email)
 
-        verify(passwordService, times(1)).matches(password, encryptedPassword)
-        verify(userRepository, times(1)).getBy(email)
-        verify(tokenGenerator, times(1)).generate(any())
+        verify(passwordService).matches(password, encryptedPassword)
+        verify(userRepository).getBy(email)
+        verify(tokenGenerator).generate(any())
     }
 
     @Test

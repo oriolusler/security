@@ -42,11 +42,11 @@ class ValidateUserTestCase {
 
         validateUserUseCase.execute(validateUserCommand)
 
-        verify(userRepository, times(1)).getBy(user.email)
-        verify(verifyServiceRepository, times(1)).getBy(user, verification)
-        verify(verifyService, times(1)).checkIfExpired(verificationObject)
-        verify(verifyServiceRepository, times(1)).setToValidated(userVerification)
-        verify(userRepository, times(1)).setUnlocked(user)
+        verify(userRepository).getBy(user.email)
+        verify(verifyServiceRepository).getBy(user, verification)
+        verify(verifyService).checkIfExpired(verificationObject)
+        verify(verifyServiceRepository).setToValidated(userVerification)
+        verify(userRepository).setUnlocked(user)
     }
 
     @Test

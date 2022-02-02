@@ -62,10 +62,10 @@ class ForgotPasswordTestCase {
             "Has solicitado el cambio de la contraseña, " +
                     "introduce este código para seguir con el proceso: $pin", emailInformation.body
         )
-        verify(userRepository, times(1)).getBy(userMail)
-        verify(verifyService, times(1)).generate(FORGOT_PASSWORD)
-        verify(emailService, times(1)).send(emailInformation)
-        verify(verifyServiceRepository, times(1)).save(any())
+        verify(userRepository).getBy(userMail)
+        verify(verifyService).generate(FORGOT_PASSWORD)
+        verify(emailService).send(emailInformation)
+        verify(verifyServiceRepository).save(any())
     }
 
     @Test

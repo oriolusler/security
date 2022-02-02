@@ -50,7 +50,7 @@ class ValidateUpdatePasswordControllerTest {
         val response = validateUpdatePasswordController.verify(validateUpdatedPasswordCommand)
 
         assertEquals(ACCEPTED, response.statusCode)
-        verify(validateUpdatePasswordUseCase, times(1)).execute(validateUpdatedPasswordCommand)
+        verify(validateUpdatePasswordUseCase).execute(validateUpdatedPasswordCommand)
     }
 
     @Test

@@ -38,7 +38,7 @@ class MailSenderServiceTest {
         val messageHasBeenSent = mailSenderService.send(mailInformation)
 
         assertTrue { messageHasBeenSent }
-        verify(javaMailSenderMock, times(1)).send(captor.capture())
+        verify(javaMailSenderMock).send(captor.capture())
 
         val messageSent = captor.value as SimpleMailMessage
         assertEquals(user.email, messageSent.to!![0])

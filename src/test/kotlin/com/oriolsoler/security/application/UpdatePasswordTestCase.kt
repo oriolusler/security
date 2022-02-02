@@ -51,13 +51,13 @@ class UpdatePasswordTestCase {
         val updatePasswordCommand = UpdatePasswordRequestCommand(mail, verification, newPassword)
         updatePasswordUseCase.execute(updatePasswordCommand)
 
-        verify(passwordService, times(1)).encode(newPassword)
-        verify(verifyServiceRepository, times(1)).getBy(user, verification)
-        verify(verifyService, times(1)).checkIfNotValidated(verificationObject)
-        verify(verifyService, times(1)).checkIfUsable(verificationObject)
-        verify(verifyServiceRepository, times(1)).setToUnusable(userVerification)
-        verify(userRepository, times(1)).updatePassword(user, encryptedNewPassword)
-        verify(userRepository, times(1)).getBy(mail)
+        verify(passwordService).encode(newPassword)
+        verify(verifyServiceRepository).getBy(user, verification)
+        verify(verifyService).checkIfNotValidated(verificationObject)
+        verify(verifyService).checkIfUsable(verificationObject)
+        verify(verifyServiceRepository).setToUnusable(userVerification)
+        verify(userRepository).updatePassword(user, encryptedNewPassword)
+        verify(userRepository).getBy(mail)
         assertTrue { true }
     }
 
@@ -86,7 +86,7 @@ class UpdatePasswordTestCase {
             updatePasswordUseCase.execute(updatePasswordCommand)
         }
         assertEquals("Update password error: User not found", exception.message)
-        verify(userRepository, times(1)).getBy(mail)
+        verify(userRepository).getBy(mail)
         verify(verifyServiceRepository, times(0)).getBy(any(), any())
         verify(verifyService, times(0)).checkIfNotValidated(any())
         verify(verifyService, times(0)).checkIfUsable(any())
@@ -124,8 +124,8 @@ class UpdatePasswordTestCase {
             updatePasswordUseCase.execute(updatePasswordCommand)
         }
         assertEquals("Update password error: No verification found", exception.message)
-        verify(userRepository, times(1)).getBy(mail)
-        verify(verifyServiceRepository, times(1)).getBy(user, verification)
+        verify(userRepository).getBy(mail)
+        verify(verifyServiceRepository).getBy(user, verification)
         verify(verifyService, times(0)).checkIfNotValidated(any())
         verify(verifyService, times(0)).checkIfUsable(any())
         verify(passwordService, times(0)).encode(any())
@@ -166,9 +166,9 @@ class UpdatePasswordTestCase {
             updatePasswordUseCase.execute(updatePasswordCommand)
         }
         assertEquals("Update password error: Verification has not been verified", exception.message)
-        verify(userRepository, times(1)).getBy(mail)
-        verify(verifyServiceRepository, times(1)).getBy(user, verification)
-        verify(verifyService, times(1)).checkIfNotValidated(verificationObject)
+        verify(userRepository).getBy(mail)
+        verify(verifyServiceRepository).getBy(user, verification)
+        verify(verifyService).checkIfNotValidated(verificationObject)
         verify(verifyService, times(0)).checkIfUsable(verificationObject)
         verify(passwordService, times(0)).encode(any())
         verify(userRepository, times(0)).updatePassword(any(), any())
@@ -209,10 +209,10 @@ class UpdatePasswordTestCase {
             updatePasswordUseCase.execute(updatePasswordCommand)
         }
         assertEquals("Update password error: Verification not usable", exception.message)
-        verify(userRepository, times(1)).getBy(mail)
-        verify(verifyServiceRepository, times(1)).getBy(user, verification)
-        verify(verifyService, times(1)).checkIfNotValidated(verificationObject)
-        verify(verifyService, times(1)).checkIfUsable(verificationObject)
+        verify(userRepository).getBy(mail)
+        verify(verifyServiceRepository).getBy(user, verification)
+        verify(verifyService).checkIfNotValidated(verificationObject)
+        verify(verifyService).checkIfUsable(verificationObject)
         verify(passwordService, times(0)).encode(any())
         verify(userRepository, times(0)).updatePassword(any(), any())
     }

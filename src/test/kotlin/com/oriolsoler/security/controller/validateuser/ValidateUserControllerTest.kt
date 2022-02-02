@@ -50,7 +50,7 @@ class ValidateUserControllerTest {
         val response = validateUserController.verify(validateUserCommand)
 
         assertEquals(ACCEPTED, response.statusCode)
-        verify(validateUserUseCase, times(1)).execute(validateUserCommand)
+        verify(validateUserUseCase).execute(validateUserCommand)
     }
 
     @Test
