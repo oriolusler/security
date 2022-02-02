@@ -64,4 +64,7 @@ class SecurityApplicationTests {
 
     @Nested
     inner class UpdatePassword : UpdatePasswordTestCase()
+
+    @Nested
+    inner class ResendUserVerificationMail : ResendUserVerificationMailTestCase()
 }

@@ -8,7 +8,7 @@ import com.oriolsoler.security.domain.email.ValidateEmailMailInformation
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.verification.Verification
 import com.oriolsoler.security.domain.verification.VerificationType.VALIDATE_USER
-import com.oriolsoler.security.infrastucutre.controller.resenduserverification.ResendUserVerificationCommand
+import com.oriolsoler.security.infrastucutre.controller.resenduservalidation.ResendUserValidationCommand
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
@@ -47,7 +47,7 @@ class ResendUserVerificationTestCase {
             emailFrom
         )
 
-        val resendUserVerificationCommand = ResendUserVerificationCommand(userMail)
+        val resendUserVerificationCommand = ResendUserValidationCommand(userMail)
 
         resendUserVerificationUseCase.execute(resendUserVerificationCommand)
 
@@ -85,7 +85,7 @@ class ResendUserVerificationTestCase {
             emailFrom
         )
 
-        val resendUserVerificationCommand = ResendUserVerificationCommand(userMail)
+        val resendUserVerificationCommand = ResendUserValidationCommand(userMail)
 
         val exception = assertThrows<ResendUserVerificationException> {
             resendUserVerificationUseCase.execute(resendUserVerificationCommand)

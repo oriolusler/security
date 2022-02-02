@@ -9,7 +9,7 @@ import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.user.UserUnlockedException
 import com.oriolsoler.security.domain.verification.UserVerification
 import com.oriolsoler.security.domain.verification.VerificationType
-import com.oriolsoler.security.infrastucutre.controller.resenduserverification.ResendUserVerificationCommand
+import com.oriolsoler.security.infrastucutre.controller.resenduservalidation.ResendUserValidationCommand
 
 class ResendUserVerificationUseCase(
     private val userRepository: UserRepository,
@@ -18,8 +18,8 @@ class ResendUserVerificationUseCase(
     private val emailService: MailService,
     private val emailFrom: String
 ) {
-    fun execute(resendUserVerificationCommand: ResendUserVerificationCommand) {
-        val currentUser = userRepository.getBy(resendUserVerificationCommand.userMail)
+    fun execute(resendUserVerificationCommand: ResendUserValidationCommand) {
+        val currentUser = userRepository.getBy(resendUserVerificationCommand.email)
         validateUser(currentUser)
 
         val verification = verifyService.generate(VerificationType.VALIDATE_USER)

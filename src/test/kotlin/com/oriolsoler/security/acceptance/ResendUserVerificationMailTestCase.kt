@@ -2,10 +2,8 @@ package com.oriolsoler.security.acceptance
 
 import com.oriolsoler.security.SecurityApplication
 import com.oriolsoler.security.application.UserRepository
-import com.oriolsoler.security.application.VerifyService
-import com.oriolsoler.security.application.VerifyServiceRepository
 import com.oriolsoler.security.domain.user.User
-import com.oriolsoler.security.domain.verification.VerificationType.*
+import com.oriolsoler.security.domain.verification.VerificationType.VALIDATE_USER
 import com.oriolsoler.security.infrastucutre.controller.resenduservalidation.ResendUserValidationCommand
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
 import com.oriolsoler.security.infrastucutre.repository.test.VerificationRepositoryForTest
@@ -16,7 +14,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.HttpStatus.*
+import org.springframework.http.HttpStatus.ACCEPTED
 import org.springframework.test.web.servlet.MockMvc
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
