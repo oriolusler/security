@@ -18,7 +18,7 @@ class DockerComposeHelper {
     private val container: DockerComposeContainer<*>
 
     init {
-        container = DockerComposeContainer<Nothing>(File("docker-compose.test.yml"))
+        container = DockerComposeContainer<Nothing>(File("docker-compose-test.yml"))
             .apply { withLocalCompose(true) }
             .apply {
                 withExposedService(

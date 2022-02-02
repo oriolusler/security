@@ -13,6 +13,7 @@ import com.oriolsoler.security.application.signup.SignUpEmailPasswordUseCase
 import com.oriolsoler.security.application.validaterefreshtoken.ValidateRefreshTokenUseCase
 import com.oriolsoler.security.application.VerifyService
 import com.oriolsoler.security.application.VerifyServiceRepository
+import com.oriolsoler.security.application.resenduserverification.ResendUserVerificationUseCase
 import com.oriolsoler.security.application.validateupdatepassword.ValidateUpdatePasswordUseCase
 import com.oriolsoler.security.application.validateuser.ValidateUserUseCase
 import org.springframework.beans.factory.annotation.Qualifier
@@ -104,5 +105,22 @@ class ApplicationConfiguration {
         passwordService: PasswordService
     ): UpdatePasswordUseCase {
         return UpdatePasswordUseCase(userRepository, verifyService, verifyServiceRepository, passwordService)
+    }
+
+    @Bean
+    fun resendUserVerificationUseCase(
+        userRepository: UserRepository,
+        verifyService: VerifyService,
+        verifyServiceRepository: VerifyServiceRepository,
+        emailService: MailService,
+        @Value("\${verification.email.from}") emailSender: String
+    ): ResendUserVerificationUseCase {
+        return ResendUserVerificationUseCase(
+            userRepository,
+            verifyService,
+            verifyServiceRepository,
+            emailService,
+            emailSender
+        )
     }
 }

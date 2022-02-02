@@ -1,3 +1,7 @@
 package com.oriolsoler.security.infrastucutre.controller.resenduservalidation
 
-class ResendUserValidationCommand(val email: String)
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
+
+
+class ResendUserValidationCommand @JsonCreator constructor(@JsonProperty("email") val email: String)

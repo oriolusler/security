@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus.ACCEPTED
 import org.springframework.test.web.servlet.MockMvc
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @SpringBootTest(
     classes = [SecurityApplication::class],
@@ -60,7 +61,7 @@ abstract class ResendUserVerificationMailTestCase {
 
         val verification = verificationRepositoryForTest.getBy(user)
         assertFalse { verification.verification.validated }
-        assertFalse { verification.verification.usable }
+        assertTrue { verification.verification.usable }
         assertEquals(VALIDATE_USER, verification.verification.type)
     }
 
