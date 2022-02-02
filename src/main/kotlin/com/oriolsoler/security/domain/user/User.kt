@@ -9,8 +9,12 @@ class User(
     val roles: List<UserRole> = listOf(ROLE_USER),
     val locked: Boolean = true
 ) {
-    fun isValid() {
+    fun checkIfValid() {
         if (locked) throw UserLockedException()
+    }
+
+    fun checkIfAlreadyValidated() {
+        if (!locked) throw UserUnlockedException()
     }
 
     override fun equals(other: Any?): Boolean {

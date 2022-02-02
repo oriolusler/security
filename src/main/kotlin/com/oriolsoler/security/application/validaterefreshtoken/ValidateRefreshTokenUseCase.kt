@@ -32,7 +32,7 @@ class ValidateRefreshTokenUseCase(
 
     private fun isValidUser(user: User) {
         try {
-            user.isValid()
+            user.checkIfValid()
         } catch (e: UserLockedException) {
             throw ValidateRefreshTokenException(e.message, e)
         }

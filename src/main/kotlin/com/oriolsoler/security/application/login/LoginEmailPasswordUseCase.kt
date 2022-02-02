@@ -38,7 +38,7 @@ class LoginEmailPasswordUseCase(
 
     private fun validateUser(user: User) {
         try {
-            user.isValid()
+            user.checkIfValid()
         } catch (e: UserLockedException) {
             throw LoginException(e.message, e)
         }

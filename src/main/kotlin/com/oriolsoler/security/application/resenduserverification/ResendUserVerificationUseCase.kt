@@ -5,6 +5,8 @@ import com.oriolsoler.security.application.VerifyService
 import com.oriolsoler.security.application.VerifyServiceRepository
 import com.oriolsoler.security.application.signup.MailService
 import com.oriolsoler.security.domain.email.ValidateEmailMailInformation
+import com.oriolsoler.security.domain.user.User
+import com.oriolsoler.security.domain.user.UserUnlockedException
 import com.oriolsoler.security.domain.verification.UserVerification
 import com.oriolsoler.security.domain.verification.VerificationType
 import com.oriolsoler.security.infrastucutre.controller.resenduserverification.ResendUserVerificationCommand
@@ -18,6 +20,8 @@ class ResendUserVerificationUseCase(
 ) {
     fun execute(resendUserVerificationCommand: ResendUserVerificationCommand) {
         val currentUser = userRepository.getBy(resendUserVerificationCommand.userMail)
+        validateUser(currentUser)
+
         val verification = verifyService.generate(VerificationType.VALIDATE_USER)
         verifyServiceRepository.save(UserVerification(currentUser, verification))
         emailService.send(
@@ -28,5 +32,13 @@ class ResendUserVerificationUseCase(
             )
         )
 
+    }
+
+    private fun validateUser(currentUser: User) {
+        try {
+            currentUser.checkIfAlreadyValidated()
+        } catch (e: UserUnlockedException) {
+            throw ResendUserVerificationException(e.message, e)
+        }
     }
 }

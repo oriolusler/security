@@ -28,7 +28,7 @@ class AccessVerificationUseCase(
 
     private fun validateUSer(user: User) {
         try {
-            user.isValid()
+            user.checkIfValid()
         } catch (e: UserLockedException) {
             throw AccessVerificationException(e.message, e)
         }
