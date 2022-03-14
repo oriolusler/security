@@ -24,6 +24,8 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.0")
     implementation("org.junit.jupiter:junit-jupiter:5.8.2")
     implementation("org.projectlombok:lombok:1.18.22")
+    implementation("com.google.api-client:google-api-client:1.33.2")
+    implementation("com.google.firebase:firebase-admin:8.1.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test:2.6.1")
     testImplementation("org.testcontainers:junit-jupiter:1.16.2")

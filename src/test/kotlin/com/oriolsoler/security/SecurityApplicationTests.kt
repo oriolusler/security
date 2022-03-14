@@ -67,4 +67,7 @@ class SecurityApplicationTests {
 
     @Nested
     inner class ResendUserVerificationMail : ResendUserVerificationMailTestCase()
+
+    @Nested
+    inner class LoginWithGoogle  : LoginWithGoogleTestCase()
 }

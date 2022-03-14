@@ -37,3 +37,4 @@ out/
 .vscode/
 
 .env
+src/test/resources/firebase-project.json
