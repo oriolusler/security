@@ -4,7 +4,7 @@ import com.oriolsoler.security.SecurityApplication
 import com.oriolsoler.security.application.UserRepository
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.user.UserRole.ROLE_USER
-import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
+import com.oriolsoler.security.infrastucutre.controller.login.emailpassword.LoginEmailPasswordRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.test.UserRepositoryForTest
 import io.restassured.module.mockmvc.RestAssuredMockMvc
 import io.restassured.module.mockmvc.RestAssuredMockMvc.given
@@ -53,7 +53,7 @@ abstract class LoginWithEmailPasswordTestCase {
 
         userRepository.save(user)
 
-        val signUpRequestCommand = LoginRequestCommand(email, password)
+        val signUpRequestCommand = LoginEmailPasswordRequestCommand(email, password)
         given()
             .contentType("application/json")
             .body(signUpRequestCommand)
@@ -75,7 +75,7 @@ abstract class LoginWithEmailPasswordTestCase {
 
         userRepository.save(user)
 
-        val signUpRequestCommand = LoginRequestCommand(email, password)
+        val signUpRequestCommand = LoginEmailPasswordRequestCommand(email, password)
         given()
             .contentType("application/json")
             .body(signUpRequestCommand)
@@ -94,7 +94,7 @@ abstract class LoginWithEmailPasswordTestCase {
 
         userRepository.save(user)
 
-        val signUpRequestCommand = LoginRequestCommand(email, "INVALID")
+        val signUpRequestCommand = LoginEmailPasswordRequestCommand(email, "INVALID")
         given()
             .contentType("application/json")
             .body(signUpRequestCommand)

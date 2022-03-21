@@ -1,13 +1,13 @@
 package com.oriolsoler.security.application
 
 import com.nhaarman.mockito_kotlin.*
-import com.oriolsoler.security.application.login.LoginEmailPasswordUseCase
+import com.oriolsoler.security.application.login.userpassword.LoginEmailPasswordUseCase
 import com.oriolsoler.security.application.login.LoginException
 import com.oriolsoler.security.application.login.TokenGenerator
 import com.oriolsoler.security.domain.Token
 import com.oriolsoler.security.domain.user.User
 import com.oriolsoler.security.domain.services.exceptions.InvalidPasswordException
-import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
+import com.oriolsoler.security.infrastucutre.controller.login.emailpassword.LoginEmailPasswordRequestCommand
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -43,8 +43,8 @@ class LoginEmailPasswordTestCase {
             tokenGenerator
         )
 
-        val loginRequestCommand = LoginRequestCommand(email, password)
-        val loginResponse = loginEmailPasswordTestCase.execute(loginRequestCommand)
+        val loginEmailPasswordRequestCommand = LoginEmailPasswordRequestCommand(email, password)
+        val loginResponse = loginEmailPasswordTestCase.execute(loginEmailPasswordRequestCommand)
 
         assertNotNull(loginResponse)
         assertNotNull(loginResponse.token)
@@ -79,8 +79,8 @@ class LoginEmailPasswordTestCase {
 
         val loginEmailPasswordTestCase = LoginEmailPasswordUseCase(userRepository, passwordService, tokenGenerator)
 
-        val loginRequestCommand = LoginRequestCommand(email, password)
-        val exception = assertFailsWith<LoginException> { loginEmailPasswordTestCase.execute(loginRequestCommand) }
+        val loginEmailPasswordRequestCommand = LoginEmailPasswordRequestCommand(email, password)
+        val exception = assertFailsWith<LoginException> { loginEmailPasswordTestCase.execute(loginEmailPasswordRequestCommand) }
 
         assertEquals("Login error: Invalid password", exception.message)
     }
@@ -108,8 +108,8 @@ class LoginEmailPasswordTestCase {
 
         val loginEmailPasswordTestCase = LoginEmailPasswordUseCase(userRepository, passwordService, tokenGenerator)
 
-        val loginRequestCommand = LoginRequestCommand(email, password)
-        val exception = assertFailsWith<LoginException> { loginEmailPasswordTestCase.execute(loginRequestCommand) }
+        val loginEmailPasswordRequestCommand = LoginEmailPasswordRequestCommand(email, password)
+        val exception = assertFailsWith<LoginException> { loginEmailPasswordTestCase.execute(loginEmailPasswordRequestCommand) }
 
         assertEquals("Login error: User locked", exception.message)
     }
@@ -126,8 +126,8 @@ class LoginEmailPasswordTestCase {
         val tokenGenerator = mock<TokenGenerator> {}
         val loginEmailPasswordTestCase = LoginEmailPasswordUseCase(userRepository, passwordService, tokenGenerator)
 
-        val loginRequestCommand = LoginRequestCommand(email, password)
-        val exception = assertFailsWith<LoginException> { loginEmailPasswordTestCase.execute(loginRequestCommand) }
+        val loginEmailPasswordRequestCommand = LoginEmailPasswordRequestCommand(email, password)
+        val exception = assertFailsWith<LoginException> { loginEmailPasswordTestCase.execute(loginEmailPasswordRequestCommand) }
 
         assertEquals("Login error: User not found", exception.message)
     }

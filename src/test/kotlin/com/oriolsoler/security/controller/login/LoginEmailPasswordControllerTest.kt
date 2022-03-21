@@ -1,14 +1,14 @@
 package com.oriolsoler.security.controller.login
 
 import com.nhaarman.mockito_kotlin.mock
-import com.oriolsoler.security.application.login.LoginEmailPasswordUseCase
+import com.oriolsoler.security.application.login.userpassword.LoginEmailPasswordUseCase
 import com.oriolsoler.security.application.login.LoginException
 import com.oriolsoler.security.domain.Token
 import com.oriolsoler.security.domain.services.exceptions.InvalidPasswordException
 import com.oriolsoler.security.domain.user.UserId
 import com.oriolsoler.security.domain.user.UserLockedException
-import com.oriolsoler.security.infrastucutre.controller.login.LoginEmailPasswordController
-import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
+import com.oriolsoler.security.infrastucutre.controller.login.emailpassword.LoginEmailPasswordController
+import com.oriolsoler.security.infrastucutre.controller.login.emailpassword.LoginEmailPasswordRequestCommand
 import com.oriolsoler.security.infrastucutre.controller.login.LoginResponse
 import com.oriolsoler.security.infrastucutre.controller.login.ResponseUser
 import com.oriolsoler.security.infrastucutre.repository.user.UserNotFoundException
@@ -41,15 +41,15 @@ class LoginEmailPasswordControllerTest {
     fun `should login user`() {
         val email = "user@email.com"
         val password = "password"
-        val loginRequestCommand = LoginRequestCommand(email, password)
+        val loginEmailPasswordRequestCommand = LoginEmailPasswordRequestCommand(email, password)
 
         val loginResponseExpected = LoginResponse(
             token = Token("", ""),
             user = ResponseUser(UserId().value.toString(), "email@online.com")
         )
-        `when`(loginEmailPasswordUseCase.execute(loginRequestCommand)).thenReturn(loginResponseExpected)
+        `when`(loginEmailPasswordUseCase.execute(loginEmailPasswordRequestCommand)).thenReturn(loginResponseExpected)
 
-        val response = loginEmailPasswordController.login(loginRequestCommand)
+        val response = loginEmailPasswordController.login(loginEmailPasswordRequestCommand)
 
         assertEquals(OK, response.statusCode)
         assertNotNull(response.body)

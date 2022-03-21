@@ -25,7 +25,11 @@ class FirebaseConfiguration {
             .setCredentials(GoogleCredentials.fromStream(serviceAccount))
             .build()
 
-        return FirebaseApp.initializeApp(options)
+        return if (FirebaseApp.getApps().isEmpty()) {
+            FirebaseApp.initializeApp(options)
+        } else {
+            FirebaseApp.getInstance()
+        }
     }
 
     @Bean

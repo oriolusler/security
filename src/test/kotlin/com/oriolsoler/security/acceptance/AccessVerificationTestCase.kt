@@ -2,8 +2,8 @@ package com.oriolsoler.security.acceptance
 
 import com.oriolsoler.security.SecurityApplication
 import com.oriolsoler.security.application.UserRepository
-import com.oriolsoler.security.infrastucutre.controller.login.LoginEmailPasswordController
-import com.oriolsoler.security.infrastucutre.controller.login.LoginRequestCommand
+import com.oriolsoler.security.infrastucutre.controller.login.emailpassword.LoginEmailPasswordController
+import com.oriolsoler.security.infrastucutre.controller.login.emailpassword.LoginEmailPasswordRequestCommand
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpEmailPasswordController
 import com.oriolsoler.security.infrastucutre.controller.signup.SignUpRequestCommand
 import com.oriolsoler.security.infrastucutre.controller.validateuser.ValidateUserCommand
@@ -68,8 +68,8 @@ abstract class AccessVerificationTestCase {
         val verifyCommand = ValidateUserCommand(email, verification.verification.verification)
         validateUserController.verify(verifyCommand)
 
-        val loginRequestCommand = LoginRequestCommand(email, password)
-        val loginResponse = loginEmailPasswordController.login(loginRequestCommand)
+        val loginEmailPasswordRequestCommand = LoginEmailPasswordRequestCommand(email, password)
+        val loginResponse = loginEmailPasswordController.login(loginEmailPasswordRequestCommand)
 
         val accessToken = loginResponse.body!!.token.accessToken
 
