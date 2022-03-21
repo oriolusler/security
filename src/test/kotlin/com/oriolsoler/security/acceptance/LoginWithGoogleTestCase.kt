@@ -42,20 +42,14 @@ abstract class LoginWithGoogleTestCase {
     @Autowired
     private lateinit var userRepositoryFotTest: UserRepositoryForTest
 
+    @Autowired
     private lateinit var auth: FirebaseAuth
+
     private lateinit var firebaseUserRequest: UserRecord.CreateRequest
 
     init {
         setenv("FIREBASE_AUTH_EMULATOR_HOST", AUTH_EMULATOR)
         setenv("GCLOUD_PROJECT", TEST_PROJECT_ID)
-
-        val options = FirebaseOptions.builder()
-            .setCredentials(fromStream(FileInputStream("src/test/resources/firebase-project.json")))
-            .build()
-
-        FirebaseApp.initializeApp(options)
-
-        auth = FirebaseAuth.getInstance()
 
         firebaseUserRequest = UserRecord.CreateRequest()
             .setUid(FIREBASE_USER_ID)
