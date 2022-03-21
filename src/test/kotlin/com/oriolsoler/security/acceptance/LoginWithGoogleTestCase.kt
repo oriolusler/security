@@ -5,6 +5,7 @@ import com.google.auth.oauth2.GoogleCredentials.fromStream
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.UserRecord
 import com.google.firebase.internal.FirebaseProcessEnvironment.setenv
 import com.oriolsoler.security.SecurityApplication
@@ -68,7 +69,10 @@ abstract class LoginWithGoogleTestCase {
     fun setUp() {
         RestAssuredMockMvc.mockMvc(mvc)
         userRepositoryFotTest.clean()
-        auth.deleteUser(FIREBASE_USER_ID)
+        try {
+            auth.deleteUser(FIREBASE_USER_ID)
+        } catch (_: FirebaseAuthException) {
+        }
     }
 
     @Test
