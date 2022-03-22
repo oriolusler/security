@@ -39,3 +39,4 @@ out/
 .env
 src/test/resources/firebase-project.json
 src/main/resources/firebase-project.json
+*.DS_Store
